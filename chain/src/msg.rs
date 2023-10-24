@@ -25,14 +25,14 @@ pub enum ExecuteMsg {
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
     // ResolveAddress returns the current address that the name resolves to
-    ResolveUserInfo { address: Vec<u8> },
+    ResolveUserInfo { address: String },
     Config {},
 }
 
 // We define a custom struct for each query response
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct ResolveRecordResponse {
-    pub user_info: UserInfo, // pub did: String,
+    pub user_info: Option<UserInfo>, // pub did: String,
                              // pub username: String,
                              // pub bio: String,
 }

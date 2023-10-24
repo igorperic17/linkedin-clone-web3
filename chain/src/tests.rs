@@ -9,19 +9,16 @@ mod tests {
     use crate::state::Config;
 
     fn assert_did_owner(deps: Deps, owner: &Addr, did: &str) {
-        // let add : &[u8] = owner.as_bytes().clone();
-        // Create an owned vector from the borrowed data, so it's no longer a temporary value.
-        let owner_bytes: Vec<u8> = owner.as_bytes().to_vec();  // Change is here
 
         let res = query(
             deps,
             mock_env(),
-            QueryMsg::ResolveUserInfo { address: owner_bytes} ,
+            QueryMsg::ResolveUserInfo { address: owner.to_string()} ,
         )
         .unwrap();
 
         let value: ResolveRecordResponse = from_binary(&res).unwrap();
-        assert_eq!(did, value.user_info.did);
+        assert_eq!(did, value.user_info.unwrap_or_default().did);
     }
 
     fn assert_config_state(deps: Deps, expected: Config) {

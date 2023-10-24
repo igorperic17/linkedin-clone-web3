@@ -74,19 +74,19 @@ pub fn execute_register(
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
-        QueryMsg::ResolveUserInfo { address } => query_resolver(deps, env, address.to_vec()),
+        QueryMsg::ResolveUserInfo { address } => query_resolver(deps, env, address),
         QueryMsg::Config {} => to_binary(&config_read(deps.storage).load()?),
     }
 }
 
-fn query_resolver(deps: Deps, _env: Env, address: Vec<u8>) -> StdResult<Binary> {
+fn query_resolver(deps: Deps, _env: Env, address: String) -> StdResult<Binary> {
     let key = address;
 
-    let user_info = match resolver_read(deps.storage).may_load(key.as_slice())? {
+    let user_info = match resolver_read(deps.storage).may_load(key.as_bytes())? {
         Some(record) => Some(record),
         None => None,
     };
-    let resp = ResolveRecordResponse { user_info: user_info.unwrap() };
+    let resp = ResolveRecordResponse { user_info: user_info };
 
     to_binary(&resp)
 }

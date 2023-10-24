@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { GetOrCreateUserResponse, ListCredentialsResponse, LoginResponse } from './app.types';
+import { UserInfoResponse, ListCredentialsResponse, LoginResponse, RequestCredentialIssuanceResponse, InitiateCredentialIssuanceRequest, InitiateCredentialIssuanceResponse, AcceptCredentialIssuanceRequest } from './app.types';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 @Injectable()
 export class AppService {
 
+  private readonly apiHost: string
   private readonly apiUrl: string
 
   constructor(configService: ConfigService) {
-    this.apiUrl = `${configService.getOrThrow('walletKit.baseUrl')}:${configService.getOrThrow('walletKit.port')}/api`
+    this.apiHost =`${configService.getOrThrow('walletKit.baseUrl')}:${configService.getOrThrow('walletKit.port')}`
+    this.apiUrl = `${this.apiHost}/api`
   }
 
   async login(walletAddress: string): Promise<LoginResponse> {
@@ -30,7 +32,21 @@ export class AppService {
     return response.data
   }
 
-  private async getOrCreateUserAsync(walletAddress: string): Promise<GetOrCreateUserResponse> {
+  async issueCredential(token: string, credential: object): Promise<any> {
+    // 1. Resolve token to id (walletAddress) through userInfo.
+    const { id, did } = await this.getUserInfoAsync(token);
+    if (!id || !did) {
+      throw new Error('User is not registered.');
+    }
+    // 2. Make issuance request.
+    const { oidcUri } = await this.requestCredentialIssuanceAsync(credential)
+    // 3. Initiate issuance.
+    const { sessionId } = await this.initiateCredentialIssuanceAsync({ token, oidcUri })
+    // 4. Accept issuance.
+    await this.acceptCredentialIssuance({ token, did, sessionId })
+  }
+
+  private async getOrCreateUserAsync(walletAddress: string): Promise<UserInfoResponse> {
     const payload = {
       id: walletAddress
     }
@@ -39,14 +55,39 @@ export class AppService {
     return response.data
   }
 
+  private async getUserInfoAsync(token: string): Promise<UserInfoResponse> {
+    const options = this.getRequestOptions(token)
+    const response = await axios.get(`${this.apiUrl}/auth/userInfo`, options)
+    return response.data
+  }
+
   private async createDidAsync(token: string): Promise<string> {
-    const payload = {
-      method: 'key'
-    }
+    const payload = { method: 'key' }
     const options = this.getRequestOptions(token)
     const response = await axios.post(`${this.apiUrl}/wallet/did/create`, payload, options)
     this.validateResponse(response)
     return response.data
+  }
+
+  private async requestCredentialIssuanceAsync(credential: object): Promise<RequestCredentialIssuanceResponse> {
+    const url = `${this.apiHost}/issuer-api/default/credentials/issuance/request?walletId=x-device&isPreAuthorized=true`
+    const payload = {
+      credentials: [credential]
+    }
+    const response = await axios.post(url, payload)
+    this.validateResponse(response)
+    return {
+      oidcUri: response.data
+    }
+  }
+
+  private async initiateCredentialIssuanceAsync({ token, oidcUri }: InitiateCredentialIssuanceRequest): Promise<InitiateCredentialIssuanceResponse> {
+    const url = `${this.apiUrl}/wallet/issuance/startIssuerInitiatedIssuance`
+    const payload = { oidcUri }
+    const options = this.getRequestOptions(token)
+    const response = await axios.post(url, payload, options)
+    this.validateResponse(response)
+    return { sessionId: response.data }
   }
 
   private getRequestOptions(token: string): AxiosRequestConfig {
@@ -55,6 +96,13 @@ export class AppService {
         Authorization: `Bearer ${token}`
       }
     }
+  }
+
+  private async acceptCredentialIssuance({ token, did, sessionId }: AcceptCredentialIssuanceRequest): Promise<void> {
+    const url = `${this.apiUrl}/wallet/issuance/continueIssuerInitiatedIssuance?sessionId=${sessionId}&did=${did}`
+    const options = this.getRequestOptions(token)
+    const response = await axios.get(url, options)
+    this.validateResponse(response)
   }
 
   private validateResponse(response: AxiosResponse) {

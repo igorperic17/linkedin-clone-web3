@@ -18,7 +18,20 @@ export class AppController {
 
   @Get('credential/list')
   async listCredentials(@Headers('Authorization') auth: string) {
-    const token = auth.replace('Bearer ', '');
+    const token = this.getToken(auth);
     return await this.appService.listCredentials(token);
+  }
+
+  @Post('credential/issue')
+  async issueCredential(
+    @Headers('Authorization') auth: string,
+    @Body() credential: object
+  ) {
+    const token = this.getToken(auth);
+    
+  }
+
+  private getToken(auth: string): string {
+    return auth.replace('Bearer ', '');
   }
 }

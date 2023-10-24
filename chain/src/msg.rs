@@ -25,7 +25,7 @@ pub enum ExecuteMsg {
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
     // ResolveAddress returns the current address that the name resolves to
-    ResolveUserInfo { address: String },
+    ResolveUserInfo { address: Vec<u8> },
     Config {},
 }
 

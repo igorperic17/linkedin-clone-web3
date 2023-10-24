@@ -8,7 +8,9 @@ services:
       WALTID_WALLET_BACKEND_BIND_ADDRESS: 0.0.0.0
     volumes:
       - ./walletkit:/waltid-walletkit/data-root # data store volume incl. config files.
-  api:
-    image: rubentewierik/blockedin:latest
     ports:
-      - 8080:3000
+      - 8080:8080
+  api:
+    build: ./api
+    ports:
+      - 8081:3000

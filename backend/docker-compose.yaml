@@ -23,8 +23,10 @@ services:
       NUXT_PUBLIC_ISSUER_URL: "http://localhost:$ISSUER_PORT"
   issuer-portal:
     image: waltid/ssikit-issuer-portal:latest
+    platform: linux/arm64
   verifier-portal:
     image: waltid/ssikit-verifier-portal:latest
+    platform: linux/arm64
   ingress:
     image: nginx:1.15.10-alpine
     ports:
@@ -38,6 +40,10 @@ services:
         mode: host
       - target: $VERIFIER_PORT
         published: $VERIFIER_PORT # verifier-portal
+        protocol: tcp
+        mode: host
+      - target: $WALLETKIT_PORT
+        published: $WALLETKIT_PORT # wallet-kit
         protocol: tcp
         mode: host
     volumes:

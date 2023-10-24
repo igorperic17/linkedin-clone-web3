@@ -2,6 +2,7 @@ import type {NextPage} from 'next'
 import Link from 'next/link'
 import WalletLoader from 'components/WalletLoader'
 import {useSigningClient} from 'contexts/client'
+import { NEXT_PUBLIC_CHAIN_EXPLORER, NEXT_PUBLIC_CHAIN_NAME } from 'constants/constants'
 
 const Home: NextPage = () => {
   const {walletAddress} = useSigningClient()
@@ -9,13 +10,13 @@ const Home: NextPage = () => {
   return (
     <WalletLoader>
       <h1 className="text-6xl font-bold">
-        Welcome to {process.env.NEXT_PUBLIC_CHAIN_NAME} !
+        Welcome to {NEXT_PUBLIC_CHAIN_NAME} !
       </h1>
 
       <div className="mt-3 text-2xl">
         Your wallet address is:{' '}
         <pre></pre>
-        <Link href={process.env.NEXT_PUBLIC_CHAIN_EXPLORER + "coreum/accounts/" + walletAddress} passHref>
+        <Link href={NEXT_PUBLIC_CHAIN_EXPLORER + "coreum/accounts/" + walletAddress} passHref>
           <a target="_blank" rel="noreferrer" className="font-mono break-all whitespace-pre-wrap link link-primary">
             {walletAddress}
           </a>
@@ -29,7 +30,7 @@ const Home: NextPage = () => {
              className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus">
             <h3 className="text-2xl font-bold">Fund wallet &rarr;</h3>
             <p className="mt-4 text-xl">
-              Fund you wallet for the {process.env.NEXT_PUBLIC_CHAIN_NAME}.
+              Fund you wallet for the {NEXT_PUBLIC_CHAIN_NAME}.
             </p>
           </a>
         </Link>

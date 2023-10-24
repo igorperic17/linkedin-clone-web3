@@ -1,3 +1,4 @@
+import { NEXT_PUBLIC_CHAIN_BECH32_PREFIX, NEXT_PUBLIC_CHAIN_COIN_TYPE, NEXT_PUBLIC_CHAIN_ID, NEXT_PUBLIC_CHAIN_NAME, NEXT_PUBLIC_CHAIN_REST_ENDPOINT, NEXT_PUBLIC_CHAIN_RPC_ENDPOINT, NEXT_PUBLIC_GAS_PRICE, NEXT_PUBLIC_STAKING_DENOM } from 'constants/constants'
 import {convertFromMicroDenom} from 'util/conversion'
 
 // extend window with CosmJS and Keplr properties
@@ -18,9 +19,9 @@ export const connectKeplr = async () => {
   } else {
     if (window.keplr.experimentalSuggestChain) {
       const stakingDenom = convertFromMicroDenom(
-        process.env.NEXT_PUBLIC_STAKING_DENOM || ''
+        NEXT_PUBLIC_STAKING_DENOM || ''
       )
-      const gasPrice = Number((process.env.NEXT_PUBLIC_GAS_PRICE || '').replace(process.env.NEXT_PUBLIC_STAKING_DENOM || '', ''));
+      const gasPrice = Number((NEXT_PUBLIC_GAS_PRICE || '').replace(NEXT_PUBLIC_STAKING_DENOM || '', ''));
 
       try {
         // Keplr v0.6.4 introduces an experimental feature that supports the feature to suggests the chain from a webpage.
@@ -31,19 +32,19 @@ export const connectKeplr = async () => {
         // If the same chain id is already registered, it will resolve and not require the user interactions.
         await window.keplr.experimentalSuggestChain({
           // Chain-id of the Cosmos SDK chain.
-          chainId: process.env.NEXT_PUBLIC_CHAIN_ID,
+          chainId: NEXT_PUBLIC_CHAIN_ID,
           // The name of the chain to be displayed to the user.
-          chainName: process.env.NEXT_PUBLIC_CHAIN_NAME,
+          chainName: NEXT_PUBLIC_CHAIN_NAME,
           // RPC endpoint of the chain.
-          rpc: process.env.NEXT_PUBLIC_CHAIN_RPC_ENDPOINT,
+          rpc: NEXT_PUBLIC_CHAIN_RPC_ENDPOINT,
           // REST endpoint of the chain.
-          rest: process.env.NEXT_PUBLIC_CHAIN_REST_ENDPOINT,
+          rest: NEXT_PUBLIC_CHAIN_REST_ENDPOINT,
           // Staking coin information
           stakeCurrency: {
             // Coin denomination to be displayed to the user.
             coinDenom: stakingDenom,
             // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-            coinMinimalDenom: process.env.NEXT_PUBLIC_STAKING_DENOM,
+            coinMinimalDenom: NEXT_PUBLIC_STAKING_DENOM,
             // # of decimal points to convert minimal denomination to user-facing denomination.
             coinDecimals: 6,
             // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
@@ -57,16 +58,16 @@ export const connectKeplr = async () => {
           bip44: {
             // You can only set the coin type of BIP44.
             // 'Purpose' is fixed to 44.
-            coinType: Number(process.env.NEXT_PUBLIC_CHAIN_COIN_TYPE),
+            coinType: Number(NEXT_PUBLIC_CHAIN_COIN_TYPE),
           },
           // Bech32 configuration to show the address to user.
           bech32Config: {
-            bech32PrefixAccAddr: process.env.NEXT_PUBLIC_CHAIN_BECH32_PREFIX,
-            bech32PrefixAccPub: `${process.env.NEXT_PUBLIC_CHAIN_BECH32_PREFIX}pub`,
-            bech32PrefixValAddr: `${process.env.NEXT_PUBLIC_CHAIN_BECH32_PREFIX}valoper`,
-            bech32PrefixValPub: `${process.env.NEXT_PUBLIC_CHAIN_BECH32_PREFIX}valoperpub`,
-            bech32PrefixConsAddr: `${process.env.NEXT_PUBLIC_CHAIN_BECH32_PREFIX}valcons`,
-            bech32PrefixConsPub: `${process.env.NEXT_PUBLIC_CHAIN_BECH32_PREFIX}valconspub`,
+            bech32PrefixAccAddr: NEXT_PUBLIC_CHAIN_BECH32_PREFIX,
+            bech32PrefixAccPub: `${NEXT_PUBLIC_CHAIN_BECH32_PREFIX}pub`,
+            bech32PrefixValAddr: `${NEXT_PUBLIC_CHAIN_BECH32_PREFIX}valoper`,
+            bech32PrefixValPub: `${NEXT_PUBLIC_CHAIN_BECH32_PREFIX}valoperpub`,
+            bech32PrefixConsAddr: `${NEXT_PUBLIC_CHAIN_BECH32_PREFIX}valcons`,
+            bech32PrefixConsPub: `${NEXT_PUBLIC_CHAIN_BECH32_PREFIX}valconspub`,
           },
           // List of all coin/tokens used in this chain.
           currencies: [
@@ -74,7 +75,7 @@ export const connectKeplr = async () => {
               // Coin denomination to be displayed to the user.
               coinDenom: stakingDenom,
               // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-              coinMinimalDenom: process.env.NEXT_PUBLIC_STAKING_DENOM,
+              coinMinimalDenom: NEXT_PUBLIC_STAKING_DENOM,
               // # of decimal points to convert minimal denomination to user-facing denomination.
               coinDecimals: 6,
               // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
@@ -88,7 +89,7 @@ export const connectKeplr = async () => {
               // Coin denomination to be displayed to the user.
               coinDenom: stakingDenom,
               // Actual denom (i.e. uatom, uscrt) used by the blockchain.
-              coinMinimalDenom: process.env.NEXT_PUBLIC_STAKING_DENOM,
+              coinMinimalDenom: NEXT_PUBLIC_STAKING_DENOM,
               // # of decimal points to convert minimal denomination to user-facing denomination.
               coinDecimals: 6,
               // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
@@ -101,7 +102,7 @@ export const connectKeplr = async () => {
           // Ideally, it is recommended to be the same with BIP44 path's coin type.
           // However, some early chains may choose to use the Cosmos Hub BIP44 path of '118'.
           // So, this is separated to support such chains.
-          coinType: Number(process.env.NEXT_PUBLIC_CHAIN_COIN_TYPE),
+          coinType: Number(NEXT_PUBLIC_CHAIN_COIN_TYPE),
           // (Optional) This is used to set the fee of the transaction.
           // If this field is not provided, Keplr extension will set the default gas price as (low: 0.01, average: 0.025, high: 0.04).
           // Currently, Keplr doesn't support dynamic calculation of the gas prices based on on-chain data.

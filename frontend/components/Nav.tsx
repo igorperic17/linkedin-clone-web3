@@ -2,6 +2,7 @@ import {useSigningClient} from 'contexts/client'
 import Link from 'next/link'
 import Image from 'next/image'
 import Router from 'next/router'
+import { NEXT_PUBLIC_SITE_ICON_URL, NEXT_PUBLIC_SITE_TITLE } from 'constants/constants'
 
 function Nav() {
   const {walletAddress, connectWallet, disconnect} = useSigningClient()
@@ -14,7 +15,7 @@ function Nav() {
     }
   }
 
-  const PUBLIC_SITE_ICON_URL = process.env.NEXT_PUBLIC_SITE_ICON_URL || ''
+  const PUBLIC_SITE_ICON_URL = NEXT_PUBLIC_SITE_ICON_URL || ''
 
   return (
     <div className="border-b w-screen px-2 md:px-16">
@@ -37,7 +38,7 @@ function Nav() {
           </Link>
           <Link href="/">
             <a className="ml-1 md:ml-2 link link-hover font-semibold text-xl md:text-2xl align-top">
-              {process.env.NEXT_PUBLIC_SITE_TITLE}
+              {NEXT_PUBLIC_SITE_TITLE}
             </a>
           </Link>
         </div>

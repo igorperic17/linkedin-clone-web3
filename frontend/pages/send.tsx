@@ -4,9 +4,10 @@ import {Coin} from '@cosmjs/amino'
 import WalletLoader from 'components/WalletLoader'
 import {useSigningClient} from 'contexts/client'
 import {convertDenomToMicroDenom, convertFromMicroDenom, convertMicroDenomToDenom,} from 'util/conversion'
+import { NEXT_PUBLIC_CHAIN_NAME, NEXT_PUBLIC_STAKING_DENOM } from 'constants/constants'
 
-const PUBLIC_CHAIN_NAME = process.env.NEXT_PUBLIC_CHAIN_NAME
-const PUBLIC_STAKING_DENOM = process.env.NEXT_PUBLIC_STAKING_DENOM || ''
+const PUBLIC_CHAIN_NAME = NEXT_PUBLIC_CHAIN_NAME
+const PUBLIC_STAKING_DENOM = NEXT_PUBLIC_STAKING_DENOM || ''
 
 const Send: NextPage = () => {
   const {walletAddress, signingClient} = useSigningClient()

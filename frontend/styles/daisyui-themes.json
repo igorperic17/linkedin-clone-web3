@@ -1,10 +1,6 @@
 {
   "coreumDark": {
-<<<<<<< Updated upstream
     "primary": "#3246fc", 
-=======
-    "primary": "#EBF3AF",
->>>>>>> Stashed changes
     "primary-focus": "#25d695",
     "primary-content": "#808080",
     "secondary": "#9f9f9f",

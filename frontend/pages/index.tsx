@@ -1,12 +1,8 @@
 import type { NextPage } from 'next'
 import Link from 'next/link'
 import WalletLoader from 'components/WalletLoader'
-<<<<<<< Updated upstream
-import {useSigningClient} from 'contexts/client'
-import { NEXT_PUBLIC_CHAIN_EXPLORER, NEXT_PUBLIC_CHAIN_NAME } from 'constants/constants'
-=======
 import { useSigningClient } from 'contexts/client'
->>>>>>> Stashed changes
+import { NEXT_PUBLIC_CHAIN_EXPLORER, NEXT_PUBLIC_CHAIN_NAME } from 'constants/constants'
 
 const Home: NextPage = () => {
   const { walletAddress } = useSigningClient()
@@ -29,18 +25,6 @@ const Home: NextPage = () => {
       </div>
 
       <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 max-w-full sm:w-full">
-<<<<<<< Updated upstream
-        <Link href="https://docs.coreum.dev/tools-ecosystem/faucet.html" passHref>
-          <a target="_blank" rel="noreferrer"
-             className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus">
-            <h3 className="text-2xl font-bold">Fund wallet &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Fund you wallet for the {NEXT_PUBLIC_CHAIN_NAME}.
-            </p>
-          </a>
-        </Link>
-=======
->>>>>>> Stashed changes
         <Link href="/send" passHref>
           <a
             className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus">
@@ -59,7 +43,7 @@ const Home: NextPage = () => {
             </p>
           </a>
         </Link>
-        <Link href="/blockedin" passHref>
+        <Link href="/profile" passHref>
           <a
             className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus">
             <h3 className="text-2xl font-bold">Blockedin</h3>

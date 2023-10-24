@@ -12,7 +12,7 @@ mod tests {
         let res = query(
             deps,
             mock_env(),
-            QueryMsg::ResolveUserInfo { address: owner.clone() } ,
+            QueryMsg::ResolveUserInfo { address: owner.to_string() } ,
         )
         .unwrap();
 
@@ -99,6 +99,10 @@ mod tests {
         // querying for name resolves to correct address
         let alice = mock_info("alice_key", &[]);
         assert_did_owner(deps.as_ref(), &alice.sender, "alice_did");
+
+        // querying for name resolves to correct address
+        // let alice_2 = mock_info("alice_key_2", &[]);
+        // assert_did_owner(deps.as_ref(), &alice_2.sender, "alice_did");
     }
 
     // #[test]

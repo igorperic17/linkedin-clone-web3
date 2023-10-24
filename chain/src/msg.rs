@@ -1,4 +1,4 @@
-use cosmwasm_std::{Addr, Coin};
+use cosmwasm_std::Coin;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -25,7 +25,7 @@ pub enum ExecuteMsg {
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
     // ResolveAddress returns the current address that the name resolves to
-    ResolveUserInfo { address: Addr },
+    ResolveUserInfo { address: String },
     Config {},
 }
 

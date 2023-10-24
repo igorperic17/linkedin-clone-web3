@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Headers } from '@nestjs/common';
 import { AppService } from './app.service';
 import { LoginRequest, LoginResponse } from './app.types';
 
@@ -14,5 +14,11 @@ export class AppController {
   @Post('auth/login')
   async login(@Body() { walletAddress }: LoginRequest): Promise<LoginResponse> {
     return await this.appService.login(walletAddress);
+  }
+
+  @Get('credential/list')
+  async listCredentials(@Headers('Authorization') auth: string) {
+    const token = auth.replace('Bearer ', '');
+    return await this.appService.listCredentials(token);
   }
 }

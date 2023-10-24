@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { GetOrCreateUserResponse, LoginResponse } from './app.types';
-import axios from 'axios';
+import { GetOrCreateUserResponse, ListCredentialsResponse, LoginResponse } from './app.types';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 @Injectable()
 export class AppService {
@@ -23,14 +23,19 @@ export class AppService {
     }
   }
 
+  async listCredentials(token: string): Promise<ListCredentialsResponse> {
+    const options = this.getRequestOptions(token)
+    const response = await axios.get(`${this.apiUrl}/wallet/credentials/list`, options)
+    this.validateResponse(response)
+    return response.data
+  }
+
   private async getOrCreateUserAsync(walletAddress: string): Promise<GetOrCreateUserResponse> {
     const payload = {
       id: walletAddress
     }
     const response = await axios.post(`${this.apiUrl}/auth/login`, payload)
-    if (response.status !== 200) {
-      throw new Error('Internal Server Error')
-    }
+    this.validateResponse(response)
     return response.data
   }
 
@@ -38,13 +43,24 @@ export class AppService {
     const payload = {
       method: 'key'
     }
-    const config = {
+    const options = this.getRequestOptions(token)
+    const response = await axios.post(`${this.apiUrl}/wallet/did/create`, payload, options)
+    this.validateResponse(response)
+    return response.data
+  }
+
+  private getRequestOptions(token: string): AxiosRequestConfig {
+    return {
       headers: {
         Authorization: `Bearer ${token}`
       }
     }
-    const response = await axios.post(`${this.apiUrl}/wallet/did/create`, payload, config)
-    return response.data
+  }
+
+  private validateResponse(response: AxiosResponse) {
+    if (response.status !== 200) {
+      throw new Error('Internal Server Error')
+    }
   }
 
   healthCheck(): string {

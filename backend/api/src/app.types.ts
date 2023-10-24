@@ -15,3 +15,7 @@ export interface GetOrCreateUserResponse {
   did: string | null
   token: string
 }
+
+export interface ListCredentialsResponse {
+  list: object[]
+}

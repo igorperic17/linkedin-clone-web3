@@ -8,7 +8,7 @@ import {
 } from 'constants/constants'
 
 const Home: NextPage = () => {
-  const { walletAddress, signingClient } = useSigningClient()
+  const { walletAddress, signingClient, contractClient } = useSigningClient()
 
   signingClient
     ?.queryContractSmart(
@@ -20,6 +20,32 @@ const Home: NextPage = () => {
       }
     )
     .then((res: any) => console.log(res))
+
+  signingClient
+    ?.queryContractSmart(
+      'testcore1vhmj54h6dcttmlstnqcwmfxy0cwjh3k05wr852l3a76fgn300s0seefzf2',
+      {
+        config: {},
+      }
+    )
+    .then((res: any) => console.log(res))
+
+  const register = () => {
+    contractClient
+      ?.register(
+        { username: 'Diego', bio: 'test', did: 'did' },
+        {
+          amount: [], //{ denom: 'utestcore', amount: '100000000000000000000000000' }
+          gas: '1000000',
+        },
+        'Registration',
+        [{ denom: 'utestcore', amount: '100' }]
+      )
+      .then((res: any) => {
+        console.log('Registered!')
+        console.log(res)
+      })
+  }
 
   return (
     <WalletLoader>
@@ -41,6 +67,14 @@ const Home: NextPage = () => {
             {walletAddress}
           </a>
         </Link>
+        <div>
+          <button
+            className="mt-4 md:mt-0 btn btn-primary btn-lg font-semibold hover:text-base-100 text-2xl rounded-full flex-grow"
+            onClick={register}
+          >
+            Register
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 max-w-full sm:w-full">

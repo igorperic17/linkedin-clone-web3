@@ -1,17 +1,28 @@
-import {useState} from 'react'
-import {connectKeplr} from 'services/keplr'
-import {createProtobufRpcClient, defaultRegistryTypes, GasPrice, QueryClient,} from '@cosmjs/stargate'
-import {Tendermint34Client} from "@cosmjs/tendermint-rpc";
-import {SigningCosmWasmClient} from '@cosmjs/cosmwasm-stargate'
-import {QueryClient as CoreumQueryClient} from "../coreum/query"
-import {GeneratedType, Registry} from "@cosmjs/proto-signing";
-import {coreumRegistryTypes} from "../coreum/tx";
-import { NEXT_PUBLIC_CHAIN_ID, NEXT_PUBLIC_CHAIN_RPC_ENDPOINT, NEXT_PUBLIC_GAS_PRICE } from 'constants/constants';
+import { useState } from 'react'
+import { connectKeplr } from 'services/keplr'
+import {
+  createProtobufRpcClient,
+  defaultRegistryTypes,
+  GasPrice,
+  QueryClient,
+} from '@cosmjs/stargate'
+import { Tendermint34Client } from '@cosmjs/tendermint-rpc'
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+import { QueryClient as CoreumQueryClient } from '../coreum/query'
+import { GeneratedType, Registry } from '@cosmjs/proto-signing'
+import { coreumRegistryTypes } from '../coreum/tx'
+import {
+  NEXT_PUBLIC_CHAIN_ID,
+  NEXT_PUBLIC_CHAIN_RPC_ENDPOINT,
+  NEXT_PUBLIC_GAS_PRICE,
+} from 'constants/constants'
+import { MyProjectClient } from 'contracts/MyProject.client'
 
 export interface IClientContext {
   walletAddress: string
   signingClient: SigningCosmWasmClient | null
   coreumQueryClient: CoreumQueryClient | null
+  contractClient: MyProjectClient | null
   loading: boolean
   error: any
   connectWallet: any
@@ -26,8 +37,10 @@ export const useClientContext = (): IClientContext => {
   const [walletAddress, setWalletAddress] = useState('')
   const [signingClient, setSigningClient] =
     useState<SigningCosmWasmClient | null>(null)
-  const [tmClient, setTmClient] =
-    useState<Tendermint34Client | null>(null)
+  const [tmClient, setTmClient] = useState<Tendermint34Client | null>(null)
+  const [contractClient, setContractClient] = useState<MyProjectClient | null>(
+    null
+  )
   const [coreumQueryClient, setCoreumQueryClient] =
     useState<CoreumQueryClient | null>(null)
   const [loading, setLoading] = useState(false)
@@ -59,20 +72,36 @@ export const useClientContext = (): IClientContext => {
         PUBLIC_RPC_ENDPOINT,
         offlineSigner,
         {
-          registry: registry,
           gasPrice: GasPrice.fromString(GAS_PRICE),
-        },
+        }
       )
       setSigningClient(client)
 
       // rpc client
-      const tendermintClient = await Tendermint34Client.connect(PUBLIC_RPC_ENDPOINT);
-      setTmClient(tendermintClient)
-      const queryClient = new QueryClient(tendermintClient);
-      setCoreumQueryClient(new CoreumQueryClient(createProtobufRpcClient(queryClient)))
+      const tendermintClient = await Tendermint34Client.connect(
+        PUBLIC_RPC_ENDPOINT
+      )
+
+      const queryClient = new QueryClient(tendermintClient)
+      setCoreumQueryClient(
+        new CoreumQueryClient(createProtobufRpcClient(queryClient))
+      )
 
       // get user address
-      const [{address}] = await offlineSigner.getAccounts()
+      const [{ address }] = await offlineSigner.getAccounts()
+      //   const senderClient = await SigningCosmWasmClient.connectWithSigner(
+      //     PUBLIC_RPC_ENDPOINT,
+      //     offlineSigner,
+      //     { gasPrice: getGasPriceWithMultiplier(feemodelQueryClient) }
+      // );
+      console.log(address)
+      setContractClient(
+        new MyProjectClient(
+          client,
+          address,
+          'testcore1vhmj54h6dcttmlstnqcwmfxy0cwjh3k05wr852l3a76fgn300s0seefzf2'
+        )
+      ) // TODO store address somewhere else
       setWalletAddress(address)
       setLoading(false)
     } catch (error: any) {
@@ -96,6 +125,7 @@ export const useClientContext = (): IClientContext => {
   return {
     walletAddress,
     signingClient,
+    contractClient,
     coreumQueryClient: coreumQueryClient,
     loading,
     error,

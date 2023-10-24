@@ -1,11 +1,11 @@
-import {ReactNode} from 'react'
-import {useSigningClient} from 'contexts/client'
+import { ReactNode } from 'react'
+import { useSigningClient } from 'contexts/client'
 import Loader from './Loader'
 
 function WalletLoader({
-                        children,
-                        loading = false,
-                      }: {
+  children,
+  loading = false,
+}: {
   children: ReactNode
   loading?: boolean
 }) {
@@ -19,7 +19,7 @@ function WalletLoader({
   if (loading || clientLoading) {
     return (
       <div className="justify-center">
-        <Loader/>
+        <Loader />
       </div>
     )
   }

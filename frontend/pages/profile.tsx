@@ -18,7 +18,7 @@ const Profile = () => {
                 </div>
                 <div>
                     <p className="text-left">
-                        Don't have a DID yet? Create one <a>here</a>
+                        Do not have a DID yet? Create one <a>here</a>
                     </p>
                 </div>
 

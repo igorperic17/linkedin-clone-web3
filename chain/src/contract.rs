@@ -8,8 +8,8 @@ use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, ResolveRecordResponse};
 use crate::state::{config, config_read, resolver, resolver_read, Config, UserInfo};
 
-const MIN_NAME_LENGTH: u64 = 3;
-const MAX_NAME_LENGTH: u64 = 64;
+// const MIN_NAME_LENGTH: u64 = 3;
+// const MAX_NAME_LENGTH: u64 = 64;
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn instantiate(
@@ -83,19 +83,19 @@ fn query_resolver(deps: Deps, _env: Env, address: Addr) -> StdResult<Binary> {
     let key = address.as_bytes();
 
     let user_info = match resolver_read(deps.storage).may_load(key)? {
-        Some(record) => Some(&record),
+        Some(record) => Some(record),
         None => None,
     };
-    let resp = ResolveRecordResponse { user_info };
+    let resp = ResolveRecordResponse { user_info: user_info.unwrap() };
 
     to_binary(&resp)
 }
 
 // let's not import a regexp library and just do these checks by hand
-fn invalid_char(c: char) -> bool {
-    let is_valid = c.is_digit(10) || c.is_ascii_lowercase() || (c == '.' || c == '-' || c == '_');
-    !is_valid
-}
+// fn invalid_char(c: char) -> bool {
+//     let is_valid = c.is_digit(10) || c.is_ascii_lowercase() || (c == '.' || c == '-' || c == '_');
+//     !is_valid
+// }
 
 // validate_name returns an error if the name is invalid
 // (we require 3-64 lowercase ascii letters, numbers, or . - _)

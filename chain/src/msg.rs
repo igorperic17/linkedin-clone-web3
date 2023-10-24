@@ -1,6 +1,8 @@
-use cosmwasm_std::Coin;
+use cosmwasm_std::{Addr, Coin};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+
+use crate::state::UserInfo;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct InstantiateMsg {
@@ -11,20 +13,26 @@ pub struct InstantiateMsg {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ExecuteMsg {
-    Register { name: String },
-    Transfer { name: String, to: String },
+    Register {
+        did: String,
+        username: String,
+        bio: String,
+    },
+    // Transfer { name: String, to: String },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
     // ResolveAddress returns the current address that the name resolves to
-    ResolveRecord { name: String },
+    ResolveUserInfo { address: Addr },
     Config {},
 }
 
 // We define a custom struct for each query response
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct ResolveRecordResponse {
-    pub address: Option<String>,
+    pub user_info: UserInfo, // pub did: String,
+                             // pub username: String,
+                             // pub bio: String,
 }

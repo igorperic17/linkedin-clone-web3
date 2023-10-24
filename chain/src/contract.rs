@@ -1,11 +1,12 @@
 use cosmwasm_std::{
-    entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdError, StdResult,
+    entry_point, to_binary, Addr, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdError,
+    StdResult,
 };
 
 use crate::coin_helpers::assert_sent_sufficient_coin;
 use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, ResolveRecordResponse};
-use crate::state::{config, config_read, resolver, resolver_read, Config, NameRecord};
+use crate::state::{config, config_read, resolver, resolver_read, Config, UserInfo};
 
 const MIN_NAME_LENGTH: u64 = 3;
 const MAX_NAME_LENGTH: u64 = 64;
@@ -35,8 +36,9 @@ pub fn execute(
     msg: ExecuteMsg,
 ) -> Result<Response, ContractError> {
     match msg {
-        ExecuteMsg::Register { name } => execute_register(deps, env, info, name),
-        ExecuteMsg::Transfer { name, to } => execute_transfer(deps, env, info, name, to),
+        ExecuteMsg::Register { did, username, bio } => {
+            execute_register(deps, env, info, did, username, bio)
+        }
     }
 }
 
@@ -44,20 +46,24 @@ pub fn execute_register(
     deps: DepsMut,
     _env: Env,
     info: MessageInfo,
-    name: String,
+    did: String,
+    username: String,
+    bio: String,
 ) -> Result<Response, ContractError> {
     // we only need to check here - at point of registration
-    validate_name(&name)?;
+    // validate_name(&name)?;
     let config_state = config(deps.storage).load()?;
     assert_sent_sufficient_coin(&info.funds, config_state.purchase_price)?;
 
-    let key = name.as_bytes();
-    let record = NameRecord { owner: info.sender };
+    let key = info.sender.as_bytes();
+    // The key should be the wallet of the user info.sender
+    let record = UserInfo { did, username, bio };
 
-    if (resolver(deps.storage).may_load(key)?).is_some() {
-        // name is already taken
-        return Err(ContractError::NameTaken { name });
-    }
+    // TODO - discuss if we allow editing
+    // if (resolver(deps.storage).may_load(key)?).is_some() {
+    //     // name is already taken
+    //     return Err(ContractError::NameTaken { name });
+    // }
 
     // name is available
     resolver(deps.storage).save(key, &record)?;
@@ -65,49 +71,22 @@ pub fn execute_register(
     Ok(Response::default())
 }
 
-pub fn execute_transfer(
-    deps: DepsMut,
-    _env: Env,
-    info: MessageInfo,
-    name: String,
-    to: String,
-) -> Result<Response, ContractError> {
-    let config_state = config(deps.storage).load()?;
-    assert_sent_sufficient_coin(&info.funds, config_state.transfer_price)?;
-
-    let new_owner = deps.api.addr_validate(&to)?;
-    let key = name.as_bytes();
-    resolver(deps.storage).update(key, |record| {
-        if let Some(mut record) = record {
-            if info.sender != record.owner {
-                return Err(ContractError::Unauthorized {});
-            }
-
-            record.owner = new_owner.clone();
-            Ok(record)
-        } else {
-            Err(ContractError::NameNotExists { name: name.clone() })
-        }
-    })?;
-    Ok(Response::default())
-}
-
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
-        QueryMsg::ResolveRecord { name } => query_resolver(deps, env, name),
+        QueryMsg::ResolveUserInfo { address } => query_resolver(deps, env, address),
         QueryMsg::Config {} => to_binary(&config_read(deps.storage).load()?),
     }
 }
 
-fn query_resolver(deps: Deps, _env: Env, name: String) -> StdResult<Binary> {
-    let key = name.as_bytes();
+fn query_resolver(deps: Deps, _env: Env, address: Addr) -> StdResult<Binary> {
+    let key = address.as_bytes();
 
-    let address = match resolver_read(deps.storage).may_load(key)? {
-        Some(record) => Some(String::from(&record.owner)),
+    let user_info = match resolver_read(deps.storage).may_load(key)? {
+        Some(record) => Some(&record),
         None => None,
     };
-    let resp = ResolveRecordResponse { address };
+    let resp = ResolveRecordResponse { user_info };
 
     to_binary(&resp)
 }
@@ -118,27 +97,27 @@ fn invalid_char(c: char) -> bool {
     !is_valid
 }
 
-/// validate_name returns an error if the name is invalid
-/// (we require 3-64 lowercase ascii letters, numbers, or . - _)
-fn validate_name(name: &str) -> Result<(), ContractError> {
-    let length = name.len() as u64;
-    if (name.len() as u64) < MIN_NAME_LENGTH {
-        Err(ContractError::NameTooShort {
-            length,
-            min_length: MIN_NAME_LENGTH,
-        })
-    } else if (name.len() as u64) > MAX_NAME_LENGTH {
-        Err(ContractError::NameTooLong {
-            length,
-            max_length: MAX_NAME_LENGTH,
-        })
-    } else {
-        match name.find(invalid_char) {
-            None => Ok(()),
-            Some(bytepos_invalid_char_start) => {
-                let c = name[bytepos_invalid_char_start..].chars().next().unwrap();
-                Err(ContractError::InvalidCharacter { c })
-            }
-        }
-    }
-}
+// validate_name returns an error if the name is invalid
+// (we require 3-64 lowercase ascii letters, numbers, or . - _)
+// fn validate_name(name: &str) -> Result<(), ContractError> {
+//     let length = name.len() as u64;
+//     if (name.len() as u64) < MIN_NAME_LENGTH {
+//         Err(ContractError::NameTooShort {
+//             length,
+//             min_length: MIN_NAME_LENGTH,
+//         })
+//     } else if (name.len() as u64) > MAX_NAME_LENGTH {
+//         Err(ContractError::NameTooLong {
+//             length,
+//             max_length: MAX_NAME_LENGTH,
+//         })
+//     } else {
+//         match name.find(invalid_char) {
+//             None => Ok(()),
+//             Some(bytepos_invalid_char_start) => {
+//                 let c = name[bytepos_invalid_char_start..].chars().next().unwrap();
+//                 Err(ContractError::InvalidCharacter { c })
+//             }
+//         }
+//     }
+// }

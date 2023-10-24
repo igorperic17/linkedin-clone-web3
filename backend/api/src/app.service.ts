@@ -38,7 +38,12 @@ export class AppService {
     const payload = {
       method: 'key'
     }
-    const response = await axios.post(`${this.apiUrl}/wallet/did/create`, payload)
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+    const response = await axios.post(`${this.apiUrl}/wallet/did/create`, payload, config)
     return response.data
   }
 

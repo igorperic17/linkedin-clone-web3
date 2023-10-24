@@ -6,6 +6,7 @@ import {SigningCosmWasmClient} from '@cosmjs/cosmwasm-stargate'
 import {QueryClient as CoreumQueryClient} from "../coreum/query"
 import {GeneratedType, Registry} from "@cosmjs/proto-signing";
 import {coreumRegistryTypes} from "../coreum/tx";
+import { NEXT_PUBLIC_CHAIN_ID, NEXT_PUBLIC_CHAIN_RPC_ENDPOINT, NEXT_PUBLIC_GAS_PRICE } from 'constants/constants';
 
 export interface IClientContext {
   walletAddress: string
@@ -17,9 +18,9 @@ export interface IClientContext {
   disconnect: Function
 }
 
-const PUBLIC_RPC_ENDPOINT = process.env.NEXT_PUBLIC_CHAIN_RPC_ENDPOINT || ''
-const PUBLIC_CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
-const GAS_PRICE = process.env.NEXT_PUBLIC_GAS_PRICE || ''
+const PUBLIC_RPC_ENDPOINT = NEXT_PUBLIC_CHAIN_RPC_ENDPOINT || ''
+const PUBLIC_CHAIN_ID = NEXT_PUBLIC_CHAIN_ID
+const GAS_PRICE = NEXT_PUBLIC_GAS_PRICE || ''
 
 export const useClientContext = (): IClientContext => {
   const [walletAddress, setWalletAddress] = useState('')

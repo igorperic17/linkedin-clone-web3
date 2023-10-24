@@ -1,11 +1,11 @@
-import {ReactNode} from 'react'
-import {useSigningClient} from 'contexts/client'
+import { ReactNode } from 'react'
+import { useSigningClient } from 'contexts/client'
 import Loader from './Loader'
 
 function WalletLoader({
-                        children,
-                        loading = false,
-                      }: {
+  children,
+  loading = false,
+}: {
   children: ReactNode
   loading?: boolean
 }) {
@@ -19,7 +19,7 @@ function WalletLoader({
   if (loading || clientLoading) {
     return (
       <div className="justify-center">
-        <Loader/>
+        <Loader />
       </div>
     )
   }
@@ -28,7 +28,14 @@ function WalletLoader({
     return (
       <div className="max-w-full">
         <h1 className="text-6xl font-bold">
+<<<<<<< Updated upstream
           Project Name{' '}
+=======
+          Welcome to{' '}
+          <a className="link link-primary link-hover" href="https://coreum.com/">
+            Blockedin!
+          </a>
+>>>>>>> Stashed changes
         </h1>
 
         <p className="mt-3 text-2xl">

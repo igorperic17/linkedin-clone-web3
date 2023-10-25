@@ -12,7 +12,11 @@ import {
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ContractsService } from './contracts/services/ContractService';
 import { createHash } from 'crypto';
-import { CredentialDegree, CredentialEmployment, CredentialEvent } from './contracts/generated/MyProject.types';
+import {
+  CredentialDegree,
+  CredentialEmployment,
+  CredentialEvent,
+} from './contracts/generated/MyProject.types';
 
 @Injectable()
 export class AppService {
@@ -47,6 +51,28 @@ export class AppService {
 
   async listCredentials(token: string): Promise<ListCredentialsResponse> {
     const options = this.getRequestOptions(token);
+    const response = await axios.get(
+      `${this.apiUrl}/wallet/credentials/list`,
+      options,
+    );
+    this.validateResponse(response);
+    return response.data;
+  }
+
+  async listOtherCredentials(
+    token: string,
+    targetWallet: string,
+  ): Promise<ListCredentialsResponse> {
+    const loggedUserInfo = await this.getUserInfoAsync(token);
+    const isAllowed = await this.contractsService.isAllowed(
+      loggedUserInfo.id,
+      targetWallet,
+    );
+    if (!isAllowed) {
+      return { list: [] };
+    }
+    const otherToken = await this.login(targetWallet);
+    const options = this.getRequestOptions(otherToken.token);
     const response = await axios.get(
       `${this.apiUrl}/wallet/credentials/list`,
       options,
@@ -106,7 +132,7 @@ export class AppService {
       institution_did: foundCredential['issuer'],
       institution_name:
         foundCredential['credentialSubject']['awardingOpportunity'][
-        'awardingBody'
+          'awardingBody'
         ]['preferredName'],
       owner: id,
       year: parseInt(
@@ -130,11 +156,18 @@ export class AppService {
     const data: CredentialEmployment = {
       institution_did: foundCredential['issuer'],
       institution_name:
-        foundCredential['credentialSubject']['awardingOpportunity']['awardingBody']['preferredName'],
+        foundCredential['credentialSubject']['awardingOpportunity'][
+          'awardingBody'
+        ]['preferredName'],
       owner: id,
-      start_year:
-        parseInt(foundCredential['credentialSubject']['awardingOpportunity']['startYear']),
-      end_year: parseInt(foundCredential['credentialSubject']['awardingOpportunity']['endYear'])
+      start_year: parseInt(
+        foundCredential['credentialSubject']['awardingOpportunity'][
+          'startYear'
+        ],
+      ),
+      end_year: parseInt(
+        foundCredential['credentialSubject']['awardingOpportunity']['endYear'],
+      ),
     };
     console.log('found employment, mapped to onchain', data);
     await this.contractsService.storeVc({
@@ -151,10 +184,13 @@ export class AppService {
     const data: CredentialEvent = {
       organizer_did: foundCredential['issuer'],
       event_name:
-        foundCredential['credentialSubject']['awardingOpportunity']['eventName'],
+        foundCredential['credentialSubject']['awardingOpportunity'][
+          'eventName'
+        ],
       owner: id,
-      year:
-        parseInt(foundCredential['credentialSubject']['awardingOpportunity']['year']),
+      year: parseInt(
+        foundCredential['credentialSubject']['awardingOpportunity']['year'],
+      ),
     };
     console.log('found event, mapped to onchain', data);
     await this.contractsService.storeVc({

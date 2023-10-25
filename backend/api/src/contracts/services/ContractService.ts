@@ -20,6 +20,16 @@ const senderMnemonic =
 export class ContractsService {
   constructor() {}
 
+  async isAllowed(requesterAddress: string, targetAddress: string) {
+    const client = await this.getClient();
+    try {
+      return (await client.isSubscribed({ requesterAddress, targetAddress }))
+        .subscribed;
+    } catch {
+      return false;
+    }
+  }
+
   async storeVc(credential: CredentialEnum) {
     const client = await this.getClient();
     const executeResult = await client.issueCredential(

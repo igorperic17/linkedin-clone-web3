@@ -44,7 +44,7 @@ pub enum QueryMsg {
     // list all credentials linked to a provided wallet
     #[returns(ListCredentialsResponse)]
     ListCredentials { address: String },
-    #[returns(ResolveRecordResponse)]
+    #[returns(IsSubscribedlResponse)]
     IsSubscribed {
         requester_address: String,
         target_address: String,

@@ -107,6 +107,14 @@ export interface Config {
   transfer_price?: Coin | null;
   [k: string]: unknown;
 }
+export interface IsSubscribedlResponse {
+  subscribed: boolean;
+  [k: string]: unknown;
+}
+export interface ListCredentialsResponse {
+  credentials: CredentialEnum[];
+  [k: string]: unknown;
+}
 export interface ResolveRecordResponse {
   user_info?: UserInfo | null;
   [k: string]: unknown;
@@ -115,10 +123,6 @@ export interface UserInfo {
   bio: string;
   did: string;
   username: string;
-  [k: string]: unknown;
-}
-export interface ListCredentialsResponse {
-  credentials: CredentialEnum[];
   [k: string]: unknown;
 }
 export interface VerifyCredentialResponse {

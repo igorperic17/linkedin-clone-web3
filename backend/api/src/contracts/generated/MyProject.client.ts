@@ -6,7 +6,7 @@
 
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { StdFee } from "@cosmjs/amino";
-import { Uint128, InstantiateMsg, Coin, ExecuteMsg, CredentialEnum, CredentialDegree, CredentialEmployment, CredentialEvent, QueryMsg, Addr, Config, ResolveRecordResponse, UserInfo, ListCredentialsResponse, VerifyCredentialResponse } from "./MyProject.types";
+import { Uint128, InstantiateMsg, Coin, ExecuteMsg, CredentialEnum, CredentialDegree, CredentialEmployment, CredentialEvent, QueryMsg, Addr, Config, IsSubscribedlResponse, ListCredentialsResponse, ResolveRecordResponse, UserInfo, VerifyCredentialResponse } from "./MyProject.types";
 export interface MyProjectReadOnlyInterface {
   contractAddress: string;
   resolveUserInfo: ({
@@ -31,7 +31,7 @@ export interface MyProjectReadOnlyInterface {
   }: {
     requesterAddress: string;
     targetAddress: string;
-  }) => Promise<ResolveRecordResponse>;
+  }) => Promise<IsSubscribedlResponse>;
 }
 export class MyProjectQueryClient implements MyProjectReadOnlyInterface {
   client: CosmWasmClient;
@@ -91,7 +91,7 @@ export class MyProjectQueryClient implements MyProjectReadOnlyInterface {
   }: {
     requesterAddress: string;
     targetAddress: string;
-  }): Promise<ResolveRecordResponse> => {
+  }): Promise<IsSubscribedlResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       is_subscribed: {
         requester_address: requesterAddress,

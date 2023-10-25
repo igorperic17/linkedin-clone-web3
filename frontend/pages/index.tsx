@@ -6,28 +6,9 @@ import {
   NEXT_PUBLIC_CHAIN_EXPLORER,
   NEXT_PUBLIC_CHAIN_NAME,
 } from 'constants/constants'
-import { useEffect } from 'react'
-import { BackendService } from 'services/backendService'
 
 const Home: NextPage = () => {
-  const { walletAddress, contractClient } = useWrappedClientContext()
-
-  const register = () => {
-    contractClient
-      ?.register(
-        { username: 'Diego', bio: 'test', did: 'did' },
-        {
-          amount: [], //{ denom: 'utestcore', amount: '100000000000000000000000000' }
-          gas: '1000000',
-        },
-        'Registration',
-        [{ denom: 'utestcore', amount: '100' }]
-      )
-      .then((res: any) => {
-        console.log('Registered!')
-        console.log(res)
-      })
-  }
+  const { walletAddress } = useWrappedClientContext()
 
   return (
     <WalletLoader>

@@ -1,5 +1,5 @@
 import { useWrappedClientContext } from "contexts/client"
-import { useEffect, useState } from "react"
+import { ReactElement, useEffect, useState } from "react"
 import { CredentialDegree, CredentialEmployment, CredentialEnum, CredentialEvent, UserInfo } from "contracts/MyProject.types"
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate"
 import { MyProjectClient } from "contracts/MyProject.client"
@@ -11,6 +11,7 @@ interface ReadOnlyProfileSectionProps {
 interface ProfileHeaderProps {
     walletAddress: string
     userInfo: UserInfo | undefined
+    toggle: ReactElement
 }
 
 export interface ProfileProps {
@@ -90,11 +91,30 @@ const EventListItem = ({ data }: ListItemProps<CredentialEvent>) => {
     )
 }
 
-const UpdatableProfileHeader = ({ userInfo }: ProfileHeaderProps) => {
-    const { contractClient } = useWrappedClientContext()
+const UpdatableProfileHeader = ({ userInfo, toggle }: ProfileHeaderProps) => {
+    const { contractClient, auth } = useWrappedClientContext()
 
     const [username, setUsername] = useState<string | undefined>(userInfo?.username)
     const [bio, setBio] = useState<string | undefined>(userInfo?.bio)
+
+    const onSaveHandler = async () => {
+        if (auth) {
+            await contractClient
+                ?.register(
+                    { username: username ?? '', bio: bio ?? '', did: auth.did },
+                    {
+                        amount: [], //{ denom: 'utestcore', amount: '100000000000000000000000000' }
+                        gas: '1000000',
+                    },
+                    'Registration',
+                    [{ denom: 'utestcore', amount: '100' }]
+                )
+                .then((res: any) => {
+                    console.log('Registered!')
+                    console.log(res)
+                })
+        }
+    }
 
     const onUsernameChangeHandler = (e: any) => {
         setUsername(e.target.value)
@@ -104,33 +124,32 @@ const UpdatableProfileHeader = ({ userInfo }: ProfileHeaderProps) => {
         setBio(e.target.value)
     }
 
-    const onSavehandler = async () => {
-        // TODO: Update public profile data on chain.
-    }
-
     if (!userInfo) {
         return (<>No user info available!</>)
     }
     return (
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-            <h1 className="font-bold text-xl">About</h1>
-            <div className="max-w-xs text-lg mt-6">
+            <h1 className="font-bold text-4xl">About</h1>
+            {toggle}
+            <div className="max-w-xs text-lg mt-3">
                 <input defaultValue={username} className="text-4xl font-bold mb-4 max-w-xs" onChange={onUsernameChangeHandler} />
-                <textarea defaultValue={bio} className="text-sm min-w-xl" onChange={onBioChangeHandler} />
+                <textarea defaultValue={bio} className="text-sm" onChange={onBioChangeHandler} />
             </div>
-            <button className="text-lg px-2 py-1 text-sm border border-neutral rounded-full text-neutral hover:border-primary hover:bg-primary hover:text-secondary" onClick={onSavehandler}>Save</button>
+            <button className="text-lg px-2 py-1 text-sm border border-neutral rounded-full text-neutral hover:border-primary hover:bg-primary hover:text-secondary" onClick={onSaveHandler}>Save</button>
         </div>
     )
 }
 
-const ReadOnlyProfileHeader = ({ userInfo }: ProfileHeaderProps) => {
+const ReadOnlyProfileHeader = ({ userInfo, toggle }: ProfileHeaderProps) => {
     if (!userInfo) {
         return (<>No user info available!</>)
     }
     return (
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-            <div className="max-w-xs text-lg m-6">
-                <h2 className="text-5xl font-bold mb-4">{userInfo.username}</h2>
+            <h1 className="font-bold text-4xl">About</h1>
+            {toggle}
+            <div className="max-w-xs text-lg mt-3">
+                <h2 className="text-4xl font-bold mb-4 max-w-xs">{userInfo.username}</h2>
                 <p className="text-sm">{userInfo.bio}</p>
             </div>
         </div>
@@ -140,7 +159,7 @@ const ReadOnlyProfileHeader = ({ userInfo }: ProfileHeaderProps) => {
 const EmploymentSection = ({ state }: SectionProps<CredentialEmployment>) => {
     return (
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-            <h3 className="font-bold mb-2">Work Experience</h3>
+            <h1 className="font-bold text-4xl mb-2">Work Experience</h1>
             {state.sort((a, b) => (b.end_year ?? (99999 + (b.start_year ?? 0))) - (a.end_year ?? (99999 + (a.start_year ?? 0)))).map((value, index) => (
                 <>
                     <EmploymentListItem data={value} key={index} />
@@ -154,7 +173,7 @@ const EmploymentSection = ({ state }: SectionProps<CredentialEmployment>) => {
 const DegreeSection = ({ state }: SectionProps<CredentialDegree>) => {
     return (
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-            <h3 className="font-bold mb-2">Education</h3>
+            <h1 className="font-bold text-4xl mb-2">Education</h1>
             {state.sort((a, b) => b.year - a.year).map((value, index) => (
                 <>
                     <DegreeListItem data={value} key={index} />
@@ -168,7 +187,7 @@ const DegreeSection = ({ state }: SectionProps<CredentialDegree>) => {
 const EventSection = ({ state }: SectionProps<CredentialEvent>) => {
     return (
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-            <h3 className="font-bold mb-2">Certificates</h3>
+            <h1 className="font-bold text-4xl mb-2">Certificates</h1>
             {state.sort((a, b) => (b.year ?? 0) - (a.year ?? 0)).map((value, index) => (
                 <>
                     <EventListItem data={value} key={index} />
@@ -215,14 +234,15 @@ const fetchCredentials = async (contractClient: MyProjectClient, requestedProfil
 }
 
 const Profile = () => {
-    const { requestedProfile, walletAddress, signingClient, contractClient } = useWrappedClientContext()
+    const { requestedProfile, walletAddress, signingClient, contractClient, auth } = useWrappedClientContext()
     const { walletAddress: requestedProfileWalletAddress } = requestedProfile
     const [userInfo, setUserInfo] = useState<UserInfo>()
     const [credentials, setCredentials] = useState<CredentialEnum[]>([])
+    const [isEdit, setIsEdit] = useState<boolean>(false)
 
     contractClient?.listCredentials
     useEffect(() => {
-        if (requestedProfileWalletAddress) {
+        if (requestedProfileWalletAddress && auth) {
             if (signingClient) {
                 fetchUserInfo(signingClient, requestedProfileWalletAddress)
                     .then((userInfo) => {
@@ -245,13 +265,18 @@ const Profile = () => {
         return (<></>)
     }
 
-    const isUpdatable = walletAddress === requestedProfileWalletAddress
+    const isEditable = walletAddress === requestedProfileWalletAddress
+    const shouldRenderEditable = isEditable && isEdit
+
+    const toggle = (
+        <h1 className='text-3xl'>Edit <input type="checkbox" className="toggle" checked={isEdit} onClick={() => setIsEdit(!isEdit)} /></h1>
+    )
 
     return (
         <div>
-            {isUpdatable
-                ? (<UpdatableProfileHeader userInfo={userInfo} walletAddress={walletAddress} />)
-                : (<ReadOnlyProfileHeader userInfo={userInfo} walletAddress={walletAddress} />)}
+            {shouldRenderEditable
+                ? (<UpdatableProfileHeader userInfo={userInfo} walletAddress={walletAddress} toggle={toggle} />)
+                : (<ReadOnlyProfileHeader userInfo={userInfo} walletAddress={walletAddress} toggle={toggle} />)}
             <ReadOnlyProfileSection credentials={credentials} />
         </div>
     )

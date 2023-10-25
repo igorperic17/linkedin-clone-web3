@@ -1,12 +1,66 @@
 import React, { useState } from "react"
+import { useWrappedClientContext } from "contexts/client"
+import { start } from "repl"
+
+interface IssueEmploymentCredentialsParameters {
+  company: string
+  startYear: string
+  endYear: string
+  firstName: string
+  lastName: string
+}
+
+
+const getIssueEmploymentCredentialData = ({
+  company,
+  startYear,
+  endYear,
+  firstName,
+  lastName
+}: IssueEmploymentCredentialsParameters) => {
+  return {
+    credentialData: {
+      credentialSubject: {
+        id: 'did:ebsi:2AEMAqXWKYMu1JHPAgGcga4dxu7ThgfgN95VyJBJGZbSJUtp',
+        awardingOpportunity: {
+          awardingBody: {
+            eidasLegalIdentifier: 'Unknown',
+            homepage: 'https://leaston.bcdiploma.com/',
+            id: 'did:ebsi:2A9BZ9SUe6BatacSpvs1V5CdjHvLpQ7bEsi2Jb6LdHKnQxaN',
+            preferredName: company,
+          },
+          startYear: startYear,
+          endYear: endYear
+        },
+        familyName: lastName,
+        givenNames: firstName,
+      }
+    },
+    "type": "VerifiableEmployment"
+  }
+}
+
+
+
+
 
 const Employment = () => {
-  const [companyName, setCompanyName] = useState('')
+  const [company, setCompany] = useState('')
   const [startYear, setStartYear] = useState('')
   const [endYear, setEndYear] = useState('')
-
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+
+  const { requestedProfile, backendService } = useWrappedClientContext()
+  const { walletAddress } = requestedProfile
+
+  const onSaveHandler = async (e: any) => {
+    e.preventDefault()
+    if (walletAddress) {
+      const credential = getIssueEmploymentCredentialData({ company, startYear, endYear, firstName, lastName })
+      await backendService.issueCredential(walletAddress, credential)
+    }
+  }
 
 
 
@@ -32,7 +86,7 @@ const Employment = () => {
           <div className="flex gap-6">
             <div className="flex flex-col items-start py-4 w-2/4">
               <label className="mr-4 mb-2 ml-2">Company Name</label>
-              <input onChange={(e) => setCompanyName(e.target.value)} value={companyName} type="text" placeholder="Enter the company name" className="w-3/4 focus:border-2 py-2 px-2 focus:rounded-md focus:border-gray-400 outline-none rounded-xl" />
+              <input onChange={(e) => setCompany(e.target.value)} value={company} type="text" placeholder="Enter the company name" className="w-3/4 focus:border-2 py-2 px-2 focus:rounded-md focus:border-gray-400 outline-none rounded-xl" />
             </div>
             <div className="w-1/2 flex">
               <div className="flex flex-col items-start py-4 w-full">
@@ -46,7 +100,7 @@ const Employment = () => {
             </div>
           </div>
         </div>
-        <button className="border-0 text-secondary text-lg bg-primary py-4 px-8 rounded-xl">Issue credential</button>
+        <button onClick={onSaveHandler} className="border-0 text-secondary text-lg bg-primary py-4 px-8 rounded-xl">Issue credential</button>
       </form>
     </div >
   )

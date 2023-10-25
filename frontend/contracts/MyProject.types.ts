@@ -93,16 +93,18 @@ export type QueryMsg = {
     address: string;
     [k: string]: unknown;
   };
+} | {
+  is_subscribed: {
+    source_profile_did: string;
+    target_profile_did: string;
+    [k: string]: unknown;
+  };
 };
 export type Addr = string;
 export interface Config {
   owner: Addr;
   purchase_price?: Coin | null;
   transfer_price?: Coin | null;
-  [k: string]: unknown;
-}
-export interface ListCredentialsResponse {
-  credentials: CredentialEnum[];
   [k: string]: unknown;
 }
 export interface ResolveRecordResponse {
@@ -113,6 +115,10 @@ export interface UserInfo {
   bio: string;
   did: string;
   username: string;
+  [k: string]: unknown;
+}
+export interface ListCredentialsResponse {
+  credentials: CredentialEnum[];
   [k: string]: unknown;
 }
 export interface VerifyCredentialResponse {

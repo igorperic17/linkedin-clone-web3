@@ -13,10 +13,11 @@ use crate::state::{
 };
 use coreum_wasm_sdk::assetnft::{self, DISABLE_SENDING};
 use coreum_wasm_sdk::core::{CoreumMsg, CoreumQueries};
-use coreum_wasm_sdk::nft::{NFT, self};
+use coreum_wasm_sdk::nft::{self, NFT};
 use coreum_wasm_sdk::types::coreum::asset;
 use cosmwasm_std::{
-    entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdError, StdResult, QueryRequest,
+    entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, QueryRequest, Response,
+    StdError, StdResult,
 };
 // use uuid::Uuid;
 
@@ -119,8 +120,8 @@ pub fn execute_subscribe(
     // let id = Uuid::new_v4().to_string();
     let id = info.sender.to_string();
     match mint_nft(deps, info, target_profile, id) {
-        Ok(msg) => { return Ok(msg) },
-        Err(error) => { return Err(error) }
+        Ok(msg) => return Ok(msg),
+        Err(error) => return Err(error),
     }
 }
 
@@ -156,13 +157,12 @@ pub fn execute_issue_credential(
     info: MessageInfo,
     cred: CredentialEnum,
 ) -> Result<Response<CoreumMsg>, ContractError> {
-
     let config_state = config(deps.storage).load()?;
 
     // TODO: uncomment this to allow only the contract owner to issue creds
-    // TODO: modify this to allow only trusted entities to issue creds 
+    // TODO: modify this to allow only trusted entities to issue creds
     if info.sender != config_state.owner {
-        return Err(ContractError::Unauthorized {  });
+        return Err(ContractError::Unauthorized {});
     }
 
     // TODO: change this to the cost of the NFT issue
@@ -185,19 +185,18 @@ pub fn execute_issue_credential(
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
-pub fn query(
-    deps: Deps<CoreumQueries>, 
-    env: Env, 
-    info: MessageInfo, 
-    msg: QueryMsg) -> StdResult<Binary> {
+pub fn query(deps: Deps<CoreumQueries>, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::ResolveUserInfo { address } => query_resolver(deps, env, address),
         QueryMsg::Config {} => to_binary(&config_read(deps.storage).load()?),
         QueryMsg::ListCredentials { address } => query_list_credentials(deps, env, address),
         QueryMsg::VerifyCredential { data } => query_verify_credentials(deps, env, data),
-        QueryMsg::IsSubscribed { source_profile_did, target_profile_did } => {
+        QueryMsg::IsSubscribed {
+            source_profile_did,
+            target_profile_did,
+        } => {
             let coreum_deps = deps;
-            query_is_subscribed(coreum_deps, env, info, source_profile_did, target_profile_did)
+            query_is_subscribed(coreum_deps, env, source_profile_did, target_profile_did)
         }
     }
 }
@@ -216,7 +215,11 @@ fn query_resolver(deps: Deps<CoreumQueries>, _env: Env, address: String) -> StdR
     to_binary(&resp)
 }
 
-fn query_list_credentials(deps: Deps<CoreumQueries>, _env: Env, address: String) -> StdResult<Binary> {
+fn query_list_credentials(
+    deps: Deps<CoreumQueries>,
+    _env: Env,
+    address: String,
+) -> StdResult<Binary> {
     let key = address.clone();
 
     match credential_read(deps.storage).may_load(key.as_bytes())? {
@@ -256,22 +259,20 @@ fn query_verify_credentials(
 
 fn query_is_subscribed(
     deps: Deps<CoreumQueries>,
-    env: Env,
-    info: MessageInfo,
+    _env: Env,
     source_profile_did: String,
     target_profile_did: String,
 ) -> StdResult<Binary> {
-
     // // get the NFT class by id (all profile "subscribers", a.k.a. their NFTs)
     let class_id = target_profile_did.clone();
     let id = source_profile_did.clone();
     let request: QueryRequest<CoreumQueries> =
         CoreumQueries::NFT(nft::Query::NFT { class_id, id }).into();
     let res: Option<nft::NFTResponse> = deps.querier.query(&request)?;
-    
+
     // // TODO: change this
     match res {
         Some(nft) => to_binary(&true),
-        None => to_binary(&false)
+        None => to_binary(&false),
     }
 }

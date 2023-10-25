@@ -6,7 +6,7 @@
 
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { StdFee } from "@cosmjs/amino";
-import { Uint128, InstantiateMsg, Coin, ExecuteMsg, CredentialEnum, CredentialDegree, CredentialEmployment, CredentialEvent, QueryMsg, Addr, Config, ListCredentialsResponse, ResolveRecordResponse, UserInfo, VerifyCredentialResponse } from "./MyProject.types";
+import { Uint128, InstantiateMsg, Coin, ExecuteMsg, CredentialEnum, CredentialDegree, CredentialEmployment, CredentialEvent, QueryMsg, Addr, Config, ResolveRecordResponse, UserInfo, ListCredentialsResponse, VerifyCredentialResponse } from "./MyProject.types";
 export interface MyProjectReadOnlyInterface {
   contractAddress: string;
   resolveUserInfo: ({
@@ -25,6 +25,13 @@ export interface MyProjectReadOnlyInterface {
   }: {
     address: string;
   }) => Promise<ListCredentialsResponse>;
+  isSubscribed: ({
+    sourceProfileDid,
+    targetProfileDid
+  }: {
+    sourceProfileDid: string;
+    targetProfileDid: string;
+  }) => Promise<ResolveRecordResponse>;
 }
 export class MyProjectQueryClient implements MyProjectReadOnlyInterface {
   client: CosmWasmClient;
@@ -37,6 +44,7 @@ export class MyProjectQueryClient implements MyProjectReadOnlyInterface {
     this.config = this.config.bind(this);
     this.verifyCredential = this.verifyCredential.bind(this);
     this.listCredentials = this.listCredentials.bind(this);
+    this.isSubscribed = this.isSubscribed.bind(this);
   }
 
   resolveUserInfo = async ({
@@ -74,6 +82,20 @@ export class MyProjectQueryClient implements MyProjectReadOnlyInterface {
     return this.client.queryContractSmart(this.contractAddress, {
       list_credentials: {
         address
+      }
+    });
+  };
+  isSubscribed = async ({
+    sourceProfileDid,
+    targetProfileDid
+  }: {
+    sourceProfileDid: string;
+    targetProfileDid: string;
+  }): Promise<ResolveRecordResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      is_subscribed: {
+        source_profile_did: sourceProfileDid,
+        target_profile_did: targetProfileDid
       }
     });
   };

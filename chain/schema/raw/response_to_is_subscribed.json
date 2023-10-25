@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ResolveRecordResponse",
+  "type": "object",
+  "properties": {
+    "user_info": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/UserInfo"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "definitions": {
+    "UserInfo": {
+      "type": "object",
+      "required": [
+        "bio",
+        "did",
+        "username"
+      ],
+      "properties": {
+        "bio": {
+          "type": "string"
+        },
+        "did": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

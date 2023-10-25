@@ -73,6 +73,30 @@
         }
       },
       "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "is_subscribed"
+      ],
+      "properties": {
+        "is_subscribed": {
+          "type": "object",
+          "required": [
+            "source_profile_did",
+            "target_profile_did"
+          ],
+          "properties": {
+            "source_profile_did": {
+              "type": "string"
+            },
+            "target_profile_did": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
     }
   ],
   "definitions": {

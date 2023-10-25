@@ -7,7 +7,7 @@ import {
   NEXT_PUBLIC_CHAIN_NAME,
 } from 'constants/constants'
 import { useEffect } from 'react'
-import { BackendService } from 'services/BackendService'
+import { BackendService } from 'services/backendService'
 
 const Home: NextPage = () => {
   const { walletAddress, contractClient } = useWrappedClientContext()
@@ -38,7 +38,7 @@ const Home: NextPage = () => {
         .catch((e) => console.error(e))
 
       service
-        .issueDummyCredential(walletAddress)
+        .issueCredential(walletAddress)
         .then((res) => console.log(res))
         .catch((e) => console.error(e))
     }

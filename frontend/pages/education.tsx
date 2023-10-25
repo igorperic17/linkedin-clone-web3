@@ -84,7 +84,7 @@ const Education = () => {
   }
 
   return (
-    <div className="p-8 flex flex-col items-start text-left rounded-xl bg-secondary w-3/4">
+    <div className="p-8 flex flex-col items-start text-left rounded-xl bg-white w-3/4">
       <div className="mb-10">
         <h2 className="mb-2 text-5xl font-bold text">Education</h2>
         <p>Send a request to issue proof of obtained degree at a university</p>

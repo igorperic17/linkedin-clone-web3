@@ -29,12 +29,12 @@ function WalletLoader({
     return (
       <div className="max-w-full text-center flex flex-col items-center">
         <Image
-        src="/bg.jpg"
-        alt="Background Image"
-        layout="fill"
-        objectFit="cover"
-        style={{ opacity: '0.1', filter: 'grayscale(100%)'}}
-      />
+          src="/bg.jpg"
+          alt="Background Image"
+          layout="fill"
+          objectFit="cover"
+          style={{ opacity: '0.1', filter: 'grayscale(100%)' }}
+        />
         <div className="z-10 p-16 backdrop-blur-sm rounded-xl" style={{ boxShadow: '0px 0px 50px 0px #707070' }}>
           <h1 className="mb-12 text-9xl font-bold">
             CoredIn
@@ -46,7 +46,7 @@ function WalletLoader({
 
           <div className="flex flex-wrap rounded-xl items-center justify-around md:max-w-4xl mt-14 sm:w-full">
             <button
-              className="p-6 text-left border border-primary text-primary hover:border-primary hover:bg-primary max-w-lg rounded-xl hover:text-secondary focus:text-primary-focus"
+              className="p-6 text-left border border-primary text-primary hover:border-primary hover:bg-primary max-w-lg rounded-xl hover:text-secondary"
               onClick={connectWallet}
             >
               <h3 className="text-2xl font-bold">Connect your wallet &rarr;</h3>

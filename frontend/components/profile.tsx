@@ -195,8 +195,9 @@ const EventSection = ({ state }: SectionProps<CredentialEvent>) => {
         return <></>
     }
     return (
+<<<<<<< Updated upstream
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-            <h1 className="font-bold text-3xl mb-2">Certificates</h1>
+            <h1 className="font-bold text-4xl mb-2">Certificates</h1>
             {state.sort((a, b) => (b.year ?? 0) - (a.year ?? 0)).map((value, index) => (
                 <>
                     <EventListItem data={value} key={index} />

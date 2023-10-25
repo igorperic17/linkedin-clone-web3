@@ -11,7 +11,7 @@ const RequestedProfileInput = () => {
     setRequestedProfileWalletAddress(e.target.value || walletAddress);
   }
   return (
-    <div className="flex items-center my-4 text-left rounded-xl justify-self-start w-[500px] justify-self-end">
+    <div className="flex items-center my-4 text-left rounded-xl justify-self-start w-[400px] justify-self-end">
       <input type="text" className="p-2 rounded-xl bg-accent w-full" placeholder="Enter wallet address of desired profile" onChange={onChangeHandler}></input>
     </div>
   )
@@ -34,7 +34,7 @@ function Nav() {
     <div className="border-b w-screen px-8 bg-white">
       <nav
         className="flex justify-between items-center m-auto text-center w-2/3 py-2">
-        <div className="flex items-center -mr-32">
+        <div className="flex items-center">
           <Link href="/">
             <a className="font-semibold text-xl md:text-2xl align-top text-neutral">
               Cored<span className="bg-neutral text-white rounded-sm px-1 mx-0.5">in</span>

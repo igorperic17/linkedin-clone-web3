@@ -7,7 +7,7 @@ import { MyProjectClient } from '../generated/MyProject.client';
 import { CredentialEnum } from '../generated/MyProject.types';
 
 export const CONTRACT_ADDRESS =
-  'testcore1yx3y8asevw2s4dtpasxhfha05gaewgwepsl7sg034e2z40379uzqyhuf4e';
+  'testcore1kpgd4huc69hur74kfvvxkkva86azhleqnvj30yw5qpmzd82y5ngsrrhpy8';
 
 const coreumAccountPrefix = 'testcore'; // the address prefix (different for different chains/environments)
 const coreumHDPath = "m/44'/990'/0'/0/0"; // coreum HD path (same for all chains/environments)

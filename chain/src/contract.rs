@@ -80,19 +80,21 @@ pub fn execute_register(
     let record = UserInfo { did, username, bio };
 
     // TODO - discuss if we allow editing
-    // if (resolver(deps.storage).may_load(key)?).is_some() {
-    //     // name is already taken
-    //     return Err(ContractError::NameTaken { name });
-    // }
+    if (resolver(deps.storage).may_load(key)?).is_some() {
+        // collection already exists, we save and exit
+        resolver(deps.storage).save(key, &record)?;
+        return Ok(Response::new());
+    }
 
     // name is available
 
     // TODO - mint NFT class for access
     // TODO . only mint if not exists
-
+    // MOAH!!!!!!!!!!!! LATE NIGHT HACK!!!! we just use 30 first address chars to avoid smartNFT regex limitation, we should hash instead..
+    let symbol = info.sender.to_string()[..26].to_string();
     let issue_class_msg = CoreumMsg::AssetNFT(assetnft::Msg::IssueClass {
         name: info.sender.to_string(), // class == wallet address for now, switch to DID
-        symbol: info.sender.to_string(), // class == wallet address for now, switch to DID
+        symbol,                        // class == wallet address for now, switch to DID
         description: Some("Test description".to_string()),
         uri: None,
         uri_hash: None,
@@ -103,12 +105,12 @@ pub fn execute_register(
 
     resolver(deps.storage).save(key, &record)?;
 
-    Ok(Response::default())
+    Ok(Response::new().add_message(issue_class_msg))
 }
 
 pub fn execute_subscribe(
     deps: DepsMut<CoreumQueries>,
-    _env: Env,
+    env: Env,
     info: MessageInfo,
     target_profile: String,
 ) -> Result<Response<CoreumMsg>, ContractError> {
@@ -119,7 +121,16 @@ pub fn execute_subscribe(
 
     // let id = Uuid::new_v4().to_string();
     let id = info.sender.to_string();
-    match mint_nft(deps, info, target_profile, id) {
+    match mint_nft(
+        deps,
+        info,
+        format!(
+            "{}-{}",
+            target_profile[..26].to_string(),
+            env.contract.address
+        ),
+        id,
+    ) {
         Ok(msg) => return Ok(msg),
         Err(error) => return Err(error),
     }

@@ -1,1 +1,1 @@
-e9a2434fd9a76d13d3516abdcc0719ea459edb46bb01a5069234ecd78aba2d68  cw_nameservice.wasm
+9dfea856848429fddc98c0b4374a9e7748569f7a5663b2666f1adc1f6de0c02b  cw_nameservice.wasm

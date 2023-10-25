@@ -1,1 +1,1 @@
-ec874eb7682acf962e7092654bca430ca1b24e48e2760ef4373ae5f478d062df  /target/wasm32-unknown-unknown/release/cw_nameservice.wasm
+9a5b5ce93b808f31fb4b7f66061f28c0d3b30456fed9bb2fcb08178de8641330  /target/wasm32-unknown-unknown/release/cw_nameservice.wasm

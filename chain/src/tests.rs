@@ -5,8 +5,8 @@ mod tests {
 
     use crate::contract::{execute, instantiate, query};
     // use crate::error::ContractError;
-    use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, ResolveRecordResponse};
-    use crate::state::Config;
+    use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, ResolveRecordResponse, ListCredentialsResponse, VerifyCredentialResponse};
+    use crate::state::{Config, CredentialDegree, CredentialEnum, CredentialEvent};
 
     fn assert_did_owner(deps: Deps, owner: &Addr, did: &str) {
 
@@ -18,7 +18,10 @@ mod tests {
         .unwrap();
 
         let value: ResolveRecordResponse = from_binary(&res).unwrap();
-        assert_eq!(did, value.user_info.unwrap_or_default().did);
+        match value.user_info {
+            Some(info) => { assert_eq!(did, info.did); }
+            None => { assert!(false) }
+        }
     }
 
     fn assert_config_state(deps: Deps, expected: Config) {
@@ -105,5 +108,133 @@ mod tests {
         // let alice_2 = mock_info("alice_key_2", &[]);
         // assert_did_owner(deps.as_ref(), &alice_2.sender, "alice_did");
     }
+
+
+
+    fn mock_register_diploma(deps: DepsMut, sent: &[Coin], diploma: CredentialEnum) {
+        // alice can register an available name
+        let info = mock_info("alice_key", sent);
+        let msg = ExecuteMsg::IssueCredential { credential: diploma };
+        let _res = execute(deps, mock_env(), info, msg)
+            .expect("contract successfully handles Register message");
+    }
+
+    #[test]
+    fn issue_diploma_works() {
+        let mut deps = mock_dependencies(&[]);
+        mock_init_no_price(deps.as_mut());
+        mock_alice_registers_name(deps.as_mut(), &[]);
+
+        let diploma = CredentialEnum::Degree { data: CredentialDegree {
+            owner: "alice_key".to_string(),
+            institution_name: "MIT".to_string(),
+            institution_did: "MID_DID".to_string(),
+            year: 2023,
+        } };
+
+        mock_register_diploma(deps.as_mut(), &[], diploma.clone());
+
+        // check if alice has the diploma
+        let res = query(
+            deps.as_ref(),
+            mock_env(),
+            QueryMsg::ListCredentials { address: "alice_key".to_string() } 
+        )
+        .unwrap();
+
+        let value: ListCredentialsResponse = from_binary(&res).unwrap();
+        
+        assert!(value.credentials.contains(&diploma));
+    }
+
+
+    #[test]
+    fn issue_event_works() {
+        let mut deps = mock_dependencies(&[]);
+        mock_init_no_price(deps.as_mut());
+        mock_alice_registers_name(deps.as_mut(), &[]);
+
+        let ebc9_event = CredentialEnum::Event { data: CredentialEvent {
+            owner: "alice_key".to_string(),
+            event_name: "EBC9 Hackaton".to_string(),
+            organizer_did: "EBC".to_string(),
+            year: Some(2023),
+        } };
+
+        mock_register_diploma(deps.as_mut(), &[], ebc9_event.clone());
+
+        // check if alice has the diploma
+        let res = query(
+            deps.as_ref(),
+            mock_env(),
+            QueryMsg::ListCredentials { address: "alice_key".to_string() } 
+        )
+        .unwrap();
+
+        let value: ListCredentialsResponse = from_binary(&res).unwrap();
+        
+        assert!(value.credentials.contains(&ebc9_event));
+
+        let ebc9_fake_event_wrong_year = CredentialEnum::Event { data: CredentialEvent {
+            owner: "alice_key".to_string(),
+            event_name: "EBC9 Hackaton".to_string(),
+            organizer_did: "EBC".to_string(),
+            year: Some(2022),
+        } };
+        let ebc9_fake_event_wrong_owner = CredentialEnum::Event { data: CredentialEvent {
+            owner: "alice_key_fake".to_string(),
+            event_name: "EBC9 Hackaton".to_string(),
+            organizer_did: "EBC".to_string(),
+            year: Some(2023),
+        } };
+
+        assert!(!value.credentials.contains(&ebc9_fake_event_wrong_year));
+        assert!(!value.credentials.contains(&ebc9_fake_event_wrong_owner));
+    }
+
+    #[test]
+    fn credential_verification_works() {
+        let mut deps = mock_dependencies(&[]);
+        mock_init_no_price(deps.as_mut());
+        mock_alice_registers_name(deps.as_mut(), &[]);
+
+        let ebc9_event = CredentialEnum::Event { data: CredentialEvent {
+            owner: "alice_key".to_string(),
+            event_name: "EBC9 Hackaton".to_string(),
+            organizer_did: "EBC".to_string(),
+            year: Some(2023),
+        } };
+
+        mock_register_diploma(deps.as_mut(), &[], ebc9_event.clone());
+
+        // check if alice has the event
+        let res = query(
+            deps.as_ref(),
+            mock_env(),
+            QueryMsg::VerifyCredential { data: ebc9_event }
+        )
+        .unwrap();
+        let value: VerifyCredentialResponse = from_binary(&res).unwrap();
+        assert_eq!(value.valid, true);
+
+
+        let ebc9_event_fake = CredentialEnum::Event { data: CredentialEvent {
+            owner: "alice_key".to_string(),
+            event_name: "EBC9 Hackaton".to_string(),
+            organizer_did: "EBC".to_string(),
+            year: Some(2022),
+        } };
+        // check if alice has the fake event (should not have it)
+        let res = query(
+            deps.as_ref(),
+            mock_env(),
+            QueryMsg::VerifyCredential { data: ebc9_event_fake }
+        )
+        .unwrap();
+        let value: VerifyCredentialResponse = from_binary(&res).unwrap();
+        assert_eq!(value.valid, false);
+
+    }
+
 
 }

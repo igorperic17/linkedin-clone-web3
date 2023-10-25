@@ -2,7 +2,7 @@ use cosmwasm_std::Coin;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::state::UserInfo;
+use crate::state::{UserInfo, CredentialEnum};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct InstantiateMsg {
@@ -13,26 +13,47 @@ pub struct InstantiateMsg {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum ExecuteMsg {
+    // register DID, bio and username with the sender's account
     Register {
         did: String,
         username: String,
         bio: String,
     },
-    // Transfer { name: String, to: String },
+    // sender is trying to issue a credential
+    IssueCredential {
+        credential: CredentialEnum,
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
-    // ResolveAddress returns the current address that the name resolves to
+    // returns the current userInfo (username, bio and DID) for the provided wallet
     ResolveUserInfo { address: String },
+     // magic
     Config {},
+    // verifies if the credintial is issues or not
+    VerifyCredential {
+        data: CredentialEnum
+    },
+    // list all credentials linked to a provided wallet
+    ListCredentials {
+        address: String
+    }
 }
 
-// We define a custom struct for each query response
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct ResolveRecordResponse {
-    pub user_info: Option<UserInfo>, // pub did: String,
-                             // pub username: String,
-                             // pub bio: String,
+    pub user_info: Option<UserInfo>,
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct ListCredentialsResponse {
+    pub credentials: Vec<CredentialEnum>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct VerifyCredentialResponse {
+    pub valid: bool
+}
+

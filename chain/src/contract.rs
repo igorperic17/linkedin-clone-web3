@@ -5,8 +5,8 @@ use cosmwasm_std::{
 
 use crate::coin_helpers::assert_sent_sufficient_coin;
 use crate::error::ContractError;
-use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, ResolveRecordResponse};
-use crate::state::{config, config_read, resolver, resolver_read, Config, UserInfo};
+use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, ResolveRecordResponse, ListCredentialsResponse, VerifyCredentialResponse};
+use crate::state::{config, config_read, credential, credential_read, resolver, resolver_read, Config, UserInfo, CredentialEnum};
 
 // const MIN_NAME_LENGTH: u64 = 3;
 // const MAX_NAME_LENGTH: u64 = 64;
@@ -38,6 +38,9 @@ pub fn execute(
     match msg {
         ExecuteMsg::Register { did, username, bio } => {
             execute_register(deps, env, info, did, username, bio)
+        },
+        ExecuteMsg::IssueCredential { credential } => {
+            execute_issue_credential(deps, env, info, credential)
         }
     }
 }
@@ -71,24 +74,81 @@ pub fn execute_register(
     Ok(Response::default())
 }
 
+// TODO: must pay for this... ?
+pub fn execute_issue_credential(
+    deps: DepsMut,
+    _env: Env,
+    info: MessageInfo,
+    cred: CredentialEnum,
+) -> Result<Response, ContractError> {
+    // we only need to check here - at point of registration
+    // validate_name(&name)?;
+    let config_state = config(deps.storage).load()?;
+
+    // TODO: change this to the cost of the NFT issue
+    assert_sent_sufficient_coin(&info.funds, config_state.purchase_price)?;
+
+    let key = info.sender.as_bytes();
+    let mut binding = credential(deps.storage).load(key).unwrap_or(vec![]);
+    let current_list: &mut Vec<CredentialEnum> = binding.as_mut();
+    current_list.insert(current_list.len(), cred);
+    credential(deps.storage).save(key, &current_list)?;
+
+    Ok(Response::default())
+}
+
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::ResolveUserInfo { address } => query_resolver(deps, env, address),
         QueryMsg::Config {} => to_binary(&config_read(deps.storage).load()?),
+        QueryMsg::ListCredentials { address } => { query_list_credentials(deps, env, address) }
+        QueryMsg::VerifyCredential { data } => { query_verify_credentials(deps, env, data) }
     }
 }
 
 fn query_resolver(deps: Deps, _env: Env, address: String) -> StdResult<Binary> {
-    let key = address;
+    let key = address.clone();
 
     let user_info = match resolver_read(deps.storage).may_load(key.as_bytes())? {
         Some(record) => Some(record),
-        None => None,
+        None => return Err(StdError::NotFound { kind: address }),
     };
     let resp = ResolveRecordResponse { user_info: user_info };
 
     to_binary(&resp)
+}
+
+fn query_list_credentials(deps: Deps, _env: Env, address: String) -> StdResult<Binary> {
+    let key = address.clone();
+
+    match credential_read(deps.storage).may_load(key.as_bytes())? {
+        Some(record) => {
+            let resp = ListCredentialsResponse { credentials: record };
+            return to_binary(&resp);
+        }
+        None => { },
+    };
+    
+    StdResult::Err(StdError::NotFound { kind: address })
+}
+
+fn query_verify_credentials(deps: Deps, _env: Env, credential: CredentialEnum) -> StdResult<Binary> {
+    
+    // extract the alledged owner
+    let key = match credential.clone() {
+        CredentialEnum::Degree { data } => data.owner,
+        CredentialEnum::Employment { data } => data.owner,
+        CredentialEnum::Event { data } => data.owner,
+    };
+
+    match credential_read(deps.storage).may_load(key.as_bytes())? {
+        Some(record) => {
+            return to_binary(&VerifyCredentialResponse { valid: record.contains(&credential) })
+        }
+        None => return StdResult::Err(StdError::NotFound { kind: key.clone() }),
+    };
+    
 }
 
 // let's not import a regexp library and just do these checks by hand

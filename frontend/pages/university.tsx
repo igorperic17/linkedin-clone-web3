@@ -1,20 +1,18 @@
 import React, { useState } from "react"
-import Image from "next/image"
-import logo from '../public/Harvard_University_logo.svg.png'
 
 const Uni = () => {
   const [degree, setDegree] = useState('')
   const [year, setYear] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const [university, setUniversity] = useState('')
-  const [major, setMajor] = useState('')
 
   return (
-    <div className="p-8 flex flex-col items-start gap-1 text-left rounded-xl bg-secondary w-3/4">
-        <h2 className="mb-2 text-5xl font-bold text-center">Education</h2>
-        <p className="mb-4">Send a request to get information about the education </p>
-      <form className="w-full flex flex-col gap-4">
+    <div className="p-8 flex flex-col items-start text-left rounded-xl bg-secondary w-3/4">
+      <div className="mb-10">
+        <h2 className="mb-2 text-5xl font-bold text">Education</h2>
+        <p>Send a request to get information about the education </p>
+      </div>
+      <form className="w-full flex flex-col gap-16">
         <div>
           <div className="flex gap-6">
             <div className="flex flex-col items-start py-4 w-1/2">

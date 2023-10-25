@@ -133,8 +133,8 @@ export class AppService {
         foundCredential['credentialSubject']['awardingOpportunity']['awardingBody']['preferredName'],
       owner: id,
       start_year:
-        foundCredential['credentialSubject']['awardingOpportunity']['startYear'],
-      end_year: foundCredential['credentialSubject']['awardingOpportunity']['endYear']
+        parseInt(foundCredential['credentialSubject']['awardingOpportunity']['startYear']),
+      end_year: parseInt(foundCredential['credentialSubject']['awardingOpportunity']['endYear'])
     };
     console.log('found employment, mapped to onchain', data);
     await this.contractsService.storeVc({
@@ -154,7 +154,7 @@ export class AppService {
         foundCredential['credentialSubject']['awardingOpportunity']['eventName'],
       owner: id,
       year:
-        foundCredential['credentialSubject']['awardingOpportunity']['year'],
+        parseInt(foundCredential['credentialSubject']['awardingOpportunity']['year']),
     };
     console.log('found event, mapped to onchain', data);
     await this.contractsService.storeVc({

@@ -10,7 +10,7 @@ use crate::state::{
     config, config_read, credential, credential_read, resolver, resolver_read, Config,
     CredentialEnum, UserInfo, self,
 };
-use coreum_wasm_sdk::assetnft::{self, WHITELISTING, DISABLE_SENDING};
+use coreum_wasm_sdk::assetnft::{self, DISABLE_SENDING};
 use coreum_wasm_sdk::core::CoreumMsg;
 use cosmwasm_std::{
     entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdError, StdResult,
@@ -156,12 +156,13 @@ pub fn execute_issue_credential(
     cred: CredentialEnum,
 ) -> Result<Response, ContractError> {
 
-    // we only need to check here - at point of registration
-    // validate_name(&name)?;
     let config_state = config(deps.storage).load()?;
-    if info.sender != config_state.owner {
-        return Err(ContractError::Unauthorized {  });
-    }
+    
+    // TODO: uncomment this to allow only the contract owner to issue creds
+    // TODO: modify this to allow only trusted entities to issue creds 
+    // if info.sender != config_state.owner {
+    //     return Err(ContractError::Unauthorized {  });
+    // }
 
     // TODO: change this to the cost of the NFT issue
     assert_sent_sufficient_coin(&info.funds, config_state.purchase_price)?;

@@ -7,12 +7,6 @@ const Hackaton = () => {
   const [key, setKey] = useState('')
   const [name, setName] = useState('')
 
-
-
-
-
-
-
   return (
     <div className="flex flex-col w-3/4 items-center pb-24 pt-8">
       <div className="flex pb-12">

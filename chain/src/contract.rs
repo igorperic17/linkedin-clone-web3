@@ -1,3 +1,5 @@
+use std::ptr::null;
+
 use crate::coin_helpers::assert_sent_sufficient_coin;
 use crate::error::ContractError;
 use crate::msg::{
@@ -6,13 +8,14 @@ use crate::msg::{
 };
 use crate::state::{
     config, config_read, credential, credential_read, resolver, resolver_read, Config,
-    CredentialEnum, UserInfo,
+    CredentialEnum, UserInfo, self,
 };
-use coreum_wasm_sdk::assetnft::{self, WHITELISTING};
+use coreum_wasm_sdk::assetnft::{self, WHITELISTING, DISABLE_SENDING};
 use coreum_wasm_sdk::core::CoreumMsg;
 use cosmwasm_std::{
     entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdError, StdResult,
 };
+use uuid::Uuid;
 
 // const MIN_NAME_LENGTH: u64 = 3;
 // const MAX_NAME_LENGTH: u64 = 64;
@@ -21,12 +24,13 @@ use cosmwasm_std::{
 pub fn instantiate(
     deps: DepsMut,
     _env: Env,
-    _info: MessageInfo,
+    info: MessageInfo,
     msg: InstantiateMsg,
 ) -> Result<Response, StdError> {
     let config_state = Config {
         purchase_price: msg.purchase_price,
         transfer_price: msg.transfer_price,
+        owner: info.sender
     };
 
     config(deps.storage).save(&config_state)?;
@@ -47,6 +51,9 @@ pub fn execute(
         }
         ExecuteMsg::IssueCredential { credential } => {
             execute_issue_credential(deps, env, info, credential)
+        }
+        ExecuteMsg::Subscirbe { target_profile } => {
+            execute_subscribe(deps, env, info, target_profile)
         }
     }
 }
@@ -78,47 +85,67 @@ pub fn execute_register(
 
     // TODO - mint NFT class for access
     // TODO . only mint if not exists
-    // let issue_class_msg = CoreumMsg::AssetNFT(assetnft::Msg::IssueClass {
-    //     name: msg.name,
-    //     symbol: msg.symbol,
-    //     description: Some("Test description".to_string()),
-    //     uri: None,
-    //     uri_hash: None,
-    //     data: None,
-    //     features: Some(vec![WHITELISTING]),
-    //     royalty_rate: Some("0".to_string()),
-    // });
+
+    let issue_class_msg = CoreumMsg::AssetNFT(assetnft::Msg::IssueClass {
+        name: info.sender.to_string(), // class == wallet address for now, switch to DID
+        symbol: info.sender.to_string(),  // class == wallet address for now, switch to DID
+        description: Some("Test description".to_string()),
+        uri: None,
+        uri_hash: None,
+        data: None,
+        features: Some(vec![DISABLE_SENDING]),
+        royalty_rate: Some("0".to_string()), // we don't want to earn anything? :(
+    });
 
     resolver(deps.storage).save(key, &record)?;
 
     Ok(Response::default())
 }
 
-// TODO - mint nft
-// fn mint_nft(
-//     deps: DepsMut,
-//     info: MessageInfo,
-//     class_id: String,
-//     id: String,
-//     account: String,
-//     data: Binary,
-// ) -> Result<Response<CoreumMsg>, ContractError> {
 
-//     let msg = CoreumMsg::AssetNFT(assetnft::Msg::Mint {
-//         class_id: class_id.clone(),
-//         id: id.clone(),
-//         uri: None,
-//         uri_hash: None,
-//         data: Some(data.clone()),
-//     });
+pub fn execute_subscribe(
+    deps: DepsMut,
+    _env: Env,
+    info: MessageInfo,
+    target_profile: String,
+) -> Result<Response, ContractError> {
+    // we only need to check here - at point of registration
+    // validate_name(&name)?;
+    let config_state = config(deps.storage).load()?;
+    assert_sent_sufficient_coin(&info.funds, config_state.purchase_price)?;
 
-//     Ok(Response::new()
-//         .add_attribute("method", "mint_nft")
-//         .add_attribute("class_id", class_id)
-//         .add_attribute("id", id)
-//         .add_attribute("data", data.to_string())
-//         .add_message(msg))
-// }
+    let id = Uuid::new_v4().to_string();
+    match mint_nft(deps, info, target_profile, id) {
+        Ok(msg) => { return Ok(cosmwasm_std::Response::new()) },
+        Err(error) => { return Err(error) }
+    }
+}
+
+fn mint_nft(
+    deps: DepsMut,
+    info: MessageInfo,
+    class_id: String,
+    id: String,
+    // account: String,
+    // data: Binary,
+) -> Result<Response<CoreumMsg>, ContractError> {
+
+    let msg = CoreumMsg::AssetNFT(assetnft::Msg::Mint {
+        class_id: class_id.clone(),
+        id: id.clone(),
+        uri: None,
+        uri_hash: None,
+        // data: Some(data.clone()), // leaving in case we want to append some data later on
+        data: None
+    });
+
+    Ok(Response::new()
+        .add_attribute("method", "mint_nft")
+        .add_attribute("class_id", class_id)
+        .add_attribute("id", id)
+        // .add_attribute("data", data.to_string())
+        .add_message(msg))
+}
 
 // TODO: must pay for this... ?
 pub fn execute_issue_credential(
@@ -127,18 +154,27 @@ pub fn execute_issue_credential(
     info: MessageInfo,
     cred: CredentialEnum,
 ) -> Result<Response, ContractError> {
+
     // we only need to check here - at point of registration
     // validate_name(&name)?;
     let config_state = config(deps.storage).load()?;
+    if info.sender != config_state.owner {
+        return Err(ContractError::Unauthorized {  });
+    }
 
     // TODO: change this to the cost of the NFT issue
     assert_sent_sufficient_coin(&info.funds, config_state.purchase_price)?;
 
-    let key = info.sender.as_bytes();
-    let mut binding = credential(deps.storage).load(key).unwrap_or(vec![]);
+    let key: &str = match cred {
+        CredentialEnum::Degree { data, vc_hash } => { &data.owner },
+        CredentialEnum::Employment { data, vc_hash } => { &data.owner },
+        CredentialEnum::Event { data, vc_hash } => { &data.owner },
+    };
+    
+    let mut binding = credential(deps.storage).load(key.as_bytes()).unwrap_or(vec![]);
     let current_list: &mut Vec<CredentialEnum> = binding.as_mut();
     current_list.insert(current_list.len(), cred);
-    credential(deps.storage).save(key, &current_list)?;
+    credential(deps.storage).save(key.as_bytes(), &current_list)?;
 
     Ok(Response::default())
 }
@@ -204,34 +240,3 @@ fn query_verify_credentials(
         None => return StdResult::Err(StdError::NotFound { kind: key.clone() }),
     };
 }
-
-// let's not import a regexp library and just do these checks by hand
-// fn invalid_char(c: char) -> bool {
-//     let is_valid = c.is_digit(10) || c.is_ascii_lowercase() || (c == '.' || c == '-' || c == '_');
-//     !is_valid
-// }
-
-// validate_name returns an error if the name is invalid
-// (we require 3-64 lowercase ascii letters, numbers, or . - _)
-// fn validate_name(name: &str) -> Result<(), ContractError> {
-//     let length = name.len() as u64;
-//     if (name.len() as u64) < MIN_NAME_LENGTH {
-//         Err(ContractError::NameTooShort {
-//             length,
-//             min_length: MIN_NAME_LENGTH,
-//         })
-//     } else if (name.len() as u64) > MAX_NAME_LENGTH {
-//         Err(ContractError::NameTooLong {
-//             length,
-//             max_length: MAX_NAME_LENGTH,
-//         })
-//     } else {
-//         match name.find(invalid_char) {
-//             None => Ok(()),
-//             Some(bytepos_invalid_char_start) => {
-//                 let c = name[bytepos_invalid_char_start..].chars().next().unwrap();
-//                 Err(ContractError::InvalidCharacter { c })
-//             }
-//         }
-//     }
-// }

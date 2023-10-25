@@ -24,6 +24,10 @@ pub enum ExecuteMsg {
     IssueCredential {
         credential: CredentialEnum,
     },
+    // Subscribe to a user profile - mints an NFT with class == target prfile DID
+    Subscirbe {
+        target_profile: String
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema, QueryResponses)]

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { connectKeplr } from 'services/keplr'
 import {
   createProtobufRpcClient,
@@ -25,8 +25,14 @@ export interface RequestedProfile {
   setRequestedProfileWalletAddress: (walletAddress: string | null) => void
 }
 
+export interface Authentication {
+  did: string
+  token: string
+}
+
 export interface IClientContext {
   walletAddress: string
+  auth: Authentication | null
   signingClient: SigningCosmWasmClient | null
   coreumQueryClient: CoreumQueryClient | null
   contractClient: MyProjectClient | null
@@ -57,6 +63,15 @@ export const useClientContext = (): IClientContext => {
   const [requestedProfileWalletAddress, setRequestedProfileWalletAddress] =
     useState<string | null>(null)
   const [backendService,] = useState(new BackendService())
+  const [auth, setAuth] = useState<Authentication | null>(null)
+
+  useEffect(() => {
+    if (!auth && walletAddress) {
+      BackendService.login(walletAddress)
+        .then((response) => setAuth(response))
+        .catch(err => console.error(err))
+    }
+  }, [auth, walletAddress])
 
   const connectWallet = async () => {
     setLoading(true)
@@ -133,6 +148,7 @@ export const useClientContext = (): IClientContext => {
 
   return {
     walletAddress,
+    auth,
     signingClient,
     contractClient,
     coreumQueryClient: coreumQueryClient,

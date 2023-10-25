@@ -20,4 +20,5 @@ cosmwasm-ts-codegen generate \
 
 ```
 curl -d "@VerifiableEvent.json" -X POST localhost:8080/issuer-api/default/config/templates/VerifiableEvent
+curl -d "@VerifiableEmployment.json" -X POST localhost:8080/issuer-api/default/config/templates/VerifiableEmployment
 ```

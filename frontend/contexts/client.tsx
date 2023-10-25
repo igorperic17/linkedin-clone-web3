@@ -6,6 +6,7 @@ let ClientContext: any
 let {Provider} = (ClientContext =
   createContext<IClientContext>({
     walletAddress: '',
+    auth: null,
     signingClient: null,
     coreumQueryClient: null,
     contractClient: null,

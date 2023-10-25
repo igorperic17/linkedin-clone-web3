@@ -6,7 +6,7 @@ const Event = () => {
   const [year, setYear] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const { requestedProfile, backendService } = useWrappedClientContext()
+  const { requestedProfile, backendService, auth } = useWrappedClientContext()
   const { walletAddress } = requestedProfile
 
   interface IssueEventCredentialsParameters {
@@ -54,9 +54,9 @@ const Event = () => {
 
   const onSaveHandler = async (e: any) => {
     e.preventDefault()
-    if (walletAddress) {
+    if (walletAddress && auth) {
       const credential = getIssueEventCredentialData({ eventName, year, firstName, lastName })
-      await backendService.issueCredential(walletAddress, credential)
+      await backendService.issueCredential(walletAddress, credential, auth)
     }
   }
 

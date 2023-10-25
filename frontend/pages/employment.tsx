@@ -10,7 +10,6 @@ interface IssueEmploymentCredentialsParameters {
   lastName: string
 }
 
-
 const getIssueEmploymentCredentialData = ({
   company,
   startYear,
@@ -40,10 +39,6 @@ const getIssueEmploymentCredentialData = ({
   }
 }
 
-
-
-
-
 const Employment = () => {
   const [company, setCompany] = useState('')
   const [startYear, setStartYear] = useState('')
@@ -51,18 +46,16 @@ const Employment = () => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
 
-  const { requestedProfile, backendService } = useWrappedClientContext()
+  const { requestedProfile, backendService, auth } = useWrappedClientContext()
   const { walletAddress } = requestedProfile
 
   const onSaveHandler = async (e: any) => {
     e.preventDefault()
-    if (walletAddress) {
+    if (walletAddress && auth) {
       const credential = getIssueEmploymentCredentialData({ company, startYear, endYear, firstName, lastName })
-      await backendService.issueCredential(walletAddress, credential)
+      await backendService.issueCredential(walletAddress, credential, auth)
     }
   }
-
-
 
   return (
     <div className="p-8 flex flex-col items-start text-left rounded-xl bg-secondary w-3/4">

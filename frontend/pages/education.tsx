@@ -72,23 +72,14 @@ const Education = () => {
   const [year, setYear] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const [did, setDid] = useState('')
-  const { requestedProfile, backendService } = useWrappedClientContext()
+  const { requestedProfile, backendService, auth } = useWrappedClientContext()
   const { walletAddress } = requestedProfile
-
-  useEffect(() => {
-    if (walletAddress) {
-      backendService.login(walletAddress)
-        .then((response) => setDid(response.did))
-        .catch(err => console.error(err))
-    }
-  }, [backendService])
 
   const onSaveHandler = async (e: any) => {
     e.preventDefault()
-    if (walletAddress) {
-      const credential = getIssueEducationCredentialData({ university, year, firstName, lastName, did })
-      await backendService.issueCredential(walletAddress, credential)
+    if (walletAddress && auth) {
+      const credential = getIssueEducationCredentialData({ university, year, firstName, lastName, did: auth.did })
+      await backendService.issueCredential(walletAddress, credential, auth)
     }
   }
 

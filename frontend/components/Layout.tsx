@@ -20,16 +20,16 @@ export default function Layout({ children }: { children: ReactNode }) {
         <Link
           target="_blank" rel="noreferrer"
           className="pl-1 link link-primary link-hover"
-          href="/university"
+          href="/education"
         >
-          University
+          Education
         </Link>
         <span className="pl-1"> | </span>
         <Link
           className="pl-1 link link-primary link-hover"
           href="/hackaton"
         >
-          Hackaton
+          Hackathon
         </Link>
       </footer>
     </div>

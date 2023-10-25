@@ -70,7 +70,7 @@ const DegreeListItem = ({ data }: ListItemProps<CredentialDegree>) => {
     return (
         <div className="mb-2">
             <p>{data.institution_name}</p>
-            <p>{data.year}</p>
+            <p>{data.year ?? 'N/A'}</p>
         </div>
     )
 }
@@ -79,7 +79,7 @@ const EventListItem = ({ data }: ListItemProps<CredentialEvent>) => {
     return (
         <div className="mb-2">
             <p>{data.event_name}</p>
-            <p>{data.year}</p>
+            <p>{data.year ?? 'N/A'}</p>
         </div>
     )
 }

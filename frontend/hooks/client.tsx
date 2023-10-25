@@ -12,6 +12,7 @@ import { QueryClient as CoreumQueryClient } from '../coreum/query'
 import { GeneratedType, Registry } from '@cosmjs/proto-signing'
 import { coreumRegistryTypes } from '../coreum/tx'
 import {
+  NEXT_APP_CONTRACT_ADDRESS,
   NEXT_PUBLIC_CHAIN_ID,
   NEXT_PUBLIC_CHAIN_RPC_ENDPOINT,
   NEXT_PUBLIC_GAS_PRICE,
@@ -20,7 +21,7 @@ import { MyProjectClient } from 'contracts/MyProject.client'
 
 export interface RequestedProfile {
   walletAddress: string | null
-  setRequestedProfileWalletAddress: (walletAddress: string | null) => void 
+  setRequestedProfileWalletAddress: (walletAddress: string | null) => void
 }
 
 export interface IClientContext {
@@ -51,7 +52,8 @@ export const useClientContext = (): IClientContext => {
     useState<CoreumQueryClient | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [requestedProfileWalletAddress, setRequestedProfileWalletAddress] = useState<string | null>(null)
+  const [requestedProfileWalletAddress, setRequestedProfileWalletAddress] =
+    useState<string | null>(null)
 
   const connectWallet = async () => {
     setLoading(true)
@@ -103,11 +105,7 @@ export const useClientContext = (): IClientContext => {
       // );
       console.log(address)
       setContractClient(
-        new MyProjectClient(
-          client,
-          address,
-          'testcore1vhmj54h6dcttmlstnqcwmfxy0cwjh3k05wr852l3a76fgn300s0seefzf2'
-        )
+        new MyProjectClient(client, address, NEXT_APP_CONTRACT_ADDRESS)
       ) // TODO store address somewhere else
       setWalletAddress(address)
       setLoading(false)
@@ -140,7 +138,7 @@ export const useClientContext = (): IClientContext => {
     disconnect,
     requestedProfile: {
       walletAddress: requestedProfileWalletAddress,
-      setRequestedProfileWalletAddress
-    }
+      setRequestedProfileWalletAddress,
+    },
   }
 }

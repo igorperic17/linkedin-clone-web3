@@ -3,19 +3,21 @@ import Link from 'next/link'
 import WalletLoader from 'components/WalletLoader'
 import { useWrappedClientContext } from 'contexts/client'
 import {
+  NEXT_APP_CONTRACT_ADDRESS,
   NEXT_PUBLIC_CHAIN_EXPLORER,
   NEXT_PUBLIC_CHAIN_NAME,
 } from 'constants/constants'
 import { useEffect, useState } from 'react'
 
 const Home: NextPage = () => {
-  const { walletAddress, signingClient, contractClient } = useWrappedClientContext()
+  const { walletAddress, signingClient, contractClient } =
+    useWrappedClientContext()
   const [userInfo, setUserInfo] = useState<any>()
 
   useEffect(() => {
     const fetchData = async () => {
       const userInfo = await signingClient?.queryContractSmart(
-        'testcore1vhmj54h6dcttmlstnqcwmfxy0cwjh3k05wr852l3a76fgn300s0seefzf2',
+        NEXT_APP_CONTRACT_ADDRESS,
         {
           resolve_user_info: {
             address: walletAddress,

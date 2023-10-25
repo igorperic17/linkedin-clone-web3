@@ -3,7 +3,7 @@ use cosmwasm_std::Coin;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::state::{UserInfo, CredentialEnum};
+use crate::state::{Config, CredentialEnum, UserInfo};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct InstantiateMsg {
@@ -26,21 +26,20 @@ pub enum ExecuteMsg {
     },
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema, QueryResponses)]
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
     // returns the current userInfo (username, bio and DID) for the provided wallet
+    #[returns(ResolveRecordResponse)]
     ResolveUserInfo { address: String },
-     // magic
+    #[returns(Config)]
     Config {},
     // verifies if the credintial is issues or not
-    VerifyCredential {
-        data: CredentialEnum
-    },
+    #[returns(VerifyCredentialResponse)]
+    VerifyCredential { data: CredentialEnum },
     // list all credentials linked to a provided wallet
-    ListCredentials {
-        address: String
-    }
+    #[returns(ListCredentialsResponse)]
+    ListCredentials { address: String },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
@@ -55,6 +54,5 @@ pub struct ListCredentialsResponse {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct VerifyCredentialResponse {
-    pub valid: bool
+    pub valid: bool,
 }
-

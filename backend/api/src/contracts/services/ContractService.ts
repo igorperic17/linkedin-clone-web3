@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
-import {
-  GasPrice,
-} from '@cosmjs/stargate';
+import { GasPrice } from '@cosmjs/stargate';
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import { stringToPath } from '@cosmjs/crypto';
 import { MyProjectClient } from '../generated/MyProject.client';
 
+export const CONTRACT_ADDRESS =
+  'testcore1hlpe5lfprh3qcqvw3nj38lrlp6dql8dp2v20tcy0myg6wx9rcx4szhxp2v';
 @Injectable()
 export class ContractsService {
   constructor() {}
@@ -39,7 +39,7 @@ export class ContractsService {
     const client = new MyProjectClient(
       senderClient,
       sender.address,
-      'testcore1vhmj54h6dcttmlstnqcwmfxy0cwjh3k05wr852l3a76fgn300s0seefzf2', // TODO - move to config!
+      CONTRACT_ADDRESS, // TODO - move to config!
     );
     console.log('trying to executre from', sender.address);
     const executeResult = await client.register(

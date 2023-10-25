@@ -81,8 +81,181 @@
           }
         },
         "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": [
+          "issue_credential"
+        ],
+        "properties": {
+          "issue_credential": {
+            "type": "object",
+            "required": [
+              "credential"
+            ],
+            "properties": {
+              "credential": {
+                "$ref": "#/definitions/CredentialEnum"
+              }
+            }
+          }
+        },
+        "additionalProperties": false
       }
-    ]
+    ],
+    "definitions": {
+      "CredentialDegree": {
+        "type": "object",
+        "required": [
+          "institution_did",
+          "institution_name",
+          "owner",
+          "year"
+        ],
+        "properties": {
+          "institution_did": {
+            "type": "string"
+          },
+          "institution_name": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        }
+      },
+      "CredentialEmployment": {
+        "type": "object",
+        "required": [
+          "institution_did",
+          "institution_name",
+          "owner"
+        ],
+        "properties": {
+          "end_year": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "institution_did": {
+            "type": "string"
+          },
+          "institution_name": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "start_year": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        }
+      },
+      "CredentialEnum": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "Degree"
+            ],
+            "properties": {
+              "Degree": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/CredentialDegree"
+                  }
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "Employment"
+            ],
+            "properties": {
+              "Employment": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/CredentialEmployment"
+                  }
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "Event"
+            ],
+            "properties": {
+              "Event": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/CredentialEvent"
+                  }
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "CredentialEvent": {
+        "type": "object",
+        "required": [
+          "event_name",
+          "organizer_did",
+          "owner"
+        ],
+        "properties": {
+          "event_name": {
+            "type": "string"
+          },
+          "organizer_did": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "year": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        }
+      }
+    }
   },
   "query": {
     "$schema": "http://json-schema.org/draft-07/schema#",
@@ -101,12 +274,7 @@
             ],
             "properties": {
               "address": {
-                "type": "array",
-                "items": {
-                  "type": "integer",
-                  "format": "uint8",
-                  "minimum": 0.0
-                }
+                "type": "string"
               }
             }
           }
@@ -124,8 +292,201 @@
           }
         },
         "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": [
+          "verify_credential"
+        ],
+        "properties": {
+          "verify_credential": {
+            "type": "object",
+            "required": [
+              "data"
+            ],
+            "properties": {
+              "data": {
+                "$ref": "#/definitions/CredentialEnum"
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": [
+          "list_credentials"
+        ],
+        "properties": {
+          "list_credentials": {
+            "type": "object",
+            "required": [
+              "address"
+            ],
+            "properties": {
+              "address": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "additionalProperties": false
       }
-    ]
+    ],
+    "definitions": {
+      "CredentialDegree": {
+        "type": "object",
+        "required": [
+          "institution_did",
+          "institution_name",
+          "owner",
+          "year"
+        ],
+        "properties": {
+          "institution_did": {
+            "type": "string"
+          },
+          "institution_name": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        }
+      },
+      "CredentialEmployment": {
+        "type": "object",
+        "required": [
+          "institution_did",
+          "institution_name",
+          "owner"
+        ],
+        "properties": {
+          "end_year": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "institution_did": {
+            "type": "string"
+          },
+          "institution_name": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "start_year": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        }
+      },
+      "CredentialEnum": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "Degree"
+            ],
+            "properties": {
+              "Degree": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/CredentialDegree"
+                  }
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "Employment"
+            ],
+            "properties": {
+              "Employment": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/CredentialEmployment"
+                  }
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "Event"
+            ],
+            "properties": {
+              "Event": {
+                "type": "object",
+                "required": [
+                  "data"
+                ],
+                "properties": {
+                  "data": {
+                    "$ref": "#/definitions/CredentialEvent"
+                  }
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "CredentialEvent": {
+        "type": "object",
+        "required": [
+          "event_name",
+          "organizer_did",
+          "owner"
+        ],
+        "properties": {
+          "event_name": {
+            "type": "string"
+          },
+          "organizer_did": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "year": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        }
+      }
+    }
   },
   "migrate": null,
   "sudo": null,
@@ -178,24 +539,223 @@
         }
       }
     },
-    "resolve_user_info": {
+    "list_credentials": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "UserInfo",
+      "title": "ListCredentialsResponse",
       "type": "object",
       "required": [
-        "bio",
-        "did",
-        "username"
+        "credentials"
       ],
       "properties": {
-        "bio": {
-          "type": "string"
+        "credentials": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CredentialEnum"
+          }
+        }
+      },
+      "definitions": {
+        "CredentialDegree": {
+          "type": "object",
+          "required": [
+            "institution_did",
+            "institution_name",
+            "owner",
+            "year"
+          ],
+          "properties": {
+            "institution_did": {
+              "type": "string"
+            },
+            "institution_name": {
+              "type": "string"
+            },
+            "owner": {
+              "type": "string"
+            },
+            "year": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            }
+          }
         },
-        "did": {
-          "type": "string"
+        "CredentialEmployment": {
+          "type": "object",
+          "required": [
+            "institution_did",
+            "institution_name",
+            "owner"
+          ],
+          "properties": {
+            "end_year": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "institution_did": {
+              "type": "string"
+            },
+            "institution_name": {
+              "type": "string"
+            },
+            "owner": {
+              "type": "string"
+            },
+            "start_year": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "format": "uint64",
+              "minimum": 0.0
+            }
+          }
         },
-        "username": {
-          "type": "string"
+        "CredentialEnum": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": [
+                "Degree"
+              ],
+              "properties": {
+                "Degree": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/CredentialDegree"
+                    }
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": [
+                "Employment"
+              ],
+              "properties": {
+                "Employment": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/CredentialEmployment"
+                    }
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": [
+                "Event"
+              ],
+              "properties": {
+                "Event": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/CredentialEvent"
+                    }
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "CredentialEvent": {
+          "type": "object",
+          "required": [
+            "event_name",
+            "organizer_did",
+            "owner"
+          ],
+          "properties": {
+            "event_name": {
+              "type": "string"
+            },
+            "organizer_did": {
+              "type": "string"
+            },
+            "owner": {
+              "type": "string"
+            },
+            "year": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "format": "uint64",
+              "minimum": 0.0
+            }
+          }
+        }
+      }
+    },
+    "resolve_user_info": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ResolveRecordResponse",
+      "type": "object",
+      "properties": {
+        "user_info": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/UserInfo"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "definitions": {
+        "UserInfo": {
+          "type": "object",
+          "required": [
+            "bio",
+            "did",
+            "username"
+          ],
+          "properties": {
+            "bio": {
+              "type": "string"
+            },
+            "did": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "verify_credential": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "VerifyCredentialResponse",
+      "type": "object",
+      "required": [
+        "valid"
+      ],
+      "properties": {
+        "valid": {
+          "type": "boolean"
         }
       }
     }

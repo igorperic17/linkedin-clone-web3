@@ -6,15 +6,25 @@
 
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { StdFee } from "@cosmjs/amino";
-import { Uint128, InstantiateMsg, Coin, ExecuteMsg, QueryMsg, Config, UserInfo } from "./MyProject.types";
+import { Uint128, InstantiateMsg, Coin, ExecuteMsg, CredentialEnum, CredentialDegree, CredentialEmployment, CredentialEvent, QueryMsg, Config, ListCredentialsResponse, ResolveRecordResponse, UserInfo, VerifyCredentialResponse } from "./MyProject.types";
 export interface MyProjectReadOnlyInterface {
   contractAddress: string;
   resolveUserInfo: ({
     address
   }: {
-    address: number[];
-  }) => Promise<UserInfo>;
+    address: string;
+  }) => Promise<ResolveRecordResponse>;
   config: () => Promise<Config>;
+  verifyCredential: ({
+    data
+  }: {
+    data: CredentialEnum;
+  }) => Promise<VerifyCredentialResponse>;
+  listCredentials: ({
+    address
+  }: {
+    address: string;
+  }) => Promise<ListCredentialsResponse>;
 }
 export class MyProjectQueryClient implements MyProjectReadOnlyInterface {
   client: CosmWasmClient;
@@ -25,13 +35,15 @@ export class MyProjectQueryClient implements MyProjectReadOnlyInterface {
     this.contractAddress = contractAddress;
     this.resolveUserInfo = this.resolveUserInfo.bind(this);
     this.config = this.config.bind(this);
+    this.verifyCredential = this.verifyCredential.bind(this);
+    this.listCredentials = this.listCredentials.bind(this);
   }
 
   resolveUserInfo = async ({
     address
   }: {
-    address: number[];
-  }): Promise<UserInfo> => {
+    address: string;
+  }): Promise<ResolveRecordResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       resolve_user_info: {
         address
@@ -41,6 +53,28 @@ export class MyProjectQueryClient implements MyProjectReadOnlyInterface {
   config = async (): Promise<Config> => {
     return this.client.queryContractSmart(this.contractAddress, {
       config: {}
+    });
+  };
+  verifyCredential = async ({
+    data
+  }: {
+    data: CredentialEnum;
+  }): Promise<VerifyCredentialResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      verify_credential: {
+        data
+      }
+    });
+  };
+  listCredentials = async ({
+    address
+  }: {
+    address: string;
+  }): Promise<ListCredentialsResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      list_credentials: {
+        address
+      }
     });
   };
 }
@@ -56,6 +90,11 @@ export interface MyProjectInterface extends MyProjectReadOnlyInterface {
     did: string;
     username: string;
   }, fee?: number | StdFee | "auto", memo?: string, _funds?: Coin[]) => Promise<ExecuteResult>;
+  issueCredential: ({
+    credential
+  }: {
+    credential: CredentialEnum;
+  }, fee?: number | StdFee | "auto", memo?: string, _funds?: Coin[]) => Promise<ExecuteResult>;
 }
 export class MyProjectClient extends MyProjectQueryClient implements MyProjectInterface {
   client: SigningCosmWasmClient;
@@ -68,6 +107,7 @@ export class MyProjectClient extends MyProjectQueryClient implements MyProjectIn
     this.sender = sender;
     this.contractAddress = contractAddress;
     this.register = this.register.bind(this);
+    this.issueCredential = this.issueCredential.bind(this);
   }
 
   register = async ({
@@ -84,6 +124,17 @@ export class MyProjectClient extends MyProjectQueryClient implements MyProjectIn
         bio,
         did,
         username
+      }
+    }, fee, memo, _funds);
+  };
+  issueCredential = async ({
+    credential
+  }: {
+    credential: CredentialEnum;
+  }, fee: number | StdFee | "auto" = "auto", memo?: string, _funds?: Coin[]): Promise<ExecuteResult> => {
+    return await this.client.execute(this.sender, this.contractAddress, {
+      issue_credential: {
+        credential
       }
     }, fee, memo, _funds);
   };

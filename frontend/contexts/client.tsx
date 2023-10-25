@@ -10,13 +10,15 @@ let {Provider} = (ClientContext =
     contractClient: null,
     loading: false,
     error: null,
-    connectWallet: () => {
-    },
-    disconnect: () => {
-    },
+    connectWallet: () => {},
+    disconnect: () => {},
+    requestedProfile: {
+      walletAddress: null,
+      setRequestedProfileWalletAddress: () => {}
+    }
   }))
 
-export const useSigningClient = (): IClientContext =>
+export const useWrappedClientContext = (): IClientContext =>
   useContext(ClientContext)
 
 export const SigningClientProvider = ({children}: {

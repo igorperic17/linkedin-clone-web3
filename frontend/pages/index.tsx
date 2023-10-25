@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import Link from 'next/link'
 import WalletLoader from 'components/WalletLoader'
-import { useSigningClient } from 'contexts/client'
+import { useWrappedClientContext } from 'contexts/client'
 import {
   NEXT_PUBLIC_CHAIN_EXPLORER,
   NEXT_PUBLIC_CHAIN_NAME,
@@ -9,7 +9,7 @@ import {
 import { useEffect, useState } from 'react'
 
 const Home: NextPage = () => {
-  const { walletAddress, signingClient, contractClient } = useSigningClient()
+  const { walletAddress, signingClient, contractClient } = useWrappedClientContext()
   const [userInfo, setUserInfo] = useState<any>()
 
   useEffect(() => {

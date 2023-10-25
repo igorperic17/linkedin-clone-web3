@@ -18,6 +18,11 @@ import {
 } from 'constants/constants'
 import { MyProjectClient } from 'contracts/MyProject.client'
 
+export interface RequestedProfile {
+  walletAddress: string | null
+  setRequestedProfileWalletAddress: (walletAddress: string | null) => void 
+}
+
 export interface IClientContext {
   walletAddress: string
   signingClient: SigningCosmWasmClient | null
@@ -27,6 +32,7 @@ export interface IClientContext {
   error: any
   connectWallet: any
   disconnect: Function
+  requestedProfile: RequestedProfile
 }
 
 const PUBLIC_RPC_ENDPOINT = NEXT_PUBLIC_CHAIN_RPC_ENDPOINT || ''
@@ -45,6 +51,7 @@ export const useClientContext = (): IClientContext => {
     useState<CoreumQueryClient | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [requestedProfileWalletAddress, setRequestedProfileWalletAddress] = useState<string | null>(null)
 
   const connectWallet = async () => {
     setLoading(true)
@@ -131,5 +138,9 @@ export const useClientContext = (): IClientContext => {
     error,
     connectWallet,
     disconnect,
+    requestedProfile: {
+      walletAddress: requestedProfileWalletAddress,
+      setRequestedProfileWalletAddress
+    }
   }
 }

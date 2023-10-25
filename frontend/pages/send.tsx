@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react'
 import type {NextPage} from 'next'
 import {Coin} from '@cosmjs/amino'
 import WalletLoader from 'components/WalletLoader'
-import {useSigningClient} from 'contexts/client'
+import {useWrappedClientContext} from 'contexts/client'
 import {convertDenomToMicroDenom, convertFromMicroDenom, convertMicroDenomToDenom,} from 'util/conversion'
 import { NEXT_PUBLIC_CHAIN_NAME, NEXT_PUBLIC_STAKING_DENOM } from 'constants/constants'
 
@@ -10,7 +10,7 @@ const PUBLIC_CHAIN_NAME = NEXT_PUBLIC_CHAIN_NAME
 const PUBLIC_STAKING_DENOM = NEXT_PUBLIC_STAKING_DENOM || ''
 
 const Send: NextPage = () => {
-  const {walletAddress, signingClient} = useSigningClient()
+  const {walletAddress, signingClient} = useWrappedClientContext()
   const [balance, setBalance] = useState('')
   const [loadedAt, setLoadedAt] = useState(new Date())
   const [loading, setLoading] = useState(false)

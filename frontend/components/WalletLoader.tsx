@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { useSigningClient } from 'contexts/client'
+import { useWrappedClientContext } from 'contexts/client'
 import Loader from './Loader'
 
 function WalletLoader({
@@ -14,7 +14,7 @@ function WalletLoader({
     loading: clientLoading,
     error,
     connectWallet,
-  } = useSigningClient()
+  } = useWrappedClientContext()
 
   if (loading || clientLoading) {
     return (

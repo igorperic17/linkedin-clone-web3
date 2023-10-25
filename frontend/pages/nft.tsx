@@ -3,7 +3,7 @@ import type {NextPage} from 'next'
 import {sha256} from 'js-sha256'
 
 import WalletLoader from 'components/WalletLoader'
-import {useSigningClient} from 'contexts/client'
+import {useWrappedClientContext} from 'contexts/client'
 import {QueryNFTsResponse} from "../coreum/proto-ts/coreum/nft/v1beta1/query";
 import {AssetNFT as AssetNFTTx, NFT as NFTTx} from "../coreum/tx";
 import {EncodeObject} from "@cosmjs/proto-signing";
@@ -15,7 +15,7 @@ const generateKittenURL = () => {
 }
 
 const NFT: NextPage = () => {
-  const {walletAddress, signingClient, coreumQueryClient} = useSigningClient()
+  const {walletAddress, signingClient, coreumQueryClient} = useWrappedClientContext()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [classCreated, setClassCreated] = useState(false)

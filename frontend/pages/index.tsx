@@ -6,10 +6,11 @@ import {
   NEXT_PUBLIC_CHAIN_EXPLORER,
   NEXT_PUBLIC_CHAIN_NAME,
 } from 'constants/constants'
+import { useEffect } from 'react'
+import { BackendService } from 'services/BackendService'
 
 const Home: NextPage = () => {
-  const { walletAddress, contractClient } =
-    useWrappedClientContext()
+  const { walletAddress, contractClient } = useWrappedClientContext()
 
   const register = () => {
     contractClient
@@ -27,6 +28,21 @@ const Home: NextPage = () => {
         console.log(res)
       })
   }
+
+  useEffect(() => {
+    if (walletAddress) {
+      const service = new BackendService()
+      service
+        .listOwnCredentials(walletAddress)
+        .then((res) => console.log(res))
+        .catch((e) => console.error(e))
+
+      service
+        .issueDummyCredential(walletAddress)
+        .then((res) => console.log(res))
+        .catch((e) => console.error(e))
+    }
+  }, [walletAddress])
 
   return (
     <WalletLoader>

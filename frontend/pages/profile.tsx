@@ -57,6 +57,12 @@ const groupCredentials = (credentials: CredentialEnum[]): GroupedCredentials => 
     }
 }
 
+const Divider = () => {
+    return (
+        <hr className="my-2 h-0.5 border-t-0 bg-gray-300 opacity-100 dark:opacity-50" />
+    )
+}
+
 const EmploymentListItem = ({ data }: ListItemProps<CredentialEmployment>) => {
     return (
         <div className="mb-2">
@@ -136,7 +142,10 @@ const EmploymentSection = ({ state }: SectionProps<CredentialEmployment>) => {
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
             <h3 className="font-bold mb-2">Work Experience</h3>
             {state.sort((a, b) => (b.end_year ?? (99999 + (b.start_year ?? 0))) - (a.end_year ?? (99999 + (a.start_year ?? 0)))).map((value, index) => (
-                <EmploymentListItem data={value} key={index} />
+                <>
+                    <EmploymentListItem data={value} key={index} />
+                    {index < state.length - 1 && <Divider />}
+                </>
             ))}
         </div >
     )
@@ -147,7 +156,10 @@ const DegreeSection = ({ state }: SectionProps<CredentialDegree>) => {
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
             <h3 className="font-bold mb-2">Education</h3>
             {state.sort((a, b) => b.year - a.year).map((value, index) => (
-                <DegreeListItem data={value} key={index} />
+                <>
+                    <DegreeListItem data={value} key={index} />
+                    {index < state.length - 1 && <Divider />}
+                </>
             ))}
         </div>
     )
@@ -158,7 +170,10 @@ const EventSection = ({ state }: SectionProps<CredentialEvent>) => {
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
             <h3 className="font-bold mb-2">Certificates</h3>
             {state.sort((a, b) => (b.year ?? 0) - (a.year ?? 0)).map((value, index) => (
-                <EventListItem data={value} key={index} />
+                <>
+                    <EventListItem data={value} key={index} />
+                    {index < state.length - 1 && <Divider />}
+                </>
             ))}
         </div>
     )

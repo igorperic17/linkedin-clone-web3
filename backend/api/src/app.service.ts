@@ -12,7 +12,7 @@ import {
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ContractsService } from './contracts/services/ContractService';
 import { createHash } from 'crypto';
-import { CredentialDegree } from './contracts/generated/MyProject.types';
+import { CredentialDegree, CredentialEmployment, CredentialEvent } from './contracts/generated/MyProject.types';
 
 @Injectable()
 export class AppService {
@@ -79,52 +79,92 @@ export class AppService {
       sessionId,
     });
 
-    //5, Get DIDs
+    // 5, Get DIDs
     const credentials = await this.listCredentials(token);
-    // console.log('credentials!', credentials);
-    // console.log('list!', credentials.list);
+
     const foundCredential = credentials.list.sort(
       (a, b) => Date.parse(b['issuanceDate']) - Date.parse(a['issuanceDate']),
     )[0];
-    // const foundCredential = credentials.list.find(
-    //   (credential) => credential['credentialSubject'] === credential,
-    // );
-
-    // console.log(
-    //   'crednetial list',
-    //   credentials.list.map((credential) => credential['credentialSubject']),
-    // );
 
     if (foundCredential) {
       console.log('found!', foundCredential);
       console.log('issued at', foundCredential['issuanceDate']);
-      // TODO - generate from vc!!
-
       if (foundCredential['type'].includes('VerifiableDiploma')) {
-        const data: CredentialDegree = {
-          institution_did: foundCredential['issuer'],
-          institution_name:
-            foundCredential['credentialSubject']['awardingOpportunity'][
-              'awardingBody'
-            ]['preferredName'],
-          owner: id,
-          year: parseInt(
-            foundCredential['credentialSubject']['awardingOpportunity'][
-              'endedAtTime'
-            ]?.slice(0, 4),
-          ),
-        };
-        console.log('found diploma, mapped to onchain', data);
-        await this.contractsService.storeVc({
-          Degree: {
-            data,
-            vc_hash: createHash('sha256')
-              .update(JSON.stringify(foundCredential))
-              .digest('hex'),
-          },
-        });
+        await this.storeDegreeVc(foundCredential, id);
+      }
+      if (foundCredential['type'].includes('VerifiableEmployment')) {
+        await this.storeEmploymentVc(foundCredential, id);
+      }
+      if (foundCredential['type'].includes('VerifiableEvent')) {
+        await this.storeEventVc(foundCredential, id);
       }
     }
+  }
+
+  private async storeDegreeVc(foundCredential: object, id: string) {
+    const data: CredentialDegree = {
+      institution_did: foundCredential['issuer'],
+      institution_name:
+        foundCredential['credentialSubject']['awardingOpportunity'][
+        'awardingBody'
+        ]['preferredName'],
+      owner: id,
+      year: parseInt(
+        foundCredential['credentialSubject']['awardingOpportunity'][
+          'endedAtTime'
+        ]?.slice(0, 4),
+      ),
+    };
+    console.log('found diploma, mapped to onchain', data);
+    await this.contractsService.storeVc({
+      Degree: {
+        data,
+        vc_hash: createHash('sha256')
+          .update(JSON.stringify(foundCredential))
+          .digest('hex'),
+      },
+    });
+  }
+
+  private async storeEmploymentVc(foundCredential: object, id: string) {
+    const data: CredentialEmployment = {
+      institution_did: foundCredential['issuer'],
+      institution_name:
+        foundCredential['credentialSubject']['awardingOpportunity']['awardingBody']['preferredName'],
+      owner: id,
+      start_year:
+        foundCredential['credentialSubject']['awardingOpportunity']['startYear'],
+      end_year: foundCredential['credentialSubject']['awardingOpportunity']['endYear']
+    };
+    console.log('found employment, mapped to onchain', data);
+    await this.contractsService.storeVc({
+      Employment: {
+        data,
+        vc_hash: createHash('sha256')
+          .update(JSON.stringify(foundCredential))
+          .digest('hex'),
+      },
+    });
+  }
+
+  private async storeEventVc(foundCredential: object, id: string) {
+    const data: CredentialEvent = {
+      organizer_did: foundCredential['issuer'],
+      event_name:
+        foundCredential['credentialSubject']['awardingOpportunity']['eventName'],
+      owner: id,
+      year:
+        foundCredential['credentialSubject']['awardingOpportunity']['year'],
+    };
+    console.log('found event, mapped to onchain', data);
+    await this.contractsService.storeVc({
+      Event: {
+        data,
+        vc_hash: createHash('sha256')
+          .update(JSON.stringify(foundCredential))
+          .digest('hex'),
+      },
+    });
   }
 
   private async getOrCreateUserAsync(

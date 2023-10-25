@@ -250,7 +250,6 @@ const Profile = () => {
     const [credentials, setCredentials] = useState<CredentialEnum[]>([])
     const [isEdit, setIsEdit] = useState<boolean>(false)
 
-    contractClient?.listCredentials
     useEffect(() => {
         if (requestedProfileWalletAddress && auth) {
             if (signingClient) {
@@ -269,7 +268,7 @@ const Profile = () => {
                     })
             }
         }
-    }, [signingClient, requestedProfileWalletAddress])
+    }, [signingClient, contractClient, requestedProfileWalletAddress, auth])
 
     if (!requestedProfileWalletAddress) {
         return (<></>)

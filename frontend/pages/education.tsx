@@ -1,5 +1,5 @@
 import { useWrappedClientContext } from "contexts/client"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 
 interface IssueEducationCredentialsParameters {
   university: string

@@ -24,12 +24,19 @@ export default function Layout({ children }: { children: ReactNode }) {
         >
           Education
         </Link>
-        <span className="pl-1"> | </span>
+        <span className="pl-1 pr-1"> | </span>
         <Link
           className="pl-1 link link-primary link-hover"
-          href="/hackaton"
+          href="/hackathon"
         >
           Hackathon
+        </Link>
+        <span className="pl-1 pr-1"> | </span>
+        <Link
+          className="pl-1 link link-primary link-hover"
+          href="/employment"
+        >
+          Work experience
         </Link>
       </footer>
     </div>

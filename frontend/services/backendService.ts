@@ -27,7 +27,7 @@ interface LoginResponse {
 export class BackendService {
 
   async listOwnCredentials(walletAddress: string, auth: Authentication) {
-    const token = { auth }
+    const { token } = auth
     if (!token) {
       throw new Error('Unable to authorize user ' + walletAddress)
     }
@@ -40,7 +40,7 @@ export class BackendService {
   }
 
   async issueCredential(walletAddress: string, credential: object | undefined, auth: Authentication) {
-    const token = { auth }
+    const { token } = auth
     if (!token) {
       throw 'Unable to authorize user ' + walletAddress
     }

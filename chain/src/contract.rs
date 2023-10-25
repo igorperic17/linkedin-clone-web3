@@ -1,12 +1,18 @@
-use cosmwasm_std::{
-    entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdError,
-    StdResult,
-};
-
 use crate::coin_helpers::assert_sent_sufficient_coin;
 use crate::error::ContractError;
-use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, ResolveRecordResponse, ListCredentialsResponse, VerifyCredentialResponse};
-use crate::state::{config, config_read, credential, credential_read, resolver, resolver_read, Config, UserInfo, CredentialEnum};
+use crate::msg::{
+    ExecuteMsg, InstantiateMsg, ListCredentialsResponse, QueryMsg, ResolveRecordResponse,
+    VerifyCredentialResponse,
+};
+use crate::state::{
+    config, config_read, credential, credential_read, resolver, resolver_read, Config,
+    CredentialEnum, UserInfo,
+};
+use coreum_wasm_sdk::assetnft::{self, WHITELISTING};
+use coreum_wasm_sdk::core::CoreumMsg;
+use cosmwasm_std::{
+    entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdError, StdResult,
+};
 
 // const MIN_NAME_LENGTH: u64 = 3;
 // const MAX_NAME_LENGTH: u64 = 64;
@@ -38,7 +44,7 @@ pub fn execute(
     match msg {
         ExecuteMsg::Register { did, username, bio } => {
             execute_register(deps, env, info, did, username, bio)
-        },
+        }
         ExecuteMsg::IssueCredential { credential } => {
             execute_issue_credential(deps, env, info, credential)
         }
@@ -69,10 +75,50 @@ pub fn execute_register(
     // }
 
     // name is available
+
+    // TODO - mint NFT class for access
+    // TODO . only mint if not exists
+    // let issue_class_msg = CoreumMsg::AssetNFT(assetnft::Msg::IssueClass {
+    //     name: msg.name,
+    //     symbol: msg.symbol,
+    //     description: Some("Test description".to_string()),
+    //     uri: None,
+    //     uri_hash: None,
+    //     data: None,
+    //     features: Some(vec![WHITELISTING]),
+    //     royalty_rate: Some("0".to_string()),
+    // });
+
     resolver(deps.storage).save(key, &record)?;
 
     Ok(Response::default())
 }
+
+// TODO - mint nft
+// fn mint_nft(
+//     deps: DepsMut,
+//     info: MessageInfo,
+//     class_id: String,
+//     id: String,
+//     account: String,
+//     data: Binary,
+// ) -> Result<Response<CoreumMsg>, ContractError> {
+
+//     let msg = CoreumMsg::AssetNFT(assetnft::Msg::Mint {
+//         class_id: class_id.clone(),
+//         id: id.clone(),
+//         uri: None,
+//         uri_hash: None,
+//         data: Some(data.clone()),
+//     });
+
+//     Ok(Response::new()
+//         .add_attribute("method", "mint_nft")
+//         .add_attribute("class_id", class_id)
+//         .add_attribute("id", id)
+//         .add_attribute("data", data.to_string())
+//         .add_message(msg))
+// }
 
 // TODO: must pay for this... ?
 pub fn execute_issue_credential(
@@ -102,8 +148,8 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::ResolveUserInfo { address } => query_resolver(deps, env, address),
         QueryMsg::Config {} => to_binary(&config_read(deps.storage).load()?),
-        QueryMsg::ListCredentials { address } => { query_list_credentials(deps, env, address) }
-        QueryMsg::VerifyCredential { data } => { query_verify_credentials(deps, env, data) }
+        QueryMsg::ListCredentials { address } => query_list_credentials(deps, env, address),
+        QueryMsg::VerifyCredential { data } => query_verify_credentials(deps, env, data),
     }
 }
 
@@ -114,7 +160,9 @@ fn query_resolver(deps: Deps, _env: Env, address: String) -> StdResult<Binary> {
         Some(record) => Some(record),
         None => return Err(StdError::NotFound { kind: address }),
     };
-    let resp = ResolveRecordResponse { user_info: user_info };
+    let resp = ResolveRecordResponse {
+        user_info: user_info,
+    };
 
     to_binary(&resp)
 }
@@ -124,17 +172,22 @@ fn query_list_credentials(deps: Deps, _env: Env, address: String) -> StdResult<B
 
     match credential_read(deps.storage).may_load(key.as_bytes())? {
         Some(record) => {
-            let resp = ListCredentialsResponse { credentials: record };
+            let resp = ListCredentialsResponse {
+                credentials: record,
+            };
             return to_binary(&resp);
         }
-        None => { },
+        None => {}
     };
-    
+
     StdResult::Err(StdError::NotFound { kind: address })
 }
 
-fn query_verify_credentials(deps: Deps, _env: Env, credential: CredentialEnum) -> StdResult<Binary> {
-    
+fn query_verify_credentials(
+    deps: Deps,
+    _env: Env,
+    credential: CredentialEnum,
+) -> StdResult<Binary> {
     // extract the alledged owner
     let key = match credential.clone() {
         CredentialEnum::Degree { data } => data.owner,
@@ -144,11 +197,12 @@ fn query_verify_credentials(deps: Deps, _env: Env, credential: CredentialEnum) -
 
     match credential_read(deps.storage).may_load(key.as_bytes())? {
         Some(record) => {
-            return to_binary(&VerifyCredentialResponse { valid: record.contains(&credential) })
+            return to_binary(&VerifyCredentialResponse {
+                valid: record.contains(&credential),
+            })
         }
         None => return StdResult::Err(StdError::NotFound { kind: key.clone() }),
     };
-    
 }
 
 // let's not import a regexp library and just do these checks by hand

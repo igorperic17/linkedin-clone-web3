@@ -1,5 +1,6 @@
 import {createContext, ReactNode, useContext} from 'react'
 import {IClientContext, useClientContext,} from 'hooks/client'
+import { BackendService } from 'services/backendService'
 
 let ClientContext: any
 let {Provider} = (ClientContext =
@@ -15,7 +16,8 @@ let {Provider} = (ClientContext =
     requestedProfile: {
       walletAddress: null,
       setRequestedProfileWalletAddress: () => {}
-    }
+    },
+    backendService: {} as BackendService
   }))
 
 export const useWrappedClientContext = (): IClientContext =>

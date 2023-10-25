@@ -7,7 +7,7 @@ import {
   NEXT_PUBLIC_CHAIN_NAME,
 } from 'constants/constants'
 import { useEffect } from 'react'
-import { BackendService } from 'services/BackendService'
+import { BackendService } from 'services/backendService'
 
 const Home: NextPage = () => {
   const { walletAddress, contractClient } = useWrappedClientContext()
@@ -29,28 +29,13 @@ const Home: NextPage = () => {
       })
   }
 
-  useEffect(() => {
-    if (walletAddress) {
-      const service = new BackendService()
-      service
-        .listOwnCredentials(walletAddress)
-        .then((res) => console.log(res))
-        .catch((e) => console.error(e))
-
-      service
-        .issueDummyCredential(walletAddress)
-        .then((res) => console.log(res))
-        .catch((e) => console.error(e))
-    }
-  }, [walletAddress])
-
   return (
     <WalletLoader>
-      <h1 className="text-6xl font-bold">
+      <h1 className="text-6xl font-bold mb-8">
         Welcome to {NEXT_PUBLIC_CHAIN_NAME} !
       </h1>
 
-      <div className="mt-3 text-2xl">
+      <div className="text-2xl">
         Your wallet address is: <pre></pre>
         <Link
           href={NEXT_PUBLIC_CHAIN_EXPLORER + 'coreum/accounts/' + walletAddress}
@@ -59,16 +44,16 @@ const Home: NextPage = () => {
           <a
             target="_blank"
             rel="noreferrer"
-            className="font-mono break-all whitespace-pre-wrap link link-primary"
+            className="font-mono break-all whitespace-pre-wrap hover:text-primary"
           >
             {walletAddress}
           </a>
         </Link>
       </div>
 
-      <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 max-w-full sm:w-full">
+      <div className="grid grid-cols-3 gap-16 mt-6 sm:w-full">
         <Link href="/send" passHref>
-          <a className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus">
+          <a className="p-6 mt-6 text-left border border-neutral rounded-xl hover:border-primary hover:bg-primary hover:text-secondary focus:text-primary-focus">
             <h3 className="text-2xl font-bold">Send to wallet &rarr;</h3>
             <p className="mt-4 text-xl">
               Execute a transaction to send funds to a wallet address.
@@ -76,7 +61,7 @@ const Home: NextPage = () => {
           </a>
         </Link>
         <Link href="/nft" passHref>
-          <a className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus">
+          <a className="p-6 mt-6 text-left border border-neutral rounded-xl hover:border-primary hover:bg-primary hover:text-secondary focus:text-primary-focus">
             <h3 className="text-2xl font-bold">NFT &rarr;</h3>
             <p className="mt-4 text-xl">
               Create you NFT class and mint NFTs for it.
@@ -84,7 +69,7 @@ const Home: NextPage = () => {
           </a>
         </Link>
         <Link href="/profile" passHref>
-          <a className="p-6 mt-6 text-left border border-secondary hover:border-primary w-96 rounded-xl hover:text-primary focus:text-primary-focus">
+          <a className="p-6 mt-6 text-left border border-neutral rounded-xl hover:border-primary hover:bg-primary hover:text-secondary focus:text-primary-focus">
             <h3 className="text-2xl font-bold">Blockedin</h3>
             <p className="mt-4 text-xl">Your social network</p>
           </a>

@@ -16,27 +16,27 @@ export default function Layout({ children }: { children: ReactNode }) {
       <main className="flex flex-col items-center justify-center w-full flex-1 p-2 md:px-20 text-center">
         {children}
       </main>
-      <footer className="flex items-center justify-center w-full h-24 border-t">
+      <footer className="flex items-center justify-center w-full h-24 border-t text-neutral">
         <Link
           target="_blank" rel="noreferrer"
-          className="pl-1 link link-primary link-hover"
+          className=""
           href="/education"
         >
-          Education
+          <a className="hover:text-primary">Education</a>
         </Link>
-        <span className="pl-1 pr-1"> | </span>
+        <span className="px-10"> | </span>
         <Link
-          className="pl-1 link link-primary link-hover"
-          href="/hackathon"
+          className=""
+          href="/event"
         >
-          Hackathon
+          <a className="hover:text-primary">Event</a>
         </Link>
-        <span className="pl-1 pr-1"> | </span>
+        <span className="px-10"> | </span>
         <Link
-          className="pl-1 link link-primary link-hover"
+          className=""
           href="/employment"
         >
-          Work experience
+          <a className="hover:text-primary">Work experience</a>
         </Link>
       </footer>
     </div>

@@ -19,5 +19,5 @@ cosmwasm-ts-codegen generate \
 ## Creating new credential type
 
 ```
-curl -d "@GenericAsset.json" -X POST localhost:3000/issuer-api/default/config/templates/GenericAsset
+curl -d "@VerifiableEvent.json" -X POST localhost:8080/issuer-api/default/config/templates/VerifiableEvent
 ```

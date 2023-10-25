@@ -1,5 +1,5 @@
 export const NEXT_PUBLIC_CHAIN_ID = 'coreum-testnet-1'
-export const NEXT_PUBLIC_CHAIN_NAME = 'Coreum Testnet'
+export const NEXT_PUBLIC_CHAIN_NAME = 'CoredIn'
 export const NEXT_PUBLIC_CHAIN_BECH32_PREFIX = 'testcore'
 export const NEXT_PUBLIC_CHAIN_RPC_ENDPOINT =
   'https://full-node.testnet-1.coreum.dev:26657/'

@@ -18,6 +18,7 @@ import {
   NEXT_PUBLIC_GAS_PRICE,
 } from 'constants/constants'
 import { MyProjectClient } from 'contracts/MyProject.client'
+import { BackendService } from 'services/backendService'
 
 export interface RequestedProfile {
   walletAddress: string | null
@@ -34,6 +35,7 @@ export interface IClientContext {
   connectWallet: any
   disconnect: Function
   requestedProfile: RequestedProfile
+  backendService: BackendService
 }
 
 const PUBLIC_RPC_ENDPOINT = NEXT_PUBLIC_CHAIN_RPC_ENDPOINT || ''
@@ -54,6 +56,7 @@ export const useClientContext = (): IClientContext => {
   const [error, setError] = useState(null)
   const [requestedProfileWalletAddress, setRequestedProfileWalletAddress] =
     useState<string | null>(null)
+  const [backendService,] = useState(new BackendService())
 
   const connectWallet = async () => {
     setLoading(true)
@@ -108,6 +111,7 @@ export const useClientContext = (): IClientContext => {
         new MyProjectClient(client, address, NEXT_APP_CONTRACT_ADDRESS)
       ) // TODO store address somewhere else
       setWalletAddress(address)
+      setRequestedProfileWalletAddress(address)
       setLoading(false)
     } catch (error: any) {
       console.error(error)
@@ -140,5 +144,6 @@ export const useClientContext = (): IClientContext => {
       walletAddress: requestedProfileWalletAddress,
       setRequestedProfileWalletAddress,
     },
+    backendService
   }
 }

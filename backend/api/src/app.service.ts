@@ -10,13 +10,19 @@ import {
   AcceptCredentialIssuanceRequest,
 } from './app.types';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { ContractsService } from './contracts/services/ContractService';
+import { createHash } from 'crypto';
+import { CredentialDegree } from './contracts/generated/MyProject.types';
 
 @Injectable()
 export class AppService {
   private readonly apiHost: string;
   private readonly apiUrl: string;
 
-  constructor(configService: ConfigService) {
+  constructor(
+    configService: ConfigService,
+    private readonly contractsService: ContractsService,
+  ) {
     this.apiHost = `${configService.getOrThrow(
       'walletKit.baseUrl',
     )}:${configService.getOrThrow('walletKit.port')}`;
@@ -65,11 +71,60 @@ export class AppService {
       token,
       oidcUri,
     });
-    console.log(JSON.stringify(sessionId));
 
-    // TODO - store onchain equivalent
     // 4. Accept issuance.
-    await this.acceptCredentialIssuance({ token, did: dids[0], sessionId });
+    const res = await this.acceptCredentialIssuance({
+      token,
+      did: dids[0],
+      sessionId,
+    });
+
+    //5, Get DIDs
+    const credentials = await this.listCredentials(token);
+    // console.log('credentials!', credentials);
+    // console.log('list!', credentials.list);
+    const foundCredential = credentials.list.sort(
+      (a, b) => Date.parse(b['issuanceDate']) - Date.parse(a['issuanceDate']),
+    )[0];
+    // const foundCredential = credentials.list.find(
+    //   (credential) => credential['credentialSubject'] === credential,
+    // );
+
+    // console.log(
+    //   'crednetial list',
+    //   credentials.list.map((credential) => credential['credentialSubject']),
+    // );
+
+    if (foundCredential) {
+      console.log('found!', foundCredential);
+      console.log('issued at', foundCredential['issuanceDate']);
+      // TODO - generate from vc!!
+
+      if (foundCredential['type'].includes('VerifiableDiploma')) {
+        const data: CredentialDegree = {
+          institution_did: foundCredential['issuer'],
+          institution_name:
+            foundCredential['credentialSubject']['awardingOpportunity'][
+              'awardingBody'
+            ]['preferredName'],
+          owner: id,
+          year: parseInt(
+            foundCredential['credentialSubject']['awardingOpportunity'][
+              'endedAtTime'
+            ]?.slice(0, 4),
+          ),
+        };
+        console.log('found diploma, mapped to onchain', data);
+        await this.contractsService.storeVc({
+          Degree: {
+            data,
+            vc_hash: createHash('sha256')
+              .update(JSON.stringify(foundCredential))
+              .digest('hex'),
+          },
+        });
+      }
+    }
   }
 
   private async getOrCreateUserAsync(
@@ -143,11 +198,13 @@ export class AppService {
     token,
     did,
     sessionId,
-  }: AcceptCredentialIssuanceRequest): Promise<void> {
+  }: AcceptCredentialIssuanceRequest): Promise<any> {
     const url = `${this.apiUrl}/wallet/issuance/continueIssuerInitiatedIssuance?sessionId=${sessionId}&did=${did}`;
     const options = this.getRequestOptions(token);
     const response = await axios.get(url, options);
     this.validateResponse(response);
+
+    return response.data;
   }
 
   private validateResponse(response: AxiosResponse) {

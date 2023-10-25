@@ -2,6 +2,8 @@
   "credentialTypes": [
     "VerifiableId",
     "VerifiableDiploma",
+    "VerifiableEmployment",
+    "VerifiableEvent",
     "ParticipantCredential",
     "OpenBadgeCredential",
     "Europass",

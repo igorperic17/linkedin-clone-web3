@@ -1,11 +1,14 @@
 import React, { useState } from "react"
 import logo from '../public/European-Blockchain-Convention-Web-Logo.png'
 import Image from "next/image"
+import { useWrappedClientContext } from "contexts/client"
 
 const Hackathon = () => {
   const [event, setEvent] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const { requestedProfile } = useWrappedClientContext()
+  const { walletAddress } = requestedProfile
 
   return (
     <div className="flex flex-col w-3/4 items-center pb-24 pt-8">

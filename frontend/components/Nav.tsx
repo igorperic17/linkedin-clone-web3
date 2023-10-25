@@ -11,9 +11,9 @@ const RequestedProfileInput = () => {
     setRequestedProfileWalletAddress(e.target.value || walletAddress);
   }
   return (
-    <div className="flex items-center my-4 p-3 text-left rounded-xl bg-secondary">
-      <p className="mr-2">Enter wallet address of desired profile:</p>
-      <input type="text" className="w-3/4 p-2 rounded-xl rounded-r-none" onChange={onChangeHandler}></input>
+    <div className="flex items-center my-4 py-2 px-4 text-left rounded-xl bg-secondary">
+      <p className="mx-2">Enter wallet address of desired profile:</p>
+      <input type="text" className="w-full p-2 rounded-xl" onChange={onChangeHandler}></input>
     </div>
   )
 }
@@ -32,12 +32,12 @@ function Nav() {
   const PUBLIC_SITE_ICON_URL = NEXT_PUBLIC_SITE_ICON_URL || ''
 
   return (
-    <div className="border-b w-screen px-2 md:px-16">
+    <div className="border-b w-screen px-8">
       <nav
-        className="flex flex-wrap text-center md:text-left md:flex flex-row w-full justify-between items-center py-4 ">
+        className="grid grid-cols-3 items-center text-center w-full py-2">
         <div className="flex items-center">
           <Link href="/">
-            <a className="link link-hover font-semibold text-xl md:text-2xl align-top">
+            <a className="font-semibold text-xl md:text-2xl align-top">
               {NEXT_PUBLIC_SITE_TITLE}
             </a>
           </Link>
@@ -45,9 +45,9 @@ function Nav() {
         <div className="flex flex-grow lg:flex-grow-0 max-w-full">
           <RequestedProfileInput />
         </div>
-        <div className="flex flex-grow lg:flex-grow-0 max-w-full">
+        <div className="max-w-full justify-self-end">
           <button
-            className="block btn btn-outline btn-primary w-full max-w-full truncate"
+            className="text-sm px-8 py-5 border border-neutral hover:border-primary hover:bg-primary hover:text-secondary rounded-xl"
             onClick={handleConnect}
           >
             {walletAddress || 'Connect Wallet'}

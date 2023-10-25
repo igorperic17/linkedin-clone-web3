@@ -28,7 +28,7 @@ export class AppController {
     @Body() credential: object
   ) {
     const token = this.getToken(auth);
-    
+    await this.appService.issueCredential(token, credential);
   }
 
   private getToken(auth: string): string {

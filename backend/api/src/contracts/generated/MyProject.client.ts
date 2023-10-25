@@ -6,7 +6,7 @@
 
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { StdFee } from "@cosmjs/amino";
-import { Uint128, InstantiateMsg, Coin, ExecuteMsg, QueryMsg, Config, UserInfo } from "./MyProject.types";
+import { Coin, Config, UserInfo } from "./MyProject.types";
 export interface MyProjectReadOnlyInterface {
   contractAddress: string;
   resolveUserInfo: ({

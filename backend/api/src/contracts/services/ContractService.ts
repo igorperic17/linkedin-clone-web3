@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import {
   GasPrice,
-  QueryClient,
-  createProtobufRpcClient,
 } from '@cosmjs/stargate';
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import { stringToPath } from '@cosmjs/crypto';

@@ -157,6 +157,9 @@ const ReadOnlyProfileHeader = ({ userInfo, toggle }: ProfileHeaderProps) => {
 }
 
 const EmploymentSection = ({ state }: SectionProps<CredentialEmployment>) => {
+    if (state.length === 0) {
+        return <></>
+    }
     return (
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
             <h1 className="font-bold text-3xl mb-2">Work Experience</h1>
@@ -171,6 +174,9 @@ const EmploymentSection = ({ state }: SectionProps<CredentialEmployment>) => {
 }
 
 const DegreeSection = ({ state }: SectionProps<CredentialDegree>) => {
+    if (state.length === 0) {
+        return <></>
+    }
     return (
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
             <h1 className="font-bold text-3xl mb-2">Education</h1>
@@ -185,6 +191,9 @@ const DegreeSection = ({ state }: SectionProps<CredentialDegree>) => {
 }
 
 const EventSection = ({ state }: SectionProps<CredentialEvent>) => {
+    if (state.length === 0) {
+        return <></>
+    }
     return (
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
             <h1 className="font-bold text-3xl mb-2">Certificates</h1>

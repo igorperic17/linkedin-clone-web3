@@ -216,7 +216,6 @@ const Profile = () => {
                     .catch(console.error)
             }
             if (contractClient) {
-                // TODO: his might throw an error for any user that is not us.
                 fetchCredentials(contractClient, requestedProfileWalletAddress)
                     .then((response) => {
                         console.log(response)

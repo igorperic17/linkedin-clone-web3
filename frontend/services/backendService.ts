@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseApiUrl = 'api' // TODO - move to config, use by env
+const baseApiUrl = process.env.NEXT_PUBLIC_DEVELOPMENT === 'true' ? 'api' : 'https://api.rubentewierik.dev'
 const API_AUTH_KEY = 'ssiwallet-auth-'
 const DUMMY_CREDENTIAL = {
   credentialData: {

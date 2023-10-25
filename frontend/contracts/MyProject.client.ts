@@ -6,7 +6,7 @@
 
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { StdFee } from "@cosmjs/amino";
-import { Uint128, InstantiateMsg, Coin, ExecuteMsg, CredentialEnum, CredentialDegree, CredentialEmployment, CredentialEvent, QueryMsg, Config, ListCredentialsResponse, ResolveRecordResponse, UserInfo, VerifyCredentialResponse } from "./MyProject.types";
+import { Uint128, InstantiateMsg, Coin, ExecuteMsg, CredentialEnum, CredentialDegree, CredentialEmployment, CredentialEvent, QueryMsg, Addr, Config, ListCredentialsResponse, ResolveRecordResponse, UserInfo, VerifyCredentialResponse } from "./MyProject.types";
 export interface MyProjectReadOnlyInterface {
   contractAddress: string;
   resolveUserInfo: ({
@@ -95,6 +95,11 @@ export interface MyProjectInterface extends MyProjectReadOnlyInterface {
   }: {
     credential: CredentialEnum;
   }, fee?: number | StdFee | "auto", memo?: string, _funds?: Coin[]) => Promise<ExecuteResult>;
+  subscirbe: ({
+    targetProfile
+  }: {
+    targetProfile: string;
+  }, fee?: number | StdFee | "auto", memo?: string, _funds?: Coin[]) => Promise<ExecuteResult>;
 }
 export class MyProjectClient extends MyProjectQueryClient implements MyProjectInterface {
   client: SigningCosmWasmClient;
@@ -108,6 +113,7 @@ export class MyProjectClient extends MyProjectQueryClient implements MyProjectIn
     this.contractAddress = contractAddress;
     this.register = this.register.bind(this);
     this.issueCredential = this.issueCredential.bind(this);
+    this.subscirbe = this.subscirbe.bind(this);
   }
 
   register = async ({
@@ -135,6 +141,17 @@ export class MyProjectClient extends MyProjectQueryClient implements MyProjectIn
     return await this.client.execute(this.sender, this.contractAddress, {
       issue_credential: {
         credential
+      }
+    }, fee, memo, _funds);
+  };
+  subscirbe = async ({
+    targetProfile
+  }: {
+    targetProfile: string;
+  }, fee: number | StdFee | "auto" = "auto", memo?: string, _funds?: Coin[]): Promise<ExecuteResult> => {
+    return await this.client.execute(this.sender, this.contractAddress, {
+      subscirbe: {
+        target_profile: targetProfile
       }
     }, fee, memo, _funds);
   };

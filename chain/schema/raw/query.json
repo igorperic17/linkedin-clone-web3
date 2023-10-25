@@ -147,11 +147,15 @@
             "Degree": {
               "type": "object",
               "required": [
-                "data"
+                "data",
+                "vc_hash"
               ],
               "properties": {
                 "data": {
                   "$ref": "#/definitions/CredentialDegree"
+                },
+                "vc_hash": {
+                  "type": "string"
                 }
               }
             }
@@ -167,11 +171,15 @@
             "Employment": {
               "type": "object",
               "required": [
-                "data"
+                "data",
+                "vc_hash"
               ],
               "properties": {
                 "data": {
                   "$ref": "#/definitions/CredentialEmployment"
+                },
+                "vc_hash": {
+                  "type": "string"
                 }
               }
             }
@@ -187,11 +195,15 @@
             "Event": {
               "type": "object",
               "required": [
-                "data"
+                "data",
+                "vc_hash"
               ],
               "properties": {
                 "data": {
                   "$ref": "#/definitions/CredentialEvent"
+                },
+                "vc_hash": {
+                  "type": "string"
                 }
               }
             }

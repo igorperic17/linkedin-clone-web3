@@ -6,7 +6,7 @@ import { stringToPath } from '@cosmjs/crypto';
 import { MyProjectClient } from '../generated/MyProject.client';
 
 export const CONTRACT_ADDRESS =
-  'testcore1hlpe5lfprh3qcqvw3nj38lrlp6dql8dp2v20tcy0myg6wx9rcx4szhxp2v';
+  'testcore10uguy40xuhw43cwecpgl8j898es58qlazvmg5z3ds9x5x6xu8srq7nqpsy';
 @Injectable()
 export class ContractsService {
   constructor() {}

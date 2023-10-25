@@ -27,20 +27,28 @@ export type ExecuteMsg = {
     credential: CredentialEnum;
     [k: string]: unknown;
   };
+} | {
+  subscirbe: {
+    target_profile: string;
+    [k: string]: unknown;
+  };
 };
 export type CredentialEnum = {
   Degree: {
     data: CredentialDegree;
+    vc_hash: string;
     [k: string]: unknown;
   };
 } | {
   Employment: {
     data: CredentialEmployment;
+    vc_hash: string;
     [k: string]: unknown;
   };
 } | {
   Event: {
     data: CredentialEvent;
+    vc_hash: string;
     [k: string]: unknown;
   };
 };
@@ -86,7 +94,9 @@ export type QueryMsg = {
     [k: string]: unknown;
   };
 };
+export type Addr = string;
 export interface Config {
+  owner: Addr;
   purchase_price?: Coin | null;
   transfer_price?: Coin | null;
   [k: string]: unknown;

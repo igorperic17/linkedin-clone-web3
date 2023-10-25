@@ -7,6 +7,7 @@ let {Provider} = (ClientContext =
     walletAddress: '',
     signingClient: null,
     coreumQueryClient: null,
+    contractClient: null,
     loading: false,
     error: null,
     connectWallet: () => {

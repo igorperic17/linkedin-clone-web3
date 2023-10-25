@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "ExecuteMsg",
-  "anyOf": [
+  "oneOf": [
     {
       "type": "object",
       "required": [
@@ -11,34 +11,18 @@
         "register": {
           "type": "object",
           "required": [
-            "name"
+            "bio",
+            "did",
+            "username"
           ],
           "properties": {
-            "name": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "required": [
-        "transfer"
-      ],
-      "properties": {
-        "transfer": {
-          "type": "object",
-          "required": [
-            "name",
-            "to"
-          ],
-          "properties": {
-            "name": {
+            "bio": {
               "type": "string"
             },
-            "to": {
+            "did": {
+              "type": "string"
+            },
+            "username": {
               "type": "string"
             }
           }

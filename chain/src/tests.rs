@@ -66,7 +66,7 @@ mod tests {
 
     #[test]
     fn proper_init_no_fees() {
-        let mut deps = mock_dependencies(&[]);
+        let mut deps = mock_dependencies();
 
         mock_init_no_price(deps.as_mut());
 
@@ -81,7 +81,7 @@ mod tests {
 
     #[test]
     fn proper_init_with_fees() {
-        let mut deps = mock_dependencies(&[]);
+        let mut deps = mock_dependencies();
 
         mock_init_with_price(deps.as_mut(), coin(3, "token"), coin(4, "token"));
 
@@ -96,7 +96,7 @@ mod tests {
 
     #[test]
     fn register_available_name_and_query_works() {
-        let mut deps = mock_dependencies(&[]);
+        let mut deps = mock_dependencies();
         mock_init_no_price(deps.as_mut());
         mock_alice_registers_name(deps.as_mut(), &[]);
 
@@ -121,7 +121,7 @@ mod tests {
 
     #[test]
     fn issue_diploma_works() {
-        let mut deps = mock_dependencies(&[]);
+        let mut deps = mock_dependencies();
         mock_init_no_price(deps.as_mut());
         mock_alice_registers_name(deps.as_mut(), &[]);
 
@@ -150,7 +150,7 @@ mod tests {
 
     #[test]
     fn issue_event_works() {
-        let mut deps = mock_dependencies(&[]);
+        let mut deps = mock_dependencies();
         mock_init_no_price(deps.as_mut());
         mock_alice_registers_name(deps.as_mut(), &[]);
 
@@ -194,7 +194,7 @@ mod tests {
 
     #[test]
     fn credential_verification_works() {
-        let mut deps = mock_dependencies(&[]);
+        let mut deps = mock_dependencies();
         mock_init_no_price(deps.as_mut());
         mock_alice_registers_name(deps.as_mut(), &[]);
 

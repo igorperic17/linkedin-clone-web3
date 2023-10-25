@@ -10,8 +10,8 @@
     "VerifiableVaccinationCertificate",
     "VerifiableAttestation"
   ],
-  "issuerUiUrl": "http://$EXTERNAL_HOSTNAME:8000",
-  "issuerApiUrl": "http://$EXTERNAL_HOSTNAME:8000/issuer-api/default",
+  "issuerUiUrl": "http://$EXTERNAL_HOSTNAME:8080",
+  "issuerApiUrl": "http://$EXTERNAL_HOSTNAME:8080/issuer-api/default",
   "issuerClientName": "walt.id Issuer Portal",
   "wallets": {
     "walt.id": {

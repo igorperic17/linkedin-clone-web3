@@ -13,7 +13,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       </Head>
 
       <Nav />
-      <main className="flex flex-col items-center justify-center w-full flex-1 p-2 md:px-20 text-center bg-secondary">
+      <main className="flex flex-col items-center justify-center w-full flex-1 p-2 md:px-20 text-center bg-[url('../public/bg.jpg')] ">
         {children}
       </main>
       <footer className="flex items-center justify-center w-full h-24 border-t text-neutral">

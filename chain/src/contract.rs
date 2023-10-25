@@ -7,8 +7,8 @@ use crate::msg::{
     VerifyCredentialResponse,
 };
 use crate::state::{
-    config, config_read, credential, credential_read, resolver, resolver_read, Config,
-    CredentialEnum, UserInfo, self,
+    self, config, config_read, credential, credential_read, resolver, resolver_read, Config,
+    CredentialEnum, UserInfo,
 };
 use coreum_wasm_sdk::assetnft::{self, DISABLE_SENDING};
 use coreum_wasm_sdk::core::CoreumMsg;
@@ -30,7 +30,7 @@ pub fn instantiate(
     let config_state = Config {
         purchase_price: msg.purchase_price,
         transfer_price: msg.transfer_price,
-        owner: info.sender
+        owner: info.sender,
     };
 
     config(deps.storage).save(&config_state)?;
@@ -88,7 +88,7 @@ pub fn execute_register(
 
     let issue_class_msg = CoreumMsg::AssetNFT(assetnft::Msg::IssueClass {
         name: info.sender.to_string(), // class == wallet address for now, switch to DID
-        symbol: info.sender.to_string(),  // class == wallet address for now, switch to DID
+        symbol: info.sender.to_string(), // class == wallet address for now, switch to DID
         description: Some("Test description".to_string()),
         uri: None,
         uri_hash: None,
@@ -101,7 +101,6 @@ pub fn execute_register(
 
     Ok(Response::default())
 }
-
 
 pub fn execute_subscribe(
     deps: DepsMut,
@@ -117,8 +116,8 @@ pub fn execute_subscribe(
     // let id = Uuid::new_v4().to_string();
     let id = "aisuhfaius".to_string();
     match mint_nft(deps, info, target_profile, id) {
-        Ok(msg) => { return Ok(cosmwasm_std::Response::new()) },
-        Err(error) => { return Err(error) }
+        Ok(msg) => return Ok(cosmwasm_std::Response::new()),
+        Err(error) => return Err(error),
     }
 }
 
@@ -130,14 +129,13 @@ fn mint_nft(
     // account: String,
     // data: Binary,
 ) -> Result<Response<CoreumMsg>, ContractError> {
-
     let msg = CoreumMsg::AssetNFT(assetnft::Msg::Mint {
         class_id: class_id.clone(),
         id: id.clone(),
         uri: None,
         uri_hash: None,
         // data: Some(data.clone()), // leaving in case we want to append some data later on
-        data: None
+        data: None,
     });
 
     Ok(Response::new()
@@ -148,18 +146,17 @@ fn mint_nft(
         .add_message(msg))
 }
 
-// TODO: must pay for this... ?
+// TODO: send money to the owner!!!!!!!
 pub fn execute_issue_credential(
     deps: DepsMut,
     _env: Env,
     info: MessageInfo,
     cred: CredentialEnum,
 ) -> Result<Response, ContractError> {
-
     let config_state = config(deps.storage).load()?;
-    
+
     // TODO: uncomment this to allow only the contract owner to issue creds
-    // TODO: modify this to allow only trusted entities to issue creds 
+    // TODO: modify this to allow only trusted entities to issue creds
     // if info.sender != config_state.owner {
     //     return Err(ContractError::Unauthorized {  });
     // }
@@ -168,12 +165,14 @@ pub fn execute_issue_credential(
     assert_sent_sufficient_coin(&info.funds, config_state.purchase_price)?;
 
     let key: String = match cred.clone() {
-        CredentialEnum::Degree { data, vc_hash } => { data.owner },
-        CredentialEnum::Employment { data, vc_hash } => { data.owner },
-        CredentialEnum::Event { data, vc_hash } => { data.owner },
+        CredentialEnum::Degree { data, vc_hash } => data.owner,
+        CredentialEnum::Employment { data, vc_hash } => data.owner,
+        CredentialEnum::Event { data, vc_hash } => data.owner,
     };
 
-    let mut binding = credential(deps.storage).load(key.as_bytes()).unwrap_or(vec![]);
+    let mut binding = credential(deps.storage)
+        .load(key.as_bytes())
+        .unwrap_or(vec![]);
     let current_list: &mut Vec<CredentialEnum> = binding.as_mut();
     current_list.insert(current_list.len(), cred);
     credential(deps.storage).save(key.as_bytes(), &current_list)?;

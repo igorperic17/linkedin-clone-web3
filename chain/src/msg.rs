@@ -26,8 +26,8 @@ pub enum ExecuteMsg {
     },
     // Subscribe to a user profile - mints an NFT with class == target prfile DID
     Subscirbe {
-        target_profile: String
-    }
+        target_profile: String,
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema, QueryResponses)]
@@ -45,7 +45,10 @@ pub enum QueryMsg {
     #[returns(ListCredentialsResponse)]
     ListCredentials { address: String },
     #[returns(ResolveRecordResponse)]
-    IsSubscribed { source_profile_did: String, target_profile_did: String },
+    IsSubscribed {
+        requester_address: String,
+        target_address: String,
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
@@ -67,4 +70,3 @@ pub struct VerifyCredentialResponse {
 pub struct IsSubscribedlResponse {
     pub subscribed: bool,
 }
-

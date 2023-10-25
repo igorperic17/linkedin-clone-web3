@@ -86,10 +86,6 @@ pub fn execute_register(
         return Ok(Response::new());
     }
 
-    // name is available
-
-    // TODO - mint NFT class for access
-    // TODO . only mint if not exists
     // MOAH!!!!!!!!!!!! LATE NIGHT HACK!!!! we just use 30 first address chars to avoid smartNFT regex limitation, we should hash instead..
     let symbol = info.sender.to_string()[..26].to_string();
     let issue_class_msg = CoreumMsg::AssetNFT(assetnft::Msg::IssueClass {
@@ -203,11 +199,11 @@ pub fn query(deps: Deps<CoreumQueries>, env: Env, msg: QueryMsg) -> StdResult<Bi
         QueryMsg::ListCredentials { address } => query_list_credentials(deps, env, address),
         QueryMsg::VerifyCredential { data } => query_verify_credentials(deps, env, data),
         QueryMsg::IsSubscribed {
-            source_profile_did,
-            target_profile_did,
+            requester_address,
+            target_address,
         } => {
             let coreum_deps = deps;
-            query_is_subscribed(coreum_deps, env, source_profile_did, target_profile_did)
+            query_is_subscribed(coreum_deps, env, requester_address, target_address)
         }
     }
 }
@@ -270,13 +266,17 @@ fn query_verify_credentials(
 
 fn query_is_subscribed(
     deps: Deps<CoreumQueries>,
-    _env: Env,
-    source_profile_did: String,
-    target_profile_did: String,
+    env: Env,
+    requester_address: String,
+    target_address: String,
 ) -> StdResult<Binary> {
     // // get the NFT class by id (all profile "subscribers", a.k.a. their NFTs)
-    let class_id = target_profile_did.clone();
-    let id = source_profile_did.clone();
+    let class_id = format!(
+        "{}-{}",
+        target_address[..26].to_string(),
+        env.contract.address
+    );
+    let id = requester_address.to_string();
     let request: QueryRequest<CoreumQueries> =
         CoreumQueries::NFT(nft::Query::NFT { class_id, id }).into();
     let res: Option<nft::NFTResponse> = deps.querier.query(&request)?;

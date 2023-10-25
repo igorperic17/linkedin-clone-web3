@@ -95,8 +95,8 @@ export type QueryMsg = {
   };
 } | {
   is_subscribed: {
-    source_profile_did: string;
-    target_profile_did: string;
+    requester_address: string;
+    target_address: string;
     [k: string]: unknown;
   };
 };

@@ -26,11 +26,11 @@ export interface MyProjectReadOnlyInterface {
     address: string;
   }) => Promise<ListCredentialsResponse>;
   isSubscribed: ({
-    sourceProfileDid,
-    targetProfileDid
+    requesterAddress,
+    targetAddress
   }: {
-    sourceProfileDid: string;
-    targetProfileDid: string;
+    requesterAddress: string;
+    targetAddress: string;
   }) => Promise<ResolveRecordResponse>;
 }
 export class MyProjectQueryClient implements MyProjectReadOnlyInterface {
@@ -86,16 +86,16 @@ export class MyProjectQueryClient implements MyProjectReadOnlyInterface {
     });
   };
   isSubscribed = async ({
-    sourceProfileDid,
-    targetProfileDid
+    requesterAddress,
+    targetAddress
   }: {
-    sourceProfileDid: string;
-    targetProfileDid: string;
+    requesterAddress: string;
+    targetAddress: string;
   }): Promise<ResolveRecordResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       is_subscribed: {
-        source_profile_did: sourceProfileDid,
-        target_profile_did: targetProfileDid
+        requester_address: requesterAddress,
+        target_address: targetAddress
       }
     });
   };

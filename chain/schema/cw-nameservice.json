@@ -374,14 +374,14 @@
           "is_subscribed": {
             "type": "object",
             "required": [
-              "source_profile_did",
-              "target_profile_did"
+              "requester_address",
+              "target_address"
             ],
             "properties": {
-              "source_profile_did": {
+              "requester_address": {
                 "type": "string"
               },
-              "target_profile_did": {
+              "target_address": {
                 "type": "string"
               }
             }

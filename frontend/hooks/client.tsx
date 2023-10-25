@@ -111,6 +111,7 @@ export const useClientContext = (): IClientContext => {
         new MyProjectClient(client, address, NEXT_APP_CONTRACT_ADDRESS)
       ) // TODO store address somewhere else
       setWalletAddress(address)
+      setRequestedProfileWalletAddress(address)
       setLoading(false)
     } catch (error: any) {
       console.error(error)

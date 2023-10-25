@@ -8,7 +8,7 @@ interface IssueEducationCredentialsParameters {
   lastName: string
 }
 
-const getIssueEducationCredentialData = async ({
+const getIssueEducationCredentialData = ({
   university,
   year,
   firstName,
@@ -73,7 +73,8 @@ const Education = () => {
   const { requestedProfile, backendService } = useWrappedClientContext()
   const { walletAddress } = requestedProfile
 
-  const onSaveHandler = async () => {
+  const onSaveHandler = async (e: any) => {
+    e.preventDefault()
     if (walletAddress) {
       const credential = getIssueEducationCredentialData({ university, year, firstName, lastName })
       await backendService.issueCredential(walletAddress, credential)

@@ -36,11 +36,6 @@ const Home: NextPage = () => {
         .listOwnCredentials(walletAddress)
         .then((res) => console.log(res))
         .catch((e) => console.error(e))
-
-      service
-        .issueCredential(walletAddress)
-        .then((res) => console.log(res))
-        .catch((e) => console.error(e))
     }
   }, [walletAddress])
 

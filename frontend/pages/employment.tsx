@@ -1,6 +1,5 @@
 import React, { useState } from "react"
 import { useWrappedClientContext } from "contexts/client"
-import { start } from "repl"
 
 interface IssueEmploymentCredentialsParameters {
   company: string
@@ -8,6 +7,7 @@ interface IssueEmploymentCredentialsParameters {
   endYear: string
   firstName: string
   lastName: string
+  did: string
 }
 
 const getIssueEmploymentCredentialData = ({
@@ -15,12 +15,13 @@ const getIssueEmploymentCredentialData = ({
   startYear,
   endYear,
   firstName,
-  lastName
+  lastName,
+  did
 }: IssueEmploymentCredentialsParameters) => {
   return {
     credentialData: {
       credentialSubject: {
-        id: 'did:ebsi:2AEMAqXWKYMu1JHPAgGcga4dxu7ThgfgN95VyJBJGZbSJUtp',
+        id: did,
         awardingOpportunity: {
           awardingBody: {
             eidasLegalIdentifier: 'Unknown',
@@ -52,7 +53,7 @@ const Employment = () => {
   const onSaveHandler = async (e: any) => {
     e.preventDefault()
     if (walletAddress && auth) {
-      const credential = getIssueEmploymentCredentialData({ company, startYear, endYear, firstName, lastName })
+      const credential = getIssueEmploymentCredentialData({ company, startYear, endYear, firstName, lastName, did: auth.did })
       await backendService.issueCredential(walletAddress, credential, auth)
     }
   }

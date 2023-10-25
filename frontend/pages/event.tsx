@@ -14,13 +14,15 @@ const Event = () => {
     year: string
     firstName: string
     lastName: string
+    did: string
   }
 
   const getIssueEventCredentialData = ({
     eventName,
     year,
     firstName,
-    lastName
+    lastName,
+    did
   }: IssueEventCredentialsParameters) => {
     let yearInt
     try {
@@ -31,23 +33,21 @@ const Event = () => {
 
     return {
       credentialData: {
-        credentialData: {
-          credentialSubject: {
-            id: "did:ebsi:2AEMAqXWKYMu1JHPAgGcga4dxu7ThgfgN95VyJBJGZbSJUtp",
-            awardingOpportunity: {
-              awardingBody: {
-                id: "did:ebsi:2A9BZ9SUe6BatacSpvs1V5CdjHvLpQ7bEsi2Jb6LdHKnQxaN",
-                preferredName: "European Blockchain Convention"
-              },
-              eventName: eventName,
-              year: year
+        credentialSubject: {
+          id: did,
+          awardingOpportunity: {
+            awardingBody: {
+              id: "did:ebsi:2A9BZ9SUe6BatacSpvs1V5CdjHvLpQ7bEsi2Jb6LdHKnQxaN",
+              preferredName: "European Blockchain Convention"
             },
-            familyName: lastName,
-            givenNames: firstName
-          }
-        },
-        type: "VerifiableEvent"
-      }
+            eventName: eventName,
+            year: year
+          },
+          familyName: lastName,
+          givenNames: firstName
+        }
+      },
+      type: "VerifiableEvent"
     }
   }
 
@@ -55,7 +55,7 @@ const Event = () => {
   const onSaveHandler = async (e: any) => {
     e.preventDefault()
     if (walletAddress && auth) {
-      const credential = getIssueEventCredentialData({ eventName, year, firstName, lastName })
+      const credential = getIssueEventCredentialData({ eventName, year, firstName, lastName, did: auth.did })
       await backendService.issueCredential(walletAddress, credential, auth)
     }
   }
@@ -64,7 +64,7 @@ const Event = () => {
     <div className="p-8 flex flex-col items-start text-left rounded-xl bg-secondary w-3/4">
       <div className="mb-10">
         <h2 className="mb-2 text-5xl font-bold text">Event</h2>
-        <p>Send a request to issue proof of attandance of an event</p>
+        <p>Send a request to issue proof of attendance of an event</p>
       </div>
       <form className="w-full flex flex-col gap-16">
         <div>

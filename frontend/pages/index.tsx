@@ -31,31 +31,6 @@ const Home: NextPage = () => {
           </a>
         </Link>
       </div>
-
-      <div className="grid grid-cols-3 gap-16 mt-6 sm:w-full">
-        <Link href="/send" passHref>
-          <a className="p-6 mt-6 text-left border border-neutral rounded-xl hover:border-primary hover:bg-primary hover:text-secondary focus:text-primary-focus">
-            <h3 className="text-2xl font-bold">Send to wallet &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Execute a transaction to send funds to a wallet address.
-            </p>
-          </a>
-        </Link>
-        <Link href="/nft" passHref>
-          <a className="p-6 mt-6 text-left border border-neutral rounded-xl hover:border-primary hover:bg-primary hover:text-secondary focus:text-primary-focus">
-            <h3 className="text-2xl font-bold">NFT &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Create you NFT class and mint NFTs for it.
-            </p>
-          </a>
-        </Link>
-        <Link href="/profile" passHref>
-          <a className="p-6 mt-6 text-left border border-neutral rounded-xl hover:border-primary hover:bg-primary hover:text-secondary focus:text-primary-focus">
-            <h3 className="text-2xl font-bold">Blockedin</h3>
-            <p className="mt-4 text-xl">Your social network</p>
-          </a>
-        </Link>
-      </div>
     </WalletLoader>
   )
 }

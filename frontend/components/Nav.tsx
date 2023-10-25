@@ -37,21 +37,7 @@ function Nav() {
         className="flex flex-wrap text-center md:text-left md:flex flex-row w-full justify-between items-center py-4 ">
         <div className="flex items-center">
           <Link href="/">
-            <a>
-              {PUBLIC_SITE_ICON_URL.length > 0 ? (
-                <Image
-                  src={PUBLIC_SITE_ICON_URL}
-                  height={32}
-                  width={32}
-                  alt="Logo"
-                />
-              ) : (
-                <span className="text-2xl">⚛️ </span>
-              )}
-            </a>
-          </Link>
-          <Link href="/">
-            <a className="ml-1 md:ml-2 link link-hover font-semibold text-xl md:text-2xl align-top">
+            <a className="link link-hover font-semibold text-xl md:text-2xl align-top">
               {NEXT_PUBLIC_SITE_TITLE}
             </a>
           </Link>

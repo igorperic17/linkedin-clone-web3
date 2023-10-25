@@ -5,47 +5,45 @@ import logo from '../public/Harvard_University_logo.svg.png'
 const Uni = () => {
   const [degree, setDegree] = useState('')
   const [year, setYear] = useState('')
-  const [name, setName] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [university, setUniversity] = useState('')
   const [major, setMajor] = useState('')
 
   return (
-    <div className="max-w-xs">
-      <div className="flex flex-col mb-12 border">
-        <Image width={500} height={200} className="object-contain" alt="logo" src={logo}></Image>
-        <h2 className="p-8 text-5xl font-bold text-center">Harvard University</h2>
-      </div>
-      <form>
-        <div className="flex items-center py-4 border">
-          <p className="pr-12 w-48 text-left">Name of the Student</p>
-          <input onChange={(e) => setName(e.target.value)} value={name} type="text" placeholder="Type here" className="w-[250px] bg-transparent focus:border-2 py-2 px-2 focus:rounded-md focus:border-gray-400 outline-none p-[1px] " />
+    <div className="p-8 flex flex-col items-start gap-1 text-left rounded-xl bg-secondary w-3/4">
+        <h2 className="mb-2 text-5xl font-bold text-center">Education</h2>
+        <p className="mb-4">Send a request to get information about the education </p>
+      <form className="w-full flex flex-col gap-4">
+        <div>
+          <div className="flex gap-6">
+            <div className="flex flex-col items-start py-4 w-1/2">
+              <label className="mr-4 mb-2 ml-2 text-left">First name</label>
+              <input onChange={(e) => setFirstName(e.target.value)} value={firstName} type="text" placeholder="Enter the first name of the alumni" className="w-[320px] focus:border-2 py-2 px-2 focus:rounded-md focus:border-gray-400 outline-none rounded-xl" />
+            </div>
+            <div className="flex flex-col items-start py-4 w-1/2">
+              <label className="mr-4 mb-2 ml-2 text-left">Last name</label>
+              <input onChange={(e) => setLastName(e.target.value)} value={lastName} type="text" placeholder="Enter the last name of the alumni" className="w-[320px] focus:border-2 py-2 px-2 focus:rounded-md focus:border-gray-400 outline-none rounded-xl" />
+            </div>
+          </div>
+          
+          <div className="flex gap-6">
+            <div className="flex flex-col items-start py-4 w-1/2">
+              <label className="mr-4 mb-2 ml-2 text-left">University</label>
+              <select className="w-[320px] focus:border-2 py-2 px-2 focus:rounded-md focus:border-gray-400 outline-none rounded-xl" value={degree} onChange={(e) => { setDegree(e.target.value) }}>
+                <option value="">Select the university</option>
+                <option value="Harvard">Harvard</option>
+                <option value="MIT">MIT</option>
+              </select>
+            </div>
+            <div className="flex flex-col items-start py-4 w-1/2">
+              <label className="mr-4 mb-2 ml-2">Graduation year</label>
+              <input onChange={(e) => setYear(e.target.value)} value={year} type="text" placeholder="Enter the year" className="w-2/5 focus:border-2 py-2 px-2 focus:rounded-md focus:border-gray-400 outline-none rounded-xl" />
+            </div>
+          </div>
         </div>
-        <div className="flex items-center py-4">
-          <p className="pr-12 w-48">Year of Graduation</p>
-          <input onChange={(e) => setYear(e.target.value)} value={year} type="text" placeholder="Type here" className="w-[250px] bg-transparent focus:border-2 py-2 px-2 focus:rounded-md focus:border-gray-400 outline-none p-[1px] " />
-        </div>
-        <div className="flex items-center py-4">
-          <label className="pr-12 w-48">
-            Degree
-          </label>
-          <select className="p-2 w-64 text-black" value={degree} onChange={(e) => { setDegree(e.target.value) }}>
-            <option value="Bachelor">Bachelor</option>
-            <option value="Master">Master</option>
-          </select>
-        </div>
-        <div className="flex items-center py-4">
-          <label className="pr-12 w-48">
-            Major
-          </label>
-          <select className="p-2 w-64 text-black" value={major} onChange={(e) => setMajor(e.target.value)}>
-            <option value="Major 1">Major 1</option>
-            <option value="Major 2">Major 2</option>
-            <option value="Major 3">Major 3</option>
-            <option value="Major 4">Major 4</option>
-          </select>
-        </div>
+        <button className="border-0 text-secondary text-lg bg-primary py-4 px-8 rounded-xl">Issue credential</button>
       </form>
-
-      <button className="border-2 border-gray-400 p-2 rounded-xl">Confirm</button>
     </div >
   )
 }

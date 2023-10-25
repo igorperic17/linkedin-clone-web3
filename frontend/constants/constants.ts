@@ -9,7 +9,7 @@ export const NEXT_PUBLIC_CHAIN_EXPLORER =
   'https://explorer.testnet-1.coreum.dev/'
 export const NEXT_PUBLIC_STAKING_DENOM = 'utestcore'
 export const NEXT_PUBLIC_CHAIN_COIN_TYPE = '990'
-export const NEXT_PUBLIC_SITE_TITLE = 'Coreum starter'
+export const NEXT_PUBLIC_SITE_TITLE = 'CoredIn'
 export const NEXT_PUBLIC_SITE_ICON_URL = '/coreum.svg'
 export const NEXT_PUBLIC_GAS_PRICE = '0.0625utestcore'
 export const NEXT_APP_CONTRACT_ADDRESS =

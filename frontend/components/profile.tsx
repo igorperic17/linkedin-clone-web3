@@ -129,7 +129,7 @@ const UpdatableProfileHeader = ({ userInfo, toggle }: ProfileHeaderProps) => {
     }
     return (
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-            <h1 className="font-bold text-4xl">About</h1>
+            <h1 className="font-bold text-3xl">About</h1>
             {toggle}
             <div className="max-w-xs text-lg mt-3">
                 <input defaultValue={username} className="text-4xl font-bold mb-4 max-w-xs" onChange={onUsernameChangeHandler} />
@@ -146,7 +146,7 @@ const ReadOnlyProfileHeader = ({ userInfo, toggle }: ProfileHeaderProps) => {
     }
     return (
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-            <h1 className="font-bold text-4xl">About</h1>
+            <h1 className="font-bold text-3xl">About</h1>
             {toggle}
             <div className="max-w-xs text-lg mt-3">
                 <h2 className="text-4xl font-bold mb-4 max-w-xs">{userInfo.username}</h2>
@@ -159,7 +159,7 @@ const ReadOnlyProfileHeader = ({ userInfo, toggle }: ProfileHeaderProps) => {
 const EmploymentSection = ({ state }: SectionProps<CredentialEmployment>) => {
     return (
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-            <h1 className="font-bold text-4xl mb-2">Work Experience</h1>
+            <h1 className="font-bold text-3xl mb-2">Work Experience</h1>
             {state.sort((a, b) => (b.end_year ?? (99999 + (b.start_year ?? 0))) - (a.end_year ?? (99999 + (a.start_year ?? 0)))).map((value, index) => (
                 <>
                     <EmploymentListItem data={value} key={index} />
@@ -173,7 +173,7 @@ const EmploymentSection = ({ state }: SectionProps<CredentialEmployment>) => {
 const DegreeSection = ({ state }: SectionProps<CredentialDegree>) => {
     return (
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-            <h1 className="font-bold text-4xl mb-2">Education</h1>
+            <h1 className="font-bold text-3xl mb-2">Education</h1>
             {state.sort((a, b) => b.year - a.year).map((value, index) => (
                 <>
                     <DegreeListItem data={value} key={index} />
@@ -187,7 +187,7 @@ const DegreeSection = ({ state }: SectionProps<CredentialDegree>) => {
 const EventSection = ({ state }: SectionProps<CredentialEvent>) => {
     return (
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-            <h1 className="font-bold text-4xl mb-2">Certificates</h1>
+            <h1 className="font-bold text-3xl mb-2">Certificates</h1>
             {state.sort((a, b) => (b.year ?? 0) - (a.year ?? 0)).map((value, index) => (
                 <>
                     <EventListItem data={value} key={index} />

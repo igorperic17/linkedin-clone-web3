@@ -6,6 +6,7 @@ import {
   NEXT_PUBLIC_CHAIN_EXPLORER,
   NEXT_PUBLIC_CHAIN_NAME,
 } from 'constants/constants'
+import Profile from 'components/profile'
 
 const Home: NextPage = () => {
   const { walletAddress } = useWrappedClientContext()
@@ -13,10 +14,9 @@ const Home: NextPage = () => {
   return (
     <WalletLoader>
       <h1 className="text-6xl font-bold mb-8">
-        Welcome to {NEXT_PUBLIC_CHAIN_NAME} !
+        Welcome to {NEXT_PUBLIC_CHAIN_NAME}!
       </h1>
-
-      <div className="text-2xl">
+      <div className="text-2xl mb-8">
         Your wallet address is: <pre></pre>
         <Link
           href={NEXT_PUBLIC_CHAIN_EXPLORER + 'coreum/accounts/' + walletAddress}
@@ -31,6 +31,7 @@ const Home: NextPage = () => {
           </a>
         </Link>
       </div>
+      <Profile />
     </WalletLoader>
   )
 }

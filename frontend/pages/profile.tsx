@@ -134,8 +134,8 @@ const EmploymentSection = ({ state }: SectionProps<CredentialEmployment>) => {
     return (
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary" >
             <h3 className="font-bold mb-2">Work Experience</h3>
-            {state.map((value) => (
-                <EmploymentListItem data={value} />
+            {state.map((value, index) => (
+                <EmploymentListItem data={value} key={index} />
             ))}
         </div >
     )
@@ -145,8 +145,8 @@ const DegreeSection = ({ state }: SectionProps<CredentialDegree>) => {
     return (
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary">
             <h3 className="font-bold mb-2">Education</h3>
-            {state.map((value) => (
-                <DegreeListItem data={value} />
+            {state.map((value, index) => (
+                <DegreeListItem data={value} key={index} />
             ))}
         </div>
     )
@@ -156,8 +156,8 @@ const EventSection = ({ state }: SectionProps<CredentialEvent>) => {
     return (
         <div className="mb-4 p-3 text-left rounded-xl bg-secondary">
             <h3 className="font-bold mb-2">Certificates</h3>
-            {state.map((value) => (
-                <EventListItem data={value} />
+            {state.map((value, index) => (
+                <EventListItem data={value} key={index} />
             ))}
         </div>
     )

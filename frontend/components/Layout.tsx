@@ -27,7 +27,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <span className="pl-1 pr-1"> | </span>
         <Link
           className="pl-1 link link-primary link-hover"
-          href="/hackaton"
+          href="/hackathon"
         >
           Hackathon
         </Link>

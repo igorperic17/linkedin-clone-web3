@@ -15,7 +15,7 @@ use coreum_wasm_sdk::core::CoreumMsg;
 use cosmwasm_std::{
     entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdError, StdResult,
 };
-use uuid::Uuid;
+// use uuid::Uuid;
 
 // const MIN_NAME_LENGTH: u64 = 3;
 // const MAX_NAME_LENGTH: u64 = 64;
@@ -114,7 +114,8 @@ pub fn execute_subscribe(
     let config_state = config(deps.storage).load()?;
     assert_sent_sufficient_coin(&info.funds, config_state.purchase_price)?;
 
-    let id = Uuid::new_v4().to_string();
+    // let id = Uuid::new_v4().to_string();
+    let id = "aisuhfaius".to_string();
     match mint_nft(deps, info, target_profile, id) {
         Ok(msg) => { return Ok(cosmwasm_std::Response::new()) },
         Err(error) => { return Err(error) }
@@ -165,12 +166,12 @@ pub fn execute_issue_credential(
     // TODO: change this to the cost of the NFT issue
     assert_sent_sufficient_coin(&info.funds, config_state.purchase_price)?;
 
-    let key: &str = match cred {
-        CredentialEnum::Degree { data, vc_hash } => { &data.owner },
-        CredentialEnum::Employment { data, vc_hash } => { &data.owner },
-        CredentialEnum::Event { data, vc_hash } => { &data.owner },
+    let key: String = match cred.clone() {
+        CredentialEnum::Degree { data, vc_hash } => { data.owner },
+        CredentialEnum::Employment { data, vc_hash } => { data.owner },
+        CredentialEnum::Event { data, vc_hash } => { data.owner },
     };
-    
+
     let mut binding = credential(deps.storage).load(key.as_bytes()).unwrap_or(vec![]);
     let current_list: &mut Vec<CredentialEnum> = binding.as_mut();
     current_list.insert(current_list.len(), cred);
@@ -226,9 +227,9 @@ fn query_verify_credentials(
 ) -> StdResult<Binary> {
     // extract the alledged owner
     let key = match credential.clone() {
-        CredentialEnum::Degree { data } => data.owner,
-        CredentialEnum::Employment { data } => data.owner,
-        CredentialEnum::Event { data } => data.owner,
+        CredentialEnum::Degree { data, vc_hash } => data.owner,
+        CredentialEnum::Employment { data, vc_hash } => data.owner,
+        CredentialEnum::Event { data, vc_hash } => data.owner,
     };
 
     match credential_read(deps.storage).may_load(key.as_bytes())? {

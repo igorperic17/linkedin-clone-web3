@@ -54,7 +54,7 @@ const Home: NextPage = () => {
           <a
             target="_blank"
             rel="noreferrer"
-            className="font-mono break-all whitespace-pre-wrap link link-primary"
+            className="font-mono break-all whitespace-pre-wrap hover:text-primary"
           >
             {walletAddress}
           </a>

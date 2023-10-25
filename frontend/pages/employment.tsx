@@ -93,7 +93,9 @@ const Employment = () => {
             </div>
           </div>
         </div>
-        <button onClick={onSaveHandler} className="border-0 text-secondary text-lg bg-primary py-4 px-8 rounded-xl">Issue credential</button>
+        <div className="flex justify-center">
+          <button className=" border-0 w-64 text-secondary text-xl bg-primary py-4  rounded-full" onClick={onSaveHandler}>Issue credential</button>
+        </div>
       </form>
     </div >
   )

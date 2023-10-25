@@ -47,7 +47,7 @@ function Nav() {
         </div>
         <div className="max-w-full justify-self-end">
           <button
-            className="text-sm px-8 py-5 border border-neutral hover:border-primary hover:bg-primary hover:text-secondary rounded-xl"
+            className="text-lg px-8 py-5 border rounded-full border-neutral hover:border-primary hover:bg-primary hover:text-secondary"
             onClick={handleConnect}
           >
             {walletAddress || 'Connect Wallet'}

@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 const baseApiUrl = process.env.NEXT_PUBLIC_DEVELOPMENT === 'true' ? 'api' : 'https://api.rubentewierik.dev'
-const API_AUTH_KEY = 'ssiwallet-auth-'
 const DUMMY_CREDENTIAL = {
   credentialData: {
     credentialSubject: {
@@ -57,7 +56,7 @@ export class BackendService {
     return response.data
   }
 
-  private async login(
+  public async login(
     walletAddress: String
   ): Promise<LoginResponse> {
     const response = await axios.post(baseApiUrl + '/auth/login', {
@@ -67,15 +66,8 @@ export class BackendService {
     return response.data
   }
 
-  private async getAuth(walletAddress: string): Promise<string | null> {
-    let token = localStorage.getItem(API_AUTH_KEY + walletAddress)
-    if (!token) {
-      const { token } = await this.login(walletAddress)
-      if (token) {
-        localStorage.setItem(API_AUTH_KEY + walletAddress, token)
-      }
-    }
-
+  private async getAuth(walletAddress: String): Promise<string | null> {
+    const { token } = await this.login(walletAddress)
     return token
   }
 }

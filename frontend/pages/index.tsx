@@ -33,6 +33,10 @@ const Home: NextPage = () => {
     if (walletAddress) {
       const service = new BackendService()
       service
+        .login(walletAddress)
+        .then((res) => console.log(res))
+        .catch((e) => console.error(e))
+      service
         .listOwnCredentials(walletAddress)
         .then((res) => console.log(res))
         .catch((e) => console.error(e))

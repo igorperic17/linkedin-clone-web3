@@ -43,10 +43,13 @@ export class AppService {
     if (!id || dids.length !== 1) {
       throw new Error('User is not properly registered.');
     }
+    console.log(JSON.stringify(dids));
     // 2. Make issuance request.
     const { oidcUri } = await this.requestCredentialIssuanceAsync(credential)
+    console.log(JSON.stringify(oidcUri));
     // 3. Initiate issuance.
     const { sessionId } = await this.initiateCredentialIssuanceAsync({ token, oidcUri })
+    console.log(JSON.stringify(sessionId));
     // 4. Accept issuance.
     await this.acceptCredentialIssuance({ token, did: dids[0], sessionId })
   }

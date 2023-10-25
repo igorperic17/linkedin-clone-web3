@@ -279,10 +279,15 @@ const fetchUserInfo = async (
 const fetchCredentials = async (
   contractClient: MyProjectClient,
   requestedProfileWalletAddress: string
-) => {
-  return await contractClient.listCredentials({
-    address: requestedProfileWalletAddress,
-  })
+): Promise<CredentialEnum[]> => {
+  try {
+    const response = await contractClient.listCredentials({
+      address: requestedProfileWalletAddress,
+    })
+    return response.credentials
+  } catch (e) {
+    return []
+  }
 }
 
 const Profile = () => {
@@ -310,9 +315,9 @@ const Profile = () => {
       }
       if (contractClient) {
         fetchCredentials(contractClient, requestedProfileWalletAddress).then(
-          (response) => {
-            console.log(response)
-            setCredentials(response.credentials)
+          (credentials) => {
+            console.log(credentials)
+            setCredentials(credentials)
           }
         )
       }

@@ -1,23 +1,25 @@
 import { useWrappedClientContext } from "contexts/client"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 interface IssueEducationCredentialsParameters {
   university: string
   year: string
   firstName: string
   lastName: string
+  did: string
 }
 
 const getIssueEducationCredentialData = ({
   university,
   year,
   firstName,
-  lastName
+  lastName,
+  did
 }: IssueEducationCredentialsParameters) => {
   return {
     credentialData: {
       credentialSubject: {
-        id: 'did:ebsi:2AEMAqXWKYMu1JHPAgGcga4dxu7ThgfgN95VyJBJGZbSJUtp',
+        id: did,
         awardingOpportunity: {
           awardingBody: {
             eidasLegalIdentifier: 'Unknown',
@@ -70,13 +72,22 @@ const Education = () => {
   const [year, setYear] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const [did, setDid] = useState('')
   const { requestedProfile, backendService } = useWrappedClientContext()
   const { walletAddress } = requestedProfile
+
+  useEffect(() => {
+    if (walletAddress) {
+      backendService.login(walletAddress)
+        .then((response) => setDid(response.did))
+        .catch(err => console.error(err))
+    }
+  }, [backendService])
 
   const onSaveHandler = async (e: any) => {
     e.preventDefault()
     if (walletAddress) {
-      const credential = getIssueEducationCredentialData({ university, year, firstName, lastName })
+      const credential = getIssueEducationCredentialData({ university, year, firstName, lastName, did })
       await backendService.issueCredential(walletAddress, credential)
     }
   }

@@ -57,7 +57,7 @@ export class BackendService {
   }
 
   public async login(
-    walletAddress: String
+    walletAddress: string
   ): Promise<LoginResponse> {
     const response = await axios.post(baseApiUrl + '/auth/login', {
       walletAddress,
@@ -66,7 +66,7 @@ export class BackendService {
     return response.data
   }
 
-  private async getAuth(walletAddress: String): Promise<string | null> {
+  private async getAuth(walletAddress: string): Promise<string | null> {
     const { token } = await this.login(walletAddress)
     return token
   }

@@ -29,20 +29,6 @@ const Home: NextPage = () => {
       })
   }
 
-  useEffect(() => {
-    if (walletAddress) {
-      const service = new BackendService()
-      service
-        .login(walletAddress)
-        .then((res) => console.log(res))
-        .catch((e) => console.error(e))
-      service
-        .listOwnCredentials(walletAddress)
-        .then((res) => console.log(res))
-        .catch((e) => console.error(e))
-    }
-  }, [walletAddress])
-
   return (
     <WalletLoader>
       <h1 className="text-6xl font-bold mb-8">

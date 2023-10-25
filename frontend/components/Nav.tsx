@@ -12,7 +12,7 @@ const RequestedProfileInput = () => {
   }
   return (
     <div className="flex items-center my-4 text-left rounded-xl justify-self-start w-[500px] justify-self-end">
-      <input type="text" className="p-2 rounded-xl bg-secondary w-full" placeholder="Enter wallet address of desired profile" onChange={onChangeHandler}></input>
+      <input type="text" className="p-2 rounded-xl bg-accent w-full" placeholder="Enter wallet address of desired profile" onChange={onChangeHandler}></input>
     </div>
   )
 }
@@ -31,12 +31,12 @@ function Nav() {
   const PUBLIC_SITE_ICON_URL = NEXT_PUBLIC_SITE_ICON_URL || ''
 
   return (
-    <div className="border-b w-screen px-8">
+    <div className="border-b w-screen px-8 bg-white">
       <nav
         className="flex justify-between items-center m-auto text-center w-2/3 py-2">
         <div className="flex items-center -mr-32">
           <Link href="/">
-            <a className="font-semibold text-xl md:text-2xl align-top">
+            <a className="font-semibold text-xl md:text-2xl align-top text-neutral">
               Cored<span className="bg-neutral text-white rounded-sm px-1 mx-0.5">in</span>
             </a>
           </Link>
@@ -46,7 +46,7 @@ function Nav() {
         </div>
         <div className="max-w-full justify-self-end">
           <button
-            className="text-lg px-4 py-2 text-sm border rounded-full border-neutral hover:border-primary hover:bg-primary hover:text-secondary"
+            className="text-lg px-4 py-2 text-sm border border-neutral rounded-full text-neutral hover:border-primary hover:bg-primary hover:text-secondary"
             onClick={handleConnect}
           >
             {walletAddress || 'Connect Wallet'}

@@ -61,9 +61,9 @@ const Event = () => {
   }
 
   return (
-    <div className="p-8 flex flex-col items-start text-left rounded-xl bg-white w-3/4">
+    <div className="p-8 flex flex-col items-start text-left rounded-xl bg-white w-3/4 text-base-200">
       <div className="mb-10">
-        <h2 className="mb-2 text-5xl font-bold text">Event</h2>
+        <h2 className="mb-2 text-5xl font-bold">Event</h2>
         <p>Send a request to issue proof of attendance of an event</p>
       </div>
       <form className="w-full flex flex-col gap-16">
@@ -91,7 +91,7 @@ const Event = () => {
           </div>
         </div>
         <div className="flex justify-center">
-          <button className=" border-0 w-64 text-secondary text-xl bg-primary py-4  rounded-full" onClick={onSaveHandler}>Issue credential</button>
+          <button className="border-0 text-secondary text-xl bg-primary py-4 px-8 rounded-full text-base-100" onClick={onSaveHandler}>Issue credential</button>
         </div>
       </form>
     </div >

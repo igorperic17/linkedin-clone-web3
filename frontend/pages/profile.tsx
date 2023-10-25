@@ -106,12 +106,13 @@ const UpdatableProfileHeader = ({ userInfo }: ProfileHeaderProps) => {
         return (<>No user info available!</>)
     }
     return (
-        <div className="mb-4 p-3 text-left rounded-xl bg-secondary">
-            <div className="max-w-xs text-lg m-6">
-                <input defaultValue={username} className="text-5xl font-bold mb-4" onChange={onUsernameChangeHandler} />
-                <input defaultValue={bio} className="text-sm" onChange={onBioChangeHandler} />
+        <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
+            <h1 className="font-bold text-xl">About</h1>
+            <div className="max-w-xs text-lg mt-6">
+                <input defaultValue={username} className="text-4xl font-bold mb-4 max-w-xs" onChange={onUsernameChangeHandler} />
+                <textarea defaultValue={bio} className="text-sm min-w-xl" onChange={onBioChangeHandler} />
             </div>
-            <button onClick={onSavehandler}>Save</button>
+            <button className="text-lg px-2 py-1 text-sm border border-neutral rounded-full text-neutral hover:border-primary hover:bg-primary hover:text-secondary" onClick={onSavehandler}>Save</button>
         </div>
     )
 }
@@ -121,7 +122,7 @@ const ReadOnlyProfileHeader = ({ userInfo }: ProfileHeaderProps) => {
         return (<>No user info available!</>)
     }
     return (
-        <div className="mb-4 p-3 text-left rounded-xl bg-secondary">
+        <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
             <div className="max-w-xs text-lg m-6">
                 <h2 className="text-5xl font-bold mb-4">{userInfo.username}</h2>
                 <p className="text-sm">{userInfo.bio}</p>
@@ -132,7 +133,7 @@ const ReadOnlyProfileHeader = ({ userInfo }: ProfileHeaderProps) => {
 
 const EmploymentSection = ({ state }: SectionProps<CredentialEmployment>) => {
     return (
-        <div className="mb-4 p-3 text-left rounded-xl bg-secondary" >
+        <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
             <h3 className="font-bold mb-2">Work Experience</h3>
             {state.sort((a, b) => (b.end_year ?? (99999 + (b.start_year ?? 0))) - (a.end_year ?? (99999 + (a.start_year ?? 0)))).map((value, index) => (
                 <EmploymentListItem data={value} key={index} />
@@ -143,7 +144,7 @@ const EmploymentSection = ({ state }: SectionProps<CredentialEmployment>) => {
 
 const DegreeSection = ({ state }: SectionProps<CredentialDegree>) => {
     return (
-        <div className="mb-4 p-3 text-left rounded-xl bg-secondary">
+        <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
             <h3 className="font-bold mb-2">Education</h3>
             {state.sort((a, b) => b.year - a.year).map((value, index) => (
                 <DegreeListItem data={value} key={index} />
@@ -154,7 +155,7 @@ const DegreeSection = ({ state }: SectionProps<CredentialDegree>) => {
 
 const EventSection = ({ state }: SectionProps<CredentialEvent>) => {
     return (
-        <div className="mb-4 p-3 text-left rounded-xl bg-secondary">
+        <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
             <h3 className="font-bold mb-2">Certificates</h3>
             {state.sort((a, b) => (b.year ?? 0) - (a.year ?? 0)).map((value, index) => (
                 <EventListItem data={value} key={index} />
@@ -233,7 +234,6 @@ const Profile = () => {
 
     return (
         <div>
-            {walletAddress}
             {isUpdatable
                 ? (<UpdatableProfileHeader userInfo={userInfo} walletAddress={walletAddress} />)
                 : (<ReadOnlyProfileHeader userInfo={userInfo} walletAddress={walletAddress} />)}

@@ -1,12 +1,12 @@
 import Image from "next/image"
 import photo from '../public/profile-pic.jpg'
 import { useWrappedClientContext } from "contexts/client"
+import { useEffect, useState } from "react"
+import { UserInfo } from "contracts/MyProject.types"
+import UpdatableProfile from "components/updatableProfile"
 
 interface ReadOnlyProfileProps {
     walletAddress: string | null
-}
-interface UpdatableProfileProps {
-    walletAddress: string
 }
 
 const ReadOnlyProfile = ({ walletAddress }: ReadOnlyProfileProps) => {
@@ -19,7 +19,7 @@ const ReadOnlyProfile = ({ walletAddress }: ReadOnlyProfileProps) => {
                 <div className="max-w-xs text-lg m-6">
                     <h2 className="text-5xl font-bold mb-4">NATALIA DAVTYAN</h2>
                     <p className="text-sm">Junior frontend developer and code reviewer<br></br>
-                    React | JavaScript | HTML | CSS</p>
+                        React | JavaScript | HTML | CSS</p>
                 </div>
             </div>
             <div className="mb-4">
@@ -36,7 +36,7 @@ const ReadOnlyProfile = ({ walletAddress }: ReadOnlyProfileProps) => {
                 </div>
                 <div className="mb-4 p-3 text-left rounded-xl bg-secondary">
                     <h3 className="font-bold mb-2">Education</h3>
-                        <p className="text-primary"><a>Request info &#8594;</a></p>
+                    <p className="text-primary"><a>Request info &#8594;</a></p>
                 </div>
                 <div className="mb-4 p-3 text-left rounded-xl bg-secondary">
                     <h3 className="font-bold mb-2">Certificates</h3>
@@ -61,19 +61,33 @@ const ReadOnlyProfile = ({ walletAddress }: ReadOnlyProfileProps) => {
     )
 }
 
-const UpdatableProfile = ({ walletAddress }: UpdatableProfileProps) => {
-    return (
-        <div>
-            TODO: Implement form update for current user. {walletAddress}
-        </div>
-    )
-}
-
 const Profile = () => {
-    const { walletAddress, requestedProfile } = useWrappedClientContext()
+    const { requestedProfile, walletAddress, signingClient } = useWrappedClientContext()
     const { walletAddress: requestedProfileWalletAddress } = requestedProfile
+    const [userInfo, setUserInfo] = useState<UserInfo>()
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const userInfo = await signingClient?.queryContractSmart(
+                'testcore1vhmj54h6dcttmlstnqcwmfxy0cwjh3k05wr852l3a76fgn300s0seefzf2', // TODO: Hardcoded
+                {
+                    resolve_user_info: {
+                        address: requestedProfileWalletAddress,
+                    },
+                }
+            )
+            return userInfo
+        }
+
+        fetchData()
+            .then((userInfo) => {
+                console.log(userInfo)
+                setUserInfo(userInfo)
+            })
+            .catch(console.error)
+    }, [requestedProfileWalletAddress])
     if (walletAddress === requestedProfileWalletAddress) {
-        return <UpdatableProfile walletAddress={walletAddress} />
+        return <UpdatableProfile walletAddress={requestedProfileWalletAddress} />
     }
     return <ReadOnlyProfile walletAddress={requestedProfileWalletAddress} />
 }

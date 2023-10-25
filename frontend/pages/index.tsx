@@ -3,37 +3,13 @@ import Link from 'next/link'
 import WalletLoader from 'components/WalletLoader'
 import { useWrappedClientContext } from 'contexts/client'
 import {
-  NEXT_APP_CONTRACT_ADDRESS,
   NEXT_PUBLIC_CHAIN_EXPLORER,
   NEXT_PUBLIC_CHAIN_NAME,
 } from 'constants/constants'
-import { useEffect, useState } from 'react'
 
 const Home: NextPage = () => {
-  const { walletAddress, signingClient, contractClient } =
+  const { walletAddress, contractClient } =
     useWrappedClientContext()
-  const [userInfo, setUserInfo] = useState<any>()
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const userInfo = await signingClient?.queryContractSmart(
-        NEXT_APP_CONTRACT_ADDRESS,
-        {
-          resolve_user_info: {
-            address: walletAddress,
-          },
-        }
-      )
-      return userInfo
-    }
-
-    fetchData()
-      .then((userInfo) => {
-        console.log(userInfo)
-        setUserInfo(userInfo)
-      })
-      .catch(console.error)
-  }, [walletAddress])
 
   const register = () => {
     contractClient
@@ -72,22 +48,6 @@ const Home: NextPage = () => {
             {walletAddress}
           </a>
         </Link>
-        {userInfo && (
-          <div>
-            <h3 className="text-2xl font-bold">Registered!</h3>
-            {JSON.stringify(userInfo)}
-          </div>
-        )}
-        {!userInfo && (
-          <div>
-            <button
-              className="mt-4 md:mt-0 btn btn-primary btn-lg font-semibold hover:text-base-100 text-2xl rounded-full flex-grow"
-              onClick={register}
-            >
-              Register
-            </button>
-          </div>
-        )}
       </div>
 
       <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 max-w-full sm:w-full">

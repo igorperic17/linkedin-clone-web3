@@ -11,9 +11,9 @@ const RequestedProfileInput = () => {
     setRequestedProfileWalletAddress(e.target.value || walletAddress);
   }
   return (
-    <div className="flex items-center my-4 p-3 text-left rounded-xl bg-secondary">
-      <p className="mr-2">Enter wallet address of desired profile:</p>
-      <input type="text" className="w-3/4 p-2 rounded-xl rounded-r-none" onChange={onChangeHandler}></input>
+    <div className="flex items-center m-1 py-4 px-8 text-left rounded-xl bg-secondary ">
+      <p className="mr-6">Enter wallet address of desired profile:</p>
+      <input type="text" className="w-full p-2 rounded-xl" onChange={onChangeHandler}></input>
     </div>
   )
 }
@@ -34,7 +34,7 @@ function Nav() {
   return (
     <div className="border-b w-screen px-2 md:px-16">
       <nav
-        className="flex flex-wrap text-center md:text-left md:flex flex-row w-full justify-between items-center py-4 ">
+        className="flex flex-wrap text-center md:text-left md:flex flex-row w-full justify-between items-center py-4">
         <div className="flex items-center">
           <Link href="/">
             <a className="link link-hover font-semibold text-xl md:text-2xl align-top">
@@ -45,9 +45,9 @@ function Nav() {
         <div className="flex flex-grow lg:flex-grow-0 max-w-full">
           <RequestedProfileInput />
         </div>
-        <div className="flex flex-grow lg:flex-grow-0 max-w-full">
+        <div className="flex flex-grow lg:flex-grow-0 w-1/6">
           <button
-            className="block btn btn-outline btn-primary w-full max-w-full truncate"
+            className="py-4 px-8 block border border-neutral hover:text-secondary hover:bg-primary w-full max-w-full rounded-xl"
             onClick={handleConnect}
           >
             {walletAddress || 'Connect Wallet'}

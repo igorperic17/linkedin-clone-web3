@@ -17,7 +17,7 @@ interface ReadOnlyProfileSectionProps {
 interface ProfileHeaderProps {
   walletAddress: string
   userInfo: UserInfo | undefined
-  toggle: ReactElement
+  toggle?: ReactElement
 }
 
 export interface ProfileProps {
@@ -101,8 +101,8 @@ const EventListItem = ({ data }: ListItemProps<CredentialEvent>) => {
   )
 }
 
-const UpdatableProfileHeader = ({ userInfo, toggle }: ProfileHeaderProps) => {
-  const { contractClient, auth } = useWrappedClientContext()
+const EditableProfileHeader = ({ userInfo, toggle }: ProfileHeaderProps) => {
+  const { contractClient, auth, walletAddress } = useWrappedClientContext()
 
   const [username, setUsername] = useState<string | undefined>(
     userInfo?.username
@@ -136,9 +136,6 @@ const UpdatableProfileHeader = ({ userInfo, toggle }: ProfileHeaderProps) => {
     setBio(e.target.value)
   }
 
-  if (!userInfo) {
-    return <>No user info available!</>
-  }
   return (
     <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
       <h1 className="font-bold text-3xl">About</h1>
@@ -263,7 +260,7 @@ const fetchUserInfo = async (
 ) => {
   try {
     const userInfo = await signingClient?.queryContractSmart(
-      'testcore1vhmj54h6dcttmlstnqcwmfxy0cwjh3k05wr852l3a76fgn300s0seefzf2', // TODO: Hardcoded
+      requestedProfileWalletAddress,
       {
         resolve_user_info: {
           address: requestedProfileWalletAddress,
@@ -329,7 +326,7 @@ const Profile = () => {
   }
 
   const isEditable = walletAddress === requestedProfileWalletAddress
-  const shouldRenderEditable = isEditable && isEdit
+  const shouldRenderEditable = isEditable && (isEdit || !userInfo)
 
   const toggle = (
     <h1 className="text-3xl">
@@ -346,16 +343,15 @@ const Profile = () => {
   return (
     <div>
       {shouldRenderEditable ? (
-        <UpdatableProfileHeader
+        <EditableProfileHeader
           userInfo={userInfo}
           walletAddress={walletAddress}
-          toggle={toggle}
+          toggle={userInfo && toggle}
         />
       ) : (
         <ReadOnlyProfileHeader
           userInfo={userInfo}
           walletAddress={walletAddress}
-          toggle={toggle}
         />
       )}
       <ReadOnlyProfileSection credentials={credentials} />

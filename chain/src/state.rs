@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use cosmwasm_std::{Coin, Storage};
+use cosmwasm_std::{Coin, Storage, Addr};
 use cosmwasm_storage::{
     bucket, bucket_read, singleton, singleton_read, Bucket, ReadonlyBucket, ReadonlySingleton,
     Singleton,
@@ -15,6 +15,7 @@ pub static CREDENTIAL_RESOLVER_KEY: &[u8] = b"credentialresolver";
 pub struct Config {
     pub purchase_price: Option<Coin>,
     pub transfer_price: Option<Coin>,
+    pub owner: Addr
 }
 
 pub fn config(storage: &mut dyn Storage) -> Singleton<Config> {
@@ -43,9 +44,9 @@ pub fn resolver_read(storage: &dyn Storage) -> ReadonlyBucket<UserInfo> {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub enum CredentialEnum {
-    Degree { data: CredentialDegree },
-    Employment { data: CredentialEmployment },
-    Event { data: CredentialEvent}
+    Degree { data: CredentialDegree, vc_hash: String},
+    Employment { data: CredentialEmployment, vc_hash: String },
+    Event { data: CredentialEvent, vc_hash: String}
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]

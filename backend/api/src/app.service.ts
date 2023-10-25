@@ -17,8 +17,12 @@ export class AppService {
   async login(walletAddress: string): Promise<LoginResponse> {
     // 1. Retrieve the user. NOTE: Also creates the account using wallet address as ID if it does not exist.
     const user = await this.getOrCreateUserAsync(walletAddress)
-    // 2. Retrieve the user's did if available, or create a new one linked to the wallet.
-    const did = user.did ? user.did : await this.createDidAsync(user.token)
+    const dids = await this.getDidsAsync(user.token);
+    if (dids.length > 1) {
+      throw new Error('More than one DID registered.');
+    }
+    // 3. Provide the user's did if available, or create a new one linked to the wallet.
+    const did = dids.length > 0 ? dids[0] : await this.createDidAsync(user.token)
     return {
       did,
       token: user.token
@@ -34,24 +38,29 @@ export class AppService {
 
   async issueCredential(token: string, credential: object): Promise<any> {
     // 1. Resolve token to id (walletAddress) through userInfo.
-    const { id, did } = await this.getUserInfoAsync(token);
-    if (!id || !did) {
-      throw new Error('User is not registered.');
+    const { id } = await this.getUserInfoAsync(token);
+    const dids = await this.getDidsAsync(token);
+    if (!id || dids.length !== 1) {
+      throw new Error('User is not properly registered.');
     }
     // 2. Make issuance request.
     const { oidcUri } = await this.requestCredentialIssuanceAsync(credential)
     // 3. Initiate issuance.
     const { sessionId } = await this.initiateCredentialIssuanceAsync({ token, oidcUri })
     // 4. Accept issuance.
-    await this.acceptCredentialIssuance({ token, did, sessionId })
+    await this.acceptCredentialIssuance({ token, did: dids[0], sessionId })
   }
 
   private async getOrCreateUserAsync(walletAddress: string): Promise<UserInfoResponse> {
-    const payload = {
-      id: walletAddress
-    }
+    const payload = { id: walletAddress }
     const response = await axios.post(`${this.apiUrl}/auth/login`, payload)
     this.validateResponse(response)
+    return response.data
+  }
+
+  private async getDidsAsync(token: string): Promise<string[]> {
+    const options = this.getRequestOptions(token)
+    const response = await axios.get(`${this.apiUrl}/wallet/did/list`, options)
     return response.data
   }
 

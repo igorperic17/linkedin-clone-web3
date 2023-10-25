@@ -24,7 +24,6 @@ export interface LoginResponse {
 
 export interface UserInfoResponse {
   id: string | null
-  did: string | null
   token: string
 }
 

@@ -44,6 +44,8 @@ pub enum QueryMsg {
     // list all credentials linked to a provided wallet
     #[returns(ListCredentialsResponse)]
     ListCredentials { address: String },
+    #[returns(ResolveRecordResponse)]
+    IsSubscribed { source_profile_did: String, target_profile_did: String },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
@@ -60,3 +62,9 @@ pub struct ListCredentialsResponse {
 pub struct VerifyCredentialResponse {
     pub valid: bool,
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct IsSubscribedlResponse {
+    pub subscribed: bool,
+}
+

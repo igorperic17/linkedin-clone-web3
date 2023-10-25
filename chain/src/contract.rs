@@ -1,3 +1,4 @@
+use std::borrow::BorrowMut;
 use std::ptr::null;
 
 use crate::coin_helpers::assert_sent_sufficient_coin;
@@ -11,9 +12,11 @@ use crate::state::{
     CredentialEnum, UserInfo, self,
 };
 use coreum_wasm_sdk::assetnft::{self, DISABLE_SENDING};
-use coreum_wasm_sdk::core::CoreumMsg;
+use coreum_wasm_sdk::core::{CoreumMsg, CoreumQueries};
+use coreum_wasm_sdk::nft::{NFT, self};
+use coreum_wasm_sdk::types::coreum::asset;
 use cosmwasm_std::{
-    entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdError, StdResult,
+    entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdError, StdResult, QueryRequest,
 };
 // use uuid::Uuid;
 
@@ -22,7 +25,7 @@ use cosmwasm_std::{
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn instantiate(
-    deps: DepsMut,
+    deps: DepsMut<CoreumQueries>,
     _env: Env,
     info: MessageInfo,
     msg: InstantiateMsg,
@@ -40,11 +43,11 @@ pub fn instantiate(
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn execute(
-    deps: DepsMut,
+    deps: DepsMut<CoreumQueries>,
     env: Env,
     info: MessageInfo,
     msg: ExecuteMsg,
-) -> Result<Response, ContractError> {
+) -> Result<Response<CoreumMsg>, ContractError> {
     match msg {
         ExecuteMsg::Register { did, username, bio } => {
             execute_register(deps, env, info, did, username, bio)
@@ -59,13 +62,13 @@ pub fn execute(
 }
 
 pub fn execute_register(
-    deps: DepsMut,
+    deps: DepsMut<CoreumQueries>,
     _env: Env,
     info: MessageInfo,
     did: String,
     username: String,
     bio: String,
-) -> Result<Response, ContractError> {
+) -> Result<Response<CoreumMsg>, ContractError> {
     // we only need to check here - at point of registration
     // validate_name(&name)?;
     let config_state = config(deps.storage).load()?;
@@ -104,26 +107,26 @@ pub fn execute_register(
 
 
 pub fn execute_subscribe(
-    deps: DepsMut,
+    deps: DepsMut<CoreumQueries>,
     _env: Env,
     info: MessageInfo,
     target_profile: String,
-) -> Result<Response, ContractError> {
+) -> Result<Response<CoreumMsg>, ContractError> {
     // we only need to check here - at point of registration
     // validate_name(&name)?;
     let config_state = config(deps.storage).load()?;
     assert_sent_sufficient_coin(&info.funds, config_state.purchase_price)?;
 
     // let id = Uuid::new_v4().to_string();
-    let id = "aisuhfaius".to_string();
+    let id = info.sender.to_string();
     match mint_nft(deps, info, target_profile, id) {
-        Ok(msg) => { return Ok(cosmwasm_std::Response::new()) },
+        Ok(msg) => { return Ok(msg) },
         Err(error) => { return Err(error) }
     }
 }
 
 fn mint_nft(
-    deps: DepsMut,
+    deps: DepsMut<CoreumQueries>,
     info: MessageInfo,
     class_id: String,
     id: String,
@@ -150,19 +153,19 @@ fn mint_nft(
 
 // TODO: must pay for this... ?
 pub fn execute_issue_credential(
-    deps: DepsMut,
+    deps: DepsMut<CoreumQueries>,
     _env: Env,
     info: MessageInfo,
     cred: CredentialEnum,
-) -> Result<Response, ContractError> {
+) -> Result<Response<CoreumMsg>, ContractError> {
 
     let config_state = config(deps.storage).load()?;
-    
+
     // TODO: uncomment this to allow only the contract owner to issue creds
     // TODO: modify this to allow only trusted entities to issue creds 
-    // if info.sender != config_state.owner {
-    //     return Err(ContractError::Unauthorized {  });
-    // }
+    if info.sender != config_state.owner {
+        return Err(ContractError::Unauthorized {  });
+    }
 
     // TODO: change this to the cost of the NFT issue
     assert_sent_sufficient_coin(&info.funds, config_state.purchase_price)?;
@@ -182,16 +185,24 @@ pub fn execute_issue_credential(
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
-pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
+pub fn query(
+    deps: Deps<CoreumQueries>, 
+    env: Env, 
+    info: MessageInfo, 
+    msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::ResolveUserInfo { address } => query_resolver(deps, env, address),
         QueryMsg::Config {} => to_binary(&config_read(deps.storage).load()?),
         QueryMsg::ListCredentials { address } => query_list_credentials(deps, env, address),
         QueryMsg::VerifyCredential { data } => query_verify_credentials(deps, env, data),
+        QueryMsg::IsSubscribed { source_profile_did, target_profile_did } => {
+            let coreum_deps = deps;
+            query_is_subscribed(coreum_deps, env, info, source_profile_did, target_profile_did)
+        }
     }
 }
 
-fn query_resolver(deps: Deps, _env: Env, address: String) -> StdResult<Binary> {
+fn query_resolver(deps: Deps<CoreumQueries>, _env: Env, address: String) -> StdResult<Binary> {
     let key = address.clone();
 
     let user_info = match resolver_read(deps.storage).may_load(key.as_bytes())? {
@@ -205,7 +216,7 @@ fn query_resolver(deps: Deps, _env: Env, address: String) -> StdResult<Binary> {
     to_binary(&resp)
 }
 
-fn query_list_credentials(deps: Deps, _env: Env, address: String) -> StdResult<Binary> {
+fn query_list_credentials(deps: Deps<CoreumQueries>, _env: Env, address: String) -> StdResult<Binary> {
     let key = address.clone();
 
     match credential_read(deps.storage).may_load(key.as_bytes())? {
@@ -222,7 +233,7 @@ fn query_list_credentials(deps: Deps, _env: Env, address: String) -> StdResult<B
 }
 
 fn query_verify_credentials(
-    deps: Deps,
+    deps: Deps<CoreumQueries>,
     _env: Env,
     credential: CredentialEnum,
 ) -> StdResult<Binary> {
@@ -241,4 +252,26 @@ fn query_verify_credentials(
         }
         None => return StdResult::Err(StdError::NotFound { kind: key.clone() }),
     };
+}
+
+fn query_is_subscribed(
+    deps: Deps<CoreumQueries>,
+    env: Env,
+    info: MessageInfo,
+    source_profile_did: String,
+    target_profile_did: String,
+) -> StdResult<Binary> {
+
+    // // get the NFT class by id (all profile "subscribers", a.k.a. their NFTs)
+    let class_id = target_profile_did.clone();
+    let id = source_profile_did.clone();
+    let request: QueryRequest<CoreumQueries> =
+        CoreumQueries::NFT(nft::Query::NFT { class_id, id }).into();
+    let res: Option<nft::NFTResponse> = deps.querier.query(&request)?;
+    
+    // // TODO: change this
+    match res {
+        Some(nft) => to_binary(&true),
+        None => to_binary(&false)
+    }
 }

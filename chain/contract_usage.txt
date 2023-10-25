@@ -52,13 +52,13 @@ cored q wasm contract-state smart $CONTRACT_ADDRESS "$NAME_QUERY" --output json 
 
 Issue couple of event attendance credentials:
 
-ISSUE='{"issue_credential":{"credential": {"Event": { "data": {"owner":"testcore1399zr8frstagy2u5vl2w4uv0pdzxzh3vejtzuk", "event_name":"EBC Hackathon", "organizer_did":"org_did_real","year":2023}}}}}'
+ISSUE='{"issue_credential":{"credential": {"Event": { "data": {"owner":"testcore1399zr8frstagy2u5vl2w4uv0pdzxzh3vejtzuk", "event_name":"EBC Hackathon", "organizer_did":"org_did_real","year":2023}, "vc_hash":""}}}}'
 cored tx wasm execute $CONTRACT_ADDRESS "$ISSUE" --amount 100$COREUM_DENOM --from wallet -b block -y $COREUM_NODE_ARGS $COREUM_CHAIN_ID_ARGS
 
-ISSUE='{"issue_credential":{"credential": {"Event": { "data": {"owner":"testcore1399zr8frstagy2u5vl2w4uv0pdzxzh3vejtzuk", "event_name":"EBC Afterparty", "organizer_did":"org_did_real","year":2024}}}}}'
+ISSUE='{"issue_credential":{"credential": {"Event": { "data": {"owner":"testcore1399zr8frstagy2u5vl2w4uv0pdzxzh3vejtzuk", "event_name":"EBC Afterparty", "organizer_did":"org_did_real","year":2024}, "vc_hash":""}}}}'
 cored tx wasm execute $CONTRACT_ADDRESS "$ISSUE" --amount 100$COREUM_DENOM --from wallet -b block -y $COREUM_NODE_ARGS $COREUM_CHAIN_ID_ARGS
 
-ISSUE='{"issue_credential":{"credential": {"Degree": { "data": {"owner":"testcore1399zr8frstagy2u5vl2w4uv0pdzxzh3vejtzuk", "institution_name":"MIT", "institution_did":"MIT_did_real","year":2021}}}}}'
+ISSUE='{"issue_credential":{"credential": {"Degree": { "data": {"owner":"testcore1399zr8frstagy2u5vl2w4uv0pdzxzh3vejtzuk", "institution_name":"MIT", "institution_did":"MIT_did_real","year":2021}, "vc_hash":""}}}}'
 cored tx wasm execute $CONTRACT_ADDRESS "$ISSUE" --amount 100$COREUM_DENOM --from wallet -b block -y $COREUM_NODE_ARGS $COREUM_CHAIN_ID_ARGS
 
 

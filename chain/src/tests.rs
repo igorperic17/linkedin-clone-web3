@@ -1,18 +1,25 @@
 #[cfg(test)]
 mod tests {
-    use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
-    use cosmwasm_std::{coin, coins, from_binary, Coin, Deps, DepsMut, Addr};
+    use std::borrow::BorrowMut;
+    use std::marker::PhantomData;
+
+    use coreum_wasm_sdk::core::CoreumQueries;
+    use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info, MockStorage, MockApi, MockQuerier};
+    use cosmwasm_std::{coin, coins, from_binary, Coin, Deps, DepsMut, Addr, OwnedDeps, Empty, QuerierWrapper};
 
     use crate::contract::{execute, instantiate, query};
     // use crate::error::ContractError;
     use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, ResolveRecordResponse, ListCredentialsResponse, VerifyCredentialResponse};
     use crate::state::{Config, CredentialDegree, CredentialEnum, CredentialEvent};
 
-    fn assert_did_owner(deps: Deps, owner: &Addr, did: &str) {
 
+    fn assert_did_owner(deps: Deps<CoreumQueries>, owner: &Addr, did: &str) {
+
+        let info = mock_info("creator", &[]);
         let res = query(
             deps,
             mock_env(),
+            info,
             QueryMsg::ResolveUserInfo { address: owner.to_string()} ,
         )
         .unwrap();
@@ -24,13 +31,14 @@ mod tests {
         }
     }
 
-    fn assert_config_state(deps: Deps, expected: Config) {
-        let res = query(deps, mock_env(), QueryMsg::Config {}).unwrap();
+    fn assert_config_state(deps: Deps<CoreumQueries>, expected: Config) {
+        let info = mock_info("creator", &[]);
+        let res = query(deps, mock_env(), info, QueryMsg::Config {}).unwrap();
         let value: Config = from_binary(&res).unwrap();
         assert_eq!(value, expected);
     }
 
-    fn mock_init_with_price(deps: DepsMut, purchase_price: Coin, transfer_price: Coin) {
+    fn mock_init_with_price(deps: DepsMut<CoreumQueries>, purchase_price: Coin, transfer_price: Coin) {
         let msg = InstantiateMsg {
             purchase_price: Some(purchase_price),
             transfer_price: Some(transfer_price),
@@ -41,7 +49,7 @@ mod tests {
             .expect("contract successfully handles InstantiateMsg");
     }
 
-    fn mock_init_no_price(deps: DepsMut) {
+    fn mock_init_no_price(deps: DepsMut<CoreumQueries>) {
         let msg = InstantiateMsg {
             purchase_price: None,
             transfer_price: None,
@@ -52,7 +60,7 @@ mod tests {
             .expect("contract successfully handles InstantiateMsg");
     }
 
-    fn mock_alice_registers_name(deps: DepsMut, sent: &[Coin]) {
+    fn mock_alice_registers_name(deps: DepsMut<CoreumQueries>, sent: &[Coin]) {
         // alice can register an available name
         let info = mock_info("alice_key", sent);
         let msg = ExecuteMsg::Register {
@@ -95,11 +103,25 @@ mod tests {
     //     );
     // }
 
+    // fn mock_dependencies_coreum() -> DepsMut {
+    //     let mut deps_empty = mock_dependencies();
+    //     DepsMut {
+    //         storage: deps_empty.storage.borrow_mut(),
+    //         api: &deps_empty.api,
+    //         querier: QuerierWrapper::new(&deps_empty.querier),
+    //     }
+    // }
+
     #[test]
     fn register_available_name_and_query_works() {
-        let mut deps = mock_dependencies();
-        mock_init_no_price(deps.as_mut());
-        mock_alice_registers_name(deps.as_mut(), &[]);
+        let mut deps_empty = mock_dependencies();
+        let deps: DepsMut<CoreumQueries> = DepsMut {
+            storage: deps_empty.storage.borrow_mut(),
+            api: &deps_empty.api,
+            querier: QuerierWrapper::new(&deps_empty.querier),
+        };
+        mock_init_no_price(deps);
+        mock_alice_registers_name(deps, &[]);
 
         // querying for name resolves to correct address
         let alice = mock_info("alice_key", &[]);
@@ -112,7 +134,7 @@ mod tests {
 
 
 
-    fn mock_register_diploma(deps: DepsMut, sent: &[Coin], diploma: CredentialEnum) {
+    fn mock_register_diploma(deps: DepsMut<CoreumQueries>, sent: &[Coin], diploma: CredentialEnum) {
         // alice can register an available name
         let info = mock_info("alice_key", sent);
         let msg = ExecuteMsg::IssueCredential { credential: diploma };
@@ -122,9 +144,14 @@ mod tests {
 
     #[test]
     fn issue_diploma_works() {
-        let mut deps = mock_dependencies();
-        mock_init_no_price(deps.as_mut());
-        mock_alice_registers_name(deps.as_mut(), &[]);
+        let mut deps_empty = mock_dependencies();
+        let deps: DepsMut<CoreumQueries> = DepsMut {
+            storage: deps_empty.storage.borrow_mut(),
+            api: &deps_empty.api,
+            querier: QuerierWrapper::new(&deps_empty.querier),
+        };
+        mock_init_no_price(deps);
+        mock_alice_registers_name(deps, &[]);
 
         let diploma = CredentialEnum::Degree { data: CredentialDegree {
             owner: "alice_key".to_string(),
@@ -134,12 +161,14 @@ mod tests {
         },
             vc_hash: "".to_string(), };
 
-        mock_register_diploma(deps.as_mut(), &[], diploma.clone());
+        mock_register_diploma(deps_empty, &[], diploma.clone());
 
+        let info = mock_info("alice_key", &[]);
         // check if alice has the diploma
         let res = query(
             deps.as_ref(),
             mock_env(),
+            info,
             QueryMsg::ListCredentials { address: "alice_key".to_string() } 
         )
         .unwrap();
@@ -152,9 +181,14 @@ mod tests {
 
     #[test]
     fn issue_event_works() {
-        let mut deps = mock_dependencies();
-        mock_init_no_price(deps.as_mut());
-        mock_alice_registers_name(deps.as_mut(), &[]);
+        let mut deps_empty = mock_dependencies();
+        let mut deps: DepsMut<CoreumQueries> = DepsMut {
+            storage: deps_empty.storage.borrow_mut(),
+            api: &deps_empty.api,
+            querier: QuerierWrapper::new(&deps_empty.querier),
+        };
+        mock_init_no_price(deps);
+        mock_alice_registers_name(deps, &[]);
 
         let ebc9_event = CredentialEnum::Event { data: CredentialEvent {
             owner: "alice_key".to_string(),
@@ -164,12 +198,15 @@ mod tests {
         },
             vc_hash: "".to_string(), };
 
-        mock_register_diploma(deps.as_mut(), &[], ebc9_event.clone());
+        mock_register_diploma(deps, &[], ebc9_event.clone());
+
+        let info = mock_info("alice_key", &[]);
 
         // check if alice has the diploma
         let res = query(
             deps.as_ref(),
             mock_env(),
+            info,
             QueryMsg::ListCredentials { address: "alice_key".to_string() } 
         )
         .unwrap();
@@ -199,9 +236,20 @@ mod tests {
 
     #[test]
     fn credential_verification_works() {
-        let mut deps = mock_dependencies();
-        mock_init_no_price(deps.as_mut());
-        mock_alice_registers_name(deps.as_mut(), &[]);
+        let mut deps_empty = mock_dependencies();
+        let mut deps: DepsMut<CoreumQueries> = DepsMut {
+            storage: deps_empty.storage.borrow_mut(),
+            api: &deps_empty.api,
+            querier: QuerierWrapper::new(&deps_empty.querier),
+        };
+        // let deps_mut: DepsMut<CoreumQueries> = DepsMut {
+        //     storage: deps_empty.storage.borrow_mut(),
+        //     api: &deps_empty.api,
+        //     querier: QuerierWrapper::new(&deps_empty.querier),
+        // };
+
+        mock_init_no_price(deps);
+        mock_alice_registers_name(deps, &[]);
 
         let ebc9_event = CredentialEnum::Event { data: CredentialEvent {
             owner: "alice_key".to_string(),
@@ -211,18 +259,21 @@ mod tests {
         },
             vc_hash: "".to_string(), };
 
-        mock_register_diploma(deps.as_mut(), &[], ebc9_event.clone());
+        mock_register_diploma(deps, &[], ebc9_event.clone());
 
+        let info = mock_info("alice_key", &[]);
         // check if alice has the event
         let res = query(
             deps.as_ref(),
             mock_env(),
+            info, 
             QueryMsg::VerifyCredential { data: ebc9_event }
         )
         .unwrap();
         let value: VerifyCredentialResponse = from_binary(&res).unwrap();
         assert_eq!(value.valid, true);
 
+        let info = mock_info("alice_key", &[]);
 
         let ebc9_event_fake = CredentialEnum::Event { data: CredentialEvent {
             owner: "alice_key".to_string(),
@@ -235,6 +286,7 @@ mod tests {
         let res = query(
             deps.as_ref(),
             mock_env(),
+            info,
             QueryMsg::VerifyCredential { data: ebc9_event_fake }
         )
         .unwrap();

@@ -31,7 +31,7 @@ function Nav() {
   const PUBLIC_SITE_ICON_URL = NEXT_PUBLIC_SITE_ICON_URL || ''
 
   return (
-    <div className="border-b w-screen px-8 bg-white">
+    <div className="border-b w-screen px-8">
       <nav
         className="flex justify-between items-center m-auto text-center w-2/3 py-2">
         <div className="flex items-center -mr-32">

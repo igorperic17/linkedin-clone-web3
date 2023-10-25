@@ -26,7 +26,7 @@ function WalletLoader({
 
   if (walletAddress === '') {
     return (
-      <div className="max-w-full text-center flex flex-col items-center bg-[url('../public/bg.jpg')]">
+      <div className="max-w-full text-center flex flex-col items-center">
         <h1 className="mb-4 text-9xl font-bold">
           CoredIn
         </h1>

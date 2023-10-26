@@ -21,13 +21,18 @@ export class ContractsService {
   constructor() {}
 
   async isAllowed(requesterAddress: string, targetAddress: string) {
+    // TODO -debug !!!!!
+    // MOATH late night allowing data for demo purposes..
+
+    return true;
+    console.log('checking allowance from', requesterAddress, targetAddress);
     const client = await this.getClient();
     try {
       const res = await client.isSubscribed({
         requesterAddress,
         targetAddress,
       });
-      // TODO -debug
+
       console.log('contract is allowed response');
       console.log(res);
       return res.subscribed;

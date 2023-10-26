@@ -393,7 +393,8 @@ const Profile = () => {
           console.log(vcs)
           setVerifiableCredentials(vcs)
         })
-      } else {
+      } else if (isSubscribed) {
+        // TODO - move to bakcend
         backendService
           .listOtherCredentials(
             walletAddress,
@@ -407,7 +408,13 @@ const Profile = () => {
           })
       }
     }
-  }, [signingClient, contractClient, requestedProfileWalletAddress, auth])
+  }, [
+    signingClient,
+    isSubscribed,
+    contractClient,
+    requestedProfileWalletAddress,
+    auth,
+  ])
 
   if (!requestedProfileWalletAddress) {
     return <></>

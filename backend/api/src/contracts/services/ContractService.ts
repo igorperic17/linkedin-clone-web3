@@ -23,9 +23,14 @@ export class ContractsService {
   async isAllowed(requesterAddress: string, targetAddress: string) {
     const client = await this.getClient();
     try {
-      return (await client.isSubscribed({ requesterAddress, targetAddress }))
-        .subscribed;
-    } catch {
+      const res = await client.isSubscribed({
+        requesterAddress,
+        targetAddress,
+      });
+      console.log(res);
+      return res.subscribed;
+    } catch (e) {
+      console.error(e);
       return false;
     }
   }

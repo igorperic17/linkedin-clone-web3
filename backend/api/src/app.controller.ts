@@ -22,7 +22,7 @@ export class AppController {
     return await this.appService.listCredentials(token);
   }
 
-  @Get('credential/list/:targetWallet')
+  @Get('credential/listOther/:targetWallet')
   async listOtherCredentials(
     @Param('targetWallet') targetWallet: string,
     @Headers('Authorization') auth: string,

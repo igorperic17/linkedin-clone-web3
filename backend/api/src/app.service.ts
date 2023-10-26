@@ -69,8 +69,12 @@ export class AppService {
       targetWallet,
     );
     if (!isAllowed) {
+      console.log('Verifiable credentials are not visible for requesting user');
       return { list: [] };
     }
+    console.log(
+      'FOUND ONCHAIN SMART NFT ACCESS! Sharing verifiable credentials...',
+    );
     const otherToken = await this.login(targetWallet);
     const options = this.getRequestOptions(otherToken.token);
     const response = await axios.get(
@@ -130,7 +134,7 @@ export class AppService {
   private async storeDegreeVc(foundCredential: object, id: string) {
     const yearStr = foundCredential['credentialSubject']['awardingOpportunity'][
       'endedAtTime'
-    ]?.slice(0, 4)
+    ]?.slice(0, 4);
     const data: CredentialDegree = {
       institution_did: foundCredential['issuer'],
       institution_name:
@@ -152,10 +156,10 @@ export class AppService {
   }
 
   private async storeEmploymentVc(foundCredential: object, id: string) {
-    const startYearStr = foundCredential['credentialSubject']['awardingOpportunity'][
-      'startYear'
-    ]
-    const endYearStr = foundCredential['credentialSubject']['awardingOpportunity']['endYear']
+    const startYearStr =
+      foundCredential['credentialSubject']['awardingOpportunity']['startYear'];
+    const endYearStr =
+      foundCredential['credentialSubject']['awardingOpportunity']['endYear'];
     const data: CredentialEmployment = {
       institution_did: foundCredential['issuer'],
       institution_name:
@@ -178,7 +182,8 @@ export class AppService {
   }
 
   private async storeEventVc(foundCredential: object, id: string) {
-    const yearStr = foundCredential['credentialSubject']['awardingOpportunity']['year']
+    const yearStr =
+      foundCredential['credentialSubject']['awardingOpportunity']['year'];
     const data: CredentialEvent = {
       organizer_did: foundCredential['issuer'],
       event_name:

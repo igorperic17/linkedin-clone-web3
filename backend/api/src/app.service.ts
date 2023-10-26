@@ -128,6 +128,9 @@ export class AppService {
   }
 
   private async storeDegreeVc(foundCredential: object, id: string) {
+    const yearStr = foundCredential['credentialSubject']['awardingOpportunity'][
+      'endedAtTime'
+    ]?.slice(0, 4)
     const data: CredentialDegree = {
       institution_did: foundCredential['issuer'],
       institution_name:
@@ -135,11 +138,7 @@ export class AppService {
           'awardingBody'
         ]['preferredName'],
       owner: id,
-      year: parseInt(
-        foundCredential['credentialSubject']['awardingOpportunity'][
-          'endedAtTime'
-        ]?.slice(0, 4),
-      ),
+      year: yearStr ? parseInt(yearStr) : undefined,
     };
     console.log('found diploma, mapped to onchain', data);
     await this.contractsService.storeVc({
@@ -153,6 +152,10 @@ export class AppService {
   }
 
   private async storeEmploymentVc(foundCredential: object, id: string) {
+    const startYearStr = foundCredential['credentialSubject']['awardingOpportunity'][
+      'startYear'
+    ]
+    const endYearStr = foundCredential['credentialSubject']['awardingOpportunity']['endYear']
     const data: CredentialEmployment = {
       institution_did: foundCredential['issuer'],
       institution_name:
@@ -160,14 +163,8 @@ export class AppService {
           'awardingBody'
         ]['preferredName'],
       owner: id,
-      start_year: parseInt(
-        foundCredential['credentialSubject']['awardingOpportunity'][
-          'startYear'
-        ],
-      ),
-      end_year: parseInt(
-        foundCredential['credentialSubject']['awardingOpportunity']['endYear'],
-      ),
+      start_year: startYearStr ? parseInt(startYearStr) : undefined,
+      end_year: endYearStr ? parseInt(endYearStr) : undefined,
     };
     console.log('found employment, mapped to onchain', data);
     await this.contractsService.storeVc({
@@ -181,6 +178,7 @@ export class AppService {
   }
 
   private async storeEventVc(foundCredential: object, id: string) {
+    const yearStr = foundCredential['credentialSubject']['awardingOpportunity']['year']
     const data: CredentialEvent = {
       organizer_did: foundCredential['issuer'],
       event_name:
@@ -188,9 +186,7 @@ export class AppService {
           'eventName'
         ],
       owner: id,
-      year: parseInt(
-        foundCredential['credentialSubject']['awardingOpportunity']['year'],
-      ),
+      year: yearStr ? parseInt(yearStr) : undefined,
     };
     console.log('found event, mapped to onchain', data);
     await this.contractsService.storeVc({

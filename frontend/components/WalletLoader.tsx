@@ -35,12 +35,12 @@ function WalletLoader({
           objectFit="cover"
           style={{ opacity: '0.1', filter: 'grayscale(100%)' }}
         />
-        <div className="z-10 p-16 backdrop-blur-sm rounded-xl" style={{ boxShadow: '0px 0px 50px 0px #707070' }}>
-          <h1 className="mb-10 text-9xl font-bold">
-            CoredIn
+        <div className="z-10 p-16 backdrop-blur-sm rounded-xl flex flex-col items-center" style={{ boxShadow: '0px 0px 50px 0px #707070' }}>
+          <h1 className="mb-10 text-8xl font-bold">
+            Cored<span className="bg-primary px-3 ml-2 text-secondary rounded-xl">In</span>
           </h1>
           <p className="text-md max-w-md">
-            PoC Social app for professionals to leverage control over their sensitive data through self-sovereign identity (SSI).
+            PoC Social app for professionals to leverage control over their sensitive data through self-sovereign identity (SSI)
           </p>
           <div className="flex flex-wrap rounded-xl items-center justify-around md:max-w-4xl mt-10 sm:w-full">
             <button

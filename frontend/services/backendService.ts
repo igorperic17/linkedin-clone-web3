@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { Authentication } from 'hooks/client'
 
-const baseApiUrl = process.env.NEXT_PUBLIC_DEVELOPMENT === 'true' ? 'api' : 'https://api.coredin.rubentewierik.dev'
-// const baseApiUrl = 'api'
+// const baseApiUrl = process.env.NEXT_PUBLIC_DEVELOPMENT === 'true' ? 'api' : 'https://api.coredin.rubentewierik.dev'
+const baseApiUrl = 'api'
 const DUMMY_CREDENTIAL = {
   credentialData: {
     credentialSubject: {

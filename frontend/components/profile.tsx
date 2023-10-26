@@ -166,7 +166,7 @@ const EditableProfileHeader = ({
       />
       <div className="w-3/4 text-lg">
         <div className="flex flex-col align-center gap-5">
-          <h1 className="font-bold text-4xl">About</h1>
+          <h1 className="font-bold text-4xl flex flex-col">About</h1>
           <input
             defaultValue={username}
             className="text-xl px-4 py-2 rounded-xl bg-secondary"

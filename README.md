@@ -13,7 +13,7 @@ CoredIn MVP has been developed during the EBC hackathon by a **multidisplicary t
 ## Project Presentation
 
 You can find our presentation with all product and tech details
-<a href="https://www.canva.com/design/DAFyLR0keU8/rTj4WoBQXyiraOsQPNotTQ/view?utm_content=DAFyLR0keU8&utm_campaign=designshare&utm_medium=link&utm_source=viewer" target="_blank"> here</a>.
+<a href="https://www.canva.com/design/DAFyLR0keU8/rTj4WoBQXyiraOsQPNotTQ/view?utm_content=DAFyLR0keU8&utm_campaign=designshare&utm_medium=link&utm_source=viewer" target="_blank"> here</a>. An static PDF file of the presentation is also available inside the repo at documents/CoredInPresentation.pdf
 
 ## Project Demo
 

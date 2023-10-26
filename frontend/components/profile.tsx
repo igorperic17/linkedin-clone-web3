@@ -18,6 +18,7 @@ interface ProfileHeaderProps {
   walletAddress: string
   userInfo: UserInfo | undefined
   toggle?: ReactElement
+  setUserInfo?: (userInfo: UserInfo) => void
 }
 
 export interface ProfileProps {
@@ -101,8 +102,8 @@ const EventListItem = ({ data }: ListItemProps<CredentialEvent>) => {
   )
 }
 
-const EditableProfileHeader = ({ userInfo, toggle }: ProfileHeaderProps) => {
-  const { contractClient, auth, walletAddress } = useWrappedClientContext()
+const EditableProfileHeader = ({ userInfo, toggle, setUserInfo }: ProfileHeaderProps) => {
+  const { contractClient, auth } = useWrappedClientContext()
 
   const [username, setUsername] = useState<string | undefined>(
     userInfo?.username
@@ -111,9 +112,10 @@ const EditableProfileHeader = ({ userInfo, toggle }: ProfileHeaderProps) => {
 
   const onSaveHandler = async () => {
     if (auth) {
+      const userInfo = { username: username ?? '', bio: bio ?? '', did: auth.did }
       await contractClient
         ?.register(
-          { username: username ?? '', bio: bio ?? '', did: auth.did },
+          userInfo,
           {
             amount: [], //{ denom: 'utestcore', amount: '100000000000000000000000000' }
             gas: '1000000',
@@ -125,6 +127,7 @@ const EditableProfileHeader = ({ userInfo, toggle }: ProfileHeaderProps) => {
           console.log('Registered!')
           console.log(res)
         })
+        setUserInfo && setUserInfo(userInfo)
     }
   }
 
@@ -347,6 +350,7 @@ const Profile = () => {
           userInfo={userInfo}
           walletAddress={walletAddress}
           toggle={userInfo && toggle}
+          setUserInfo={setUserInfo}
         />
       ) : (
         <ReadOnlyProfileHeader

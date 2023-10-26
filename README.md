@@ -17,7 +17,7 @@ You can find our presentation with all product and tech details
 
 ## Project Demo
 
-(Add video?)
+Here's a <a href="https://clipchamp.com/watch/UHVPrAPOLjh" target="_blank"> video</a> showcasing the flows implemented during the hackathon.
 
 ## Testnet deployment
 

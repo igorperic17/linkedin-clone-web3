@@ -12,25 +12,22 @@ const Home: NextPage = () => {
   const { walletAddress } = useWrappedClientContext()
 
   return (
-    <WalletLoader>
-      <h1 className="text-6xl font-bold mb-8">
-        Welcome to {NEXT_PUBLIC_CHAIN_NAME}!
-      </h1>
-      <div className="text-2xl mb-8">
-        Your wallet address is: <pre></pre>
-        <Link
-          href={NEXT_PUBLIC_CHAIN_EXPLORER + 'coreum/accounts/' + walletAddress}
-          passHref
-        >
-          <a
-            target="_blank"
-            rel="noreferrer"
-            className="font-mono break-all whitespace-pre-wrap hover:text-primary"
+      <WalletLoader>
+        <div className="text-2xl mb-8">
+          Your wallet address is: <pre></pre>
+          <Link
+            href={NEXT_PUBLIC_CHAIN_EXPLORER + 'coreum/accounts/' + walletAddress}
+            passHref
           >
-            {walletAddress}
-          </a>
-        </Link>
-      </div>
+            <a
+              target="_blank"
+              rel="noreferrer"
+              className="font-mono break-all whitespace-pre-wrap hover:text-primary"
+            >
+              {walletAddress}
+            </a>
+          </Link>
+        </div>
       <Profile />
     </WalletLoader>
   )

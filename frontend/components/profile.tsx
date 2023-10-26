@@ -10,6 +10,7 @@ import {
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { MyProjectClient } from 'contracts/MyProject.client'
 import { NEXT_APP_CONTRACT_ADDRESS } from 'constants/constants'
+import Image from 'next/image'
 
 interface ReadOnlyProfileSectionProps {
   credentials: CredentialEnum[]
@@ -144,7 +145,18 @@ const EditableProfileHeader = ({ userInfo, toggle, setUserInfo }: ProfileHeaderP
     <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
       <h1 className="font-bold text-3xl">About</h1>
       {toggle}
-      <div className="max-w-xs text-lg mt-3">
+      <div className="max-w-xs text-lg mt-3 w-[200] h-[200]">
+        <div>
+            <Image
+            src="/person-icon-1682.png"
+            alt="Profile icon"
+            // width={200}
+            // height={200}
+            layout="fill"
+            // objectFit="contain"
+            //   style={{ opacity: '0.1', filter: 'grayscale(100%)' }}
+            />
+        </div>
         <input
           defaultValue={username}
           className="text-2xl font-bold mb-4 max-w-xs"
@@ -185,62 +197,68 @@ const ReadOnlyProfileHeader = ({ userInfo, toggle }: ProfileHeaderProps) => {
 }
 
 const EmploymentSection = ({ state }: SectionProps<CredentialEmployment>) => {
-  if (state.length === 0) {
-    return <></>
-  }
+//   if (state.length === 0) {
+//     return <></>
+//   }
   return (
     <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-      <h1 className="font-bold text-3xl mb-2">Work Experience</h1>
-      {state
-        .sort(
-          (a, b) =>
-            (b.end_year ?? 99999 + (b.start_year ?? 0)) -
-            (a.end_year ?? 99999 + (a.start_year ?? 0))
-        )
-        .map((value, index) => (
-          <>
-            <EmploymentListItem data={value} key={index} />
-            {index < state.length - 1 && <Divider />}
-          </>
-        ))}
+      <h1 className="font-bold text-3xl mb-2">Employment</h1>
+      <div className="mb-2">
+      <p>Apple</p>
+      <p>
+        2020-2022
+      </p>
+    </div>
+    <div className="mb-2">
+      <p>Microsoft</p>
+      <p>
+        2016-2019
+      </p>
+    </div>
+    <div className="mb-2">
+      <p>IKEA</p>
+      <p>
+        2014-2015
+      </p>
+    </div>
     </div>
   )
 }
 
 const DegreeSection = ({ state }: SectionProps<CredentialDegree>) => {
-  if (state.length === 0) {
-    return <></>
-  }
+//   if (state.length === 0) {
+//     return <></>
+//   }
   return (
     <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
       <h1 className="font-bold text-3xl mb-2">Education</h1>
-      {state
-        .sort((a, b) => b.year - a.year)
-        .map((value, index) => (
-          <>
-            <DegreeListItem data={value} key={index} />
-            {index < state.length - 1 && <Divider />}
-          </>
-        ))}
+        <div className="mb-2">
+            <p>Harvard</p>
+            <p>2015</p>
+        </div>
+        <div className="mb-2">
+            <p>MIT</p>
+            <p>2005</p>
+        </div>
     </div>
   )
 }
 
 const EventSection = ({ state }: SectionProps<CredentialEvent>) => {
-  if (state.length === 0) {
-    return <></>
-  }
+//   if (state.length === 0) {
+//     return <></>
+//   }
   return (
     <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-      <h1 className="font-bold text-4xl mb-2">Certificates</h1>
-      {state
-        .sort((a, b) => (b.year ?? 0) - (a.year ?? 0))
-        .map((value, index) => (
-          <>
-            <EventListItem data={value} key={index} />
-            {index < state.length - 1 && <Divider />}
-          </>
-        ))}
+      <h1 className="font-bold text-4xl mb-2">Events</h1>
+        <div className="mb-2">
+            <p>EBC9 Hackathon 2023</p>
+            <p>2023</p>
+        </div>
+        <div className="mb-2">
+            <p>European Blockchain Convention</p>
+            <p>2023</p>
+        </div>
     </div>
   )
 }
@@ -250,7 +268,7 @@ const ReadOnlyProfileSection = ({
 }: ReadOnlyProfileSectionProps) => {
   const { employments, degrees, events } = groupCredentials(credentials)
   return (
-    <div className="mb-4">
+    <div className="grid grid-cols-2 gap-2 w-3/4">
       <EmploymentSection state={employments} />
       <DegreeSection state={degrees} />
       <EventSection state={events} />

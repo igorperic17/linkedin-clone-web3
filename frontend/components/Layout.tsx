@@ -36,14 +36,14 @@ export default function Layout({ children }: { children: ReactNode }) {
             className=""
             href="/event"
           >
-            <a className="hover:text-primary">Event</a>
+            <a className="hover:text-primary">Events</a>
           </Link>
           <span className="px-10"> | </span>
           <Link
             className=""
             href="/employment"
           >
-            <a className="hover:text-primary">Work experience</a>
+            <a className="hover:text-primary">Employment</a>
           </Link>
         </footer>
       </div>

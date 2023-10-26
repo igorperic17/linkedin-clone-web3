@@ -13,22 +13,7 @@ const Home: NextPage = () => {
 
   return (
       <WalletLoader>
-        <div className="text-2xl mb-8">
-          Your wallet address is: <pre></pre>
-          <Link
-            href={NEXT_PUBLIC_CHAIN_EXPLORER + 'coreum/accounts/' + walletAddress}
-            passHref
-          >
-            <a
-              target="_blank"
-              rel="noreferrer"
-              className="font-mono break-all whitespace-pre-wrap hover:text-primary"
-            >
-              {walletAddress}
-            </a>
-          </Link>
-        </div>
-      <Profile />
+        <Profile />
     </WalletLoader>
   )
 }

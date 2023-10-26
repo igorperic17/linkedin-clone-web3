@@ -153,39 +153,39 @@ const EditableProfileHeader = ({
   }
 
   return (
-    <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-      <h1 className="font-bold text-3xl">About</h1>
-      {toggle}
-      <div className="max-w-xs text-lg mt-3 w-[200] h-[200]">
-        <div>
-          <Image
-            src="/person-icon-1682.png"
-            alt="Profile icon"
-            // width={200}
-            // height={200}
-            layout="fill"
-            // objectFit="contain"
-            //   style={{ opacity: '0.1', filter: 'grayscale(100%)' }}
-          />
+        <div className="my-4 p-8 text-left rounded-xl bg-white flex gap-8">
+            {toggle}
+            <Image
+                src="/person-icon-1682.png"
+                alt="Profile icon"
+                width={240}
+                height={220}
+            />
+            <div className="w-3/4 text-lg">
+                <div className="flex flex-col align-center gap-5">
+                    <h1 className="font-bold text-4xl">About</h1>
+                    <input
+                        defaultValue={username}
+                        className="text-xl px-4 py-2 rounded-xl bg-secondary"
+                        onChange={onUsernameChangeHandler}
+                        placeholder={'Enter fullname or username'}
+                    />
+                    {/* <h2 className="font-bold text-3xl">Some Username</h2> */}
+                    <textarea
+                        defaultValue={bio}
+                        className="text-sm font-bold px-4 py-2 rounded-xl bg-secondary"
+                        onChange={onBioChangeHandler}
+                        placeholder={'Enter a short bio'}
+                    />
+                    <button
+                        className="px-2 py-1 text-md text-primary border border-primary rounded-full text-neutral hover:border-primary hover:bg-primary hover:text-secondary"
+                        onClick={onSaveHandler}
+                    >
+                        Save
+                    </button>
+                </div>
+            </div>
         </div>
-        <input
-          defaultValue={username}
-          className="text-2xl font-bold mb-4 max-w-xs"
-          onChange={onUsernameChangeHandler}
-        />
-        <textarea
-          defaultValue={bio}
-          className="text-sm"
-          onChange={onBioChangeHandler}
-        />
-      </div>
-      <button
-        className="text-lg px-2 py-1 text-sm border border-neutral rounded-full text-neutral hover:border-primary hover:bg-primary hover:text-secondary"
-        onClick={onSaveHandler}
-      >
-        Save
-      </button>
-    </div>
   )
 }
 
@@ -220,20 +220,26 @@ const EmploymentSection = ({ state }: SectionProps<CredentialEmployment>) => {
   //     return <></>
   //   }
   return (
-    <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-      <h1 className="font-bold text-3xl mb-2">Employment</h1>
-      <div className="mb-2">
-        <p>Apple</p>
-        <p>2020-2022</p>
+    <div className="mb-4 py-3 px-6 text-left rounded-xl bg-white">
+      <h1 className="font-bold text-3xl mb-6">Employment</h1>
+      <div className="mb-2 pb-2 border-b">
+        <p className="text-xl font-bold">Apple</p>
+        <p className="text-sm border-secondary">
+            2020-2022
+        </p>
       </div>
-      <div className="mb-2">
-        <p>Microsoft</p>
-        <p>2016-2019</p>
-      </div>
-      <div className="mb-2">
-        <p>IKEA</p>
-        <p>2014-2015</p>
-      </div>
+        <div className="mb-2 pb-2 border-b">
+            <p className="text-xl font-bold">Microsoft</p>
+            <p className="text-sm border-secondary">
+                2016-2019
+            </p>
+        </div>
+        <div className="mb-2 pb-2 border-b">
+            <p className="text-xl font-bold">IKEA</p>
+            <p className="text-sm border-secondary">
+                2014-2015
+            </p>
+        </div>
     </div>
   )
 }
@@ -243,16 +249,16 @@ const DegreeSection = ({ state }: SectionProps<CredentialDegree>) => {
   //     return <></>
   //   }
   return (
-    <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-      <h1 className="font-bold text-3xl mb-2">Education</h1>
-      <div className="mb-2">
-        <p>Harvard</p>
-        <p>2015</p>
-      </div>
-      <div className="mb-2">
-        <p>MIT</p>
-        <p>2005</p>
-      </div>
+    <div className="mb-4 py-3 px-6 text-left rounded-xl bg-white">
+      <h1 className="font-bold text-3xl mb-6">Education</h1>
+        <div className="mb-2 pb-2 border-b">
+            <p className="text-xl font-bold">Harvard</p>
+            <p className="text-sm border-secondary">2015</p>
+        </div>
+        <div className="mb-2 pb-2 border-b">
+            <p className="text-xl font-bold">MIT</p>
+            <p className="text-sm border-secondary">2005</p>
+        </div>
     </div>
   )
 }
@@ -262,16 +268,16 @@ const EventSection = ({ state }: SectionProps<CredentialEvent>) => {
   //     return <></>
   //   }
   return (
-    <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-      <h1 className="font-bold text-4xl mb-2">Events</h1>
-      <div className="mb-2">
-        <p>EBC9 Hackathon 2023</p>
-        <p>2023</p>
-      </div>
-      <div className="mb-2">
-        <p>European Blockchain Convention</p>
-        <p>2023</p>
-      </div>
+    <div className="mb-4 py-3 px-6 text-left rounded-xl bg-white">
+      <h1 className="font-bold text-3xl mb-6">Events</h1>
+        <div className="mb-2 pb-2 border-b">
+            <p className="text-xl font-bold">EBC9 Hackathon 2023</p>
+            <p className="text-sm border-secondary">2023</p>
+        </div>
+        <div className="mb-2 pb-2 border-b">
+            <p className="text-xl font-bold">European Blockchain Convention</p>
+            <p className="text-sm border-secondary">2023</p>
+        </div>
     </div>
   )
 }
@@ -281,7 +287,7 @@ const ReadOnlyProfileSection = ({
 }: ReadOnlyProfileSectionProps) => {
   const { employments, degrees, events } = groupCredentials(credentials)
   return (
-    <div className="grid grid-cols-2 gap-2 w-3/4">
+    <div className="flex flex-col flex-wrap gap-2 grow">
       <EmploymentSection state={employments} />
       <DegreeSection state={degrees} />
       <EventSection state={events} />

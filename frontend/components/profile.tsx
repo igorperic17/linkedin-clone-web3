@@ -9,6 +9,7 @@ import {
 } from 'contracts/MyProject.types'
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { MyProjectClient } from 'contracts/MyProject.client'
+import { NEXT_APP_CONTRACT_ADDRESS } from 'constants/constants'
 
 interface ReadOnlyProfileSectionProps {
   credentials: CredentialEnum[]
@@ -117,7 +118,7 @@ const EditableProfileHeader = ({ userInfo, toggle, setUserInfo }: ProfileHeaderP
         ?.register(
           userInfo,
           {
-            amount: [], //{ denom: 'utestcore', amount: '100000000000000000000000000' }
+            amount: [],
             gas: '1000000',
           },
           'Registration',
@@ -146,7 +147,7 @@ const EditableProfileHeader = ({ userInfo, toggle, setUserInfo }: ProfileHeaderP
       <div className="max-w-xs text-lg mt-3">
         <input
           defaultValue={username}
-          className="text-4xl font-bold mb-4 max-w-xs"
+          className="text-2xl font-bold mb-4 max-w-xs"
           onChange={onUsernameChangeHandler}
         />
         <textarea
@@ -174,7 +175,7 @@ const ReadOnlyProfileHeader = ({ userInfo, toggle }: ProfileHeaderProps) => {
       <h1 className="font-bold text-3xl">About</h1>
       {toggle}
       <div className="max-w-xs text-lg mt-3">
-        <h2 className="text-4xl font-bold mb-4 max-w-xs">
+        <h2 className="text-2xl font-bold mb-4 max-w-xs">
           {userInfo.username}
         </h2>
         <p className="text-sm">{userInfo.bio}</p>
@@ -262,15 +263,15 @@ const fetchUserInfo = async (
   requestedProfileWalletAddress: string
 ) => {
   try {
-    const userInfo = await signingClient?.queryContractSmart(
-      requestedProfileWalletAddress,
+    const response = await signingClient?.queryContractSmart(
+      NEXT_APP_CONTRACT_ADDRESS,
       {
         resolve_user_info: {
           address: requestedProfileWalletAddress,
         },
       }
     )
-    return userInfo
+    return response.user_info
   } catch (e) {
     return undefined
   }
@@ -308,7 +309,7 @@ const Profile = () => {
       if (signingClient) {
         fetchUserInfo(signingClient, requestedProfileWalletAddress)
           .then((userInfo) => {
-            console.log(userInfo)
+            console.log('userInfo', userInfo)
             setUserInfo(userInfo)
           })
           .catch(console.error)
@@ -330,7 +331,6 @@ const Profile = () => {
 
   const isEditable = walletAddress === requestedProfileWalletAddress
   const shouldRenderEditable = isEditable && (isEdit || !userInfo)
-
   const toggle = (
     <h1 className="text-3xl">
       Edit{' '}
@@ -349,13 +349,14 @@ const Profile = () => {
         <EditableProfileHeader
           userInfo={userInfo}
           walletAddress={walletAddress}
-          toggle={userInfo && toggle}
+          toggle={userInfo ? toggle : undefined}
           setUserInfo={setUserInfo}
         />
       ) : (
         <ReadOnlyProfileHeader
           userInfo={userInfo}
           walletAddress={walletAddress}
+          toggle={userInfo ? toggle : undefined}
         />
       )}
       <ReadOnlyProfileSection credentials={credentials} />

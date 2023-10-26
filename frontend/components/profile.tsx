@@ -11,7 +11,6 @@ import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { MyProjectClient } from 'contracts/MyProject.client'
 import { NEXT_APP_CONTRACT_ADDRESS } from 'constants/constants'
 import Image from 'next/image'
-import { BackendService } from 'services/backendService'
 
 interface ReadOnlyProfileSectionProps {
   credentials: CredentialEnum[]
@@ -166,7 +165,7 @@ const EditableProfileHeader = ({
       />
       <div className="w-3/4 text-lg">
         <div className="flex flex-col align-center gap-5">
-          <h1 className="font-bold text-4xl flex flex-col">About</h1>
+          <h1 className="font-bold text-4xl">About</h1>
           <input
             defaultValue={username}
             className="text-xl px-4 py-2 rounded-xl bg-secondary"
@@ -321,6 +320,7 @@ const fetchCredentials = async (
     })
     return response.credentials
   } catch (e) {
+    console.error(e)
     return []
   }
 }
@@ -371,12 +371,14 @@ const Profile = () => {
           .catch(console.error)
       }
       if (contractClient) {
-        fetchCredentials(contractClient, requestedProfileWalletAddress).then(
-          (credentials) => {
-            console.log(credentials)
-            setCredentials(credentials)
-          }
-        )
+        fetchCredentials(contractClient, requestedProfileWalletAddress)
+          .then(
+            (credentials) => {
+              console.log('creds', credentials)
+              setCredentials(credentials)
+            }
+          )
+          .catch(console.error)
         contractClient
           .isSubscribed({
             requesterAddress: walletAddress,
@@ -387,7 +389,7 @@ const Profile = () => {
             console.log(val)
             setIsSubscribed(val.subscribed)
           })
-          .catch((e) => console.log(e))
+          .catch(console.error)
       }
 
       if (requestedProfileWalletAddress === walletAddress) {
@@ -438,27 +440,31 @@ const Profile = () => {
   )
 
   return (
-    <div>
-      {shouldRenderEditable ? (
-        <EditableProfileHeader
-          userInfo={userInfo}
-          walletAddress={walletAddress}
-          requestedProfileWalletAddress={requestedProfileWalletAddress}
-          toggle={userInfo ? toggle : undefined}
-          setUserInfo={setUserInfo}
-          setIsEdit={setIsEdit}
-        />
-      ) : (
-        <ReadOnlyProfileHeader
-          userInfo={userInfo}
-          walletAddress={walletAddress}
-          requestedProfileWalletAddress={requestedProfileWalletAddress}
-          onSubscribe={() => onSubscribe(requestedProfileWalletAddress)}
-          toggle={userInfo ? toggle : undefined}
-        />
-      )}
-      <ReadOnlyProfileSection credentials={credentials} />
-    </div>
+    <>
+      <div>
+        {shouldRenderEditable ? (
+          <EditableProfileHeader
+            userInfo={userInfo}
+            walletAddress={walletAddress}
+            requestedProfileWalletAddress={requestedProfileWalletAddress}
+            toggle={userInfo ? toggle : undefined}
+            setUserInfo={setUserInfo}
+            setIsEdit={setIsEdit}
+          />
+        ) : (
+          <ReadOnlyProfileHeader
+            userInfo={userInfo}
+            walletAddress={walletAddress}
+            requestedProfileWalletAddress={requestedProfileWalletAddress}
+            onSubscribe={() => onSubscribe(requestedProfileWalletAddress)}
+            toggle={userInfo ? toggle : undefined}
+          />
+        )}
+        <ReadOnlyProfileSection credentials={credentials} />
+      </div>
+      <h1 className="font-bold text-4xl">Verifiable credentials</h1>
+      <div className='max-w-screen-lg'>{JSON.stringify(verifiableCredentials)}</div>
+    </>
   )
 }
 

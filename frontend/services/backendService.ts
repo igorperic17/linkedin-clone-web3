@@ -1,8 +1,7 @@
 import axios from 'axios'
 import { Authentication } from 'hooks/client'
 
-// const baseApiUrl = process.env.NEXT_PUBLIC_DEVELOPMENT === 'true' ? 'api' : 'https://api.coredin.rubentewierik.dev'
-const baseApiUrl = 'api'
+const baseApiUrl = process.env.NEXT_PUBLIC_DEVELOPMENT === 'true' ? 'api' : 'https://api.coredin.rubentewierik.dev'
 const DUMMY_CREDENTIAL = {
   credentialData: {
     credentialSubject: {
@@ -26,6 +25,7 @@ interface LoginResponse {
 }
 
 export class BackendService {
+
   async listOwnCredentials(walletAddress: string, auth: Authentication) {
     const { token } = auth
     if (!token) {
@@ -39,31 +39,7 @@ export class BackendService {
     return response.data
   }
 
-  async listOtherCredentials(
-    walletAddress: string,
-    targetAddress: string,
-    auth: Authentication
-  ) {
-    const { token } = auth
-    if (!token) {
-      throw new Error('Unable to authorize user ' + walletAddress)
-    }
-
-    const response = await axios.get(
-      baseApiUrl + '/credential/listOther/' + targetAddress,
-      {
-        headers: { Authorization: 'Bearer ' + token },
-      }
-    )
-
-    return response.data
-  }
-
-  async issueCredential(
-    walletAddress: string,
-    credential: object | undefined,
-    auth: Authentication
-  ) {
+  async issueCredential(walletAddress: string, credential: object | undefined, auth: Authentication) {
     const { token } = auth
     if (!token) {
       throw 'Unable to authorize user ' + walletAddress
@@ -81,7 +57,9 @@ export class BackendService {
     return response.data
   }
 
-  public static async login(walletAddress: string): Promise<LoginResponse> {
+  public static async login(
+    walletAddress: string
+  ): Promise<LoginResponse> {
     const response = await axios.post(baseApiUrl + '/auth/login', {
       walletAddress,
     })

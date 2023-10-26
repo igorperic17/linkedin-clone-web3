@@ -24,13 +24,6 @@ const Event = () => {
     lastName,
     did
   }: IssueEventCredentialsParameters) => {
-    let yearInt
-    try {
-      yearInt = parseInt(year)
-    } catch (e) {
-      yearInt = 2023
-    }
-
     return {
       credentialData: {
         credentialSubject: {
@@ -41,7 +34,7 @@ const Event = () => {
               preferredName: "European Blockchain Convention"
             },
             eventName: eventName,
-            year: year
+            year: parseInteger(year) ?? 2023
           },
           familyName: lastName,
           givenNames: firstName

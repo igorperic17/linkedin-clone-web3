@@ -23,4 +23,10 @@ Here's a <a href="https://clipchamp.com/watch/UHVPrAPOLjh" target="_blank"> vide
 
 The app has been succesfully deployed in testnet!
 
+The CoredIN contracs is deployed at <a href="https://explorer.testnet-1.coreum.dev/coreum/accounts/testcore1wnc64xdun6m754crqhxsht09ad4zv7dw0t26msq7m36004rjnlyqhpykdn" target="_blank"> testcore1wnc64xdun6m754crqhxsht09ad4zv7dw0t26msq7m36004rjnlyqhpykdn</a>.
+
 You can play around with it here: <a href="https://coredin.rubentewierik.dev/" target="_blank"> https://coredin.rubentewierik.dev/</a>.
+
+## Production environment
+
+The app is not prod ready yet but hopefully it's going to be available soon at https://cored.in

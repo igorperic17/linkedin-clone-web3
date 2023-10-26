@@ -138,7 +138,7 @@ export class AppService {
           'awardingBody'
         ]['preferredName'],
       owner: id,
-      year: yearStr ? parseInt(yearStr) : undefined,
+      year: parseInteger(yearStr),
     };
     console.log('found diploma, mapped to onchain', data);
     await this.contractsService.storeVc({
@@ -163,8 +163,8 @@ export class AppService {
           'awardingBody'
         ]['preferredName'],
       owner: id,
-      start_year: startYearStr ? parseInt(startYearStr) : undefined,
-      end_year: endYearStr ? parseInt(endYearStr) : undefined,
+      start_year: parseInteger(startYearStr),
+      end_year: parseInteger(endYearStr),
     };
     console.log('found employment, mapped to onchain', data);
     await this.contractsService.storeVc({
@@ -186,7 +186,7 @@ export class AppService {
           'eventName'
         ],
       owner: id,
-      year: yearStr ? parseInt(yearStr) : undefined,
+      year: parseInteger(yearStr),
     };
     console.log('found event, mapped to onchain', data);
     await this.contractsService.storeVc({

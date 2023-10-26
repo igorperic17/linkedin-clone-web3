@@ -156,15 +156,15 @@ const EditableProfileHeader = ({
 
   return (
     <div className="my-4 p-8 text-left rounded-xl bg-white flex gap-8">
-      {toggle}
       <Image
         src="/person-icon-1682.png"
         alt="Profile icon"
         width={240}
-        height={220}
+        height={294}
       />
-      <div className="w-3/4 text-lg">
+      <div className="text-lg">
         <div className="flex flex-col align-center gap-5">
+          {toggle}
           <h1 className="font-bold text-4xl">About</h1>
           <input
             defaultValue={username}
@@ -193,6 +193,7 @@ const EditableProfileHeader = ({
 
 const ReadOnlyProfileHeader = ({
   userInfo,
+  walletAddress,
   requestedProfileWalletAddress,
   onSubscribe,
   toggle,
@@ -200,18 +201,27 @@ const ReadOnlyProfileHeader = ({
   if (!userInfo) {
     return <>No user info available!</>
   }
+  const shouldRenderSubscribeButton = walletAddress !== requestedProfileWalletAddress
   return (
-    <div className="mb-4 p-3 text-left rounded-xl bg-secondary border-solid border-2 border-black">
-      <button onClick={onSubscribe}>SUBSCRIBE!</button>
-      <h1 className="font-bold text-3xl">
-        About {requestedProfileWalletAddress}
-      </h1>
-      {toggle}
-      <div className="max-w-xs text-lg mt-3">
-        <h2 className="text-2xl font-bold mb-4 max-w-xs">
-          {userInfo.username}
-        </h2>
-        <p className="text-sm">{userInfo.bio}</p>
+    <div className="my-4 p-8 text-left rounded-xl bg-white flex gap-8">
+      <Image
+        src="/person-icon-1682.png"
+        alt="Profile icon"
+        width={240}
+        height={294}
+      />
+      <div className="text-lg">
+        <div className="flex flex-col align-center gap-5">
+          {toggle}
+          {shouldRenderSubscribeButton && (<button className='px-2 py-1 text-md text-primary border border-primary rounded-full text-neutral hover:border-primary hover:bg-primary hover:text-secondary' onClick={onSubscribe}>SUBSCRIBE!</button>)}
+          <h1 className="font-bold text-4xl">About</h1>
+          <div className="text-xl px-4 py-2 rounded-xl bg-secondary">
+            {userInfo.username}
+          </div>
+          <div className="text-sm font-bold px-4 py-2 rounded-xl bg-secondary">
+            {userInfo.bio}
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -447,7 +457,7 @@ const Profile = () => {
             userInfo={userInfo}
             walletAddress={walletAddress}
             requestedProfileWalletAddress={requestedProfileWalletAddress}
-            toggle={userInfo ? toggle : undefined}
+            toggle={(isEditable && userInfo) ? toggle : undefined}
             setUserInfo={setUserInfo}
             setIsEdit={setIsEdit}
           />
@@ -457,7 +467,7 @@ const Profile = () => {
             walletAddress={walletAddress}
             requestedProfileWalletAddress={requestedProfileWalletAddress}
             onSubscribe={() => onSubscribe(requestedProfileWalletAddress)}
-            toggle={userInfo ? toggle : undefined}
+            toggle={(isEditable && userInfo) ? toggle : undefined}
           />
         )}
         <ReadOnlyProfileSection credentials={credentials} />

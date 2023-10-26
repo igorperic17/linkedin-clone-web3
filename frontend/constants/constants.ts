@@ -13,4 +13,4 @@ export const NEXT_PUBLIC_SITE_TITLE = 'CoredIn'
 export const NEXT_PUBLIC_SITE_ICON_URL = '/coreum.svg'
 export const NEXT_PUBLIC_GAS_PRICE = '0.0625utestcore'
 export const NEXT_APP_CONTRACT_ADDRESS =
-  'testcore1ss86tm45fcvsumfpjmyescxrucc2gagfm02z0f85a62uppj99ccsy2kq2q'
+  'testcore1wnc64xdun6m754crqhxsht09ad4zv7dw0t26msq7m36004rjnlyqhpykdn'

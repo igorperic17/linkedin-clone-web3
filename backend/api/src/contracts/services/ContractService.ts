@@ -7,7 +7,7 @@ import { MyProjectClient } from '../generated/MyProject.client';
 import { CredentialEnum } from '../generated/MyProject.types';
 
 export const CONTRACT_ADDRESS =
-  'testcore1ss86tm45fcvsumfpjmyescxrucc2gagfm02z0f85a62uppj99ccsy2kq2q';
+  'testcore1wnc64xdun6m754crqhxsht09ad4zv7dw0t26msq7m36004rjnlyqhpykdn';
 
 const coreumAccountPrefix = 'testcore'; // the address prefix (different for different chains/environments)
 const coreumHDPath = "m/44'/990'/0'/0/0"; // coreum HD path (same for all chains/environments)
@@ -27,6 +27,8 @@ export class ContractsService {
         requesterAddress,
         targetAddress,
       });
+      // TODO -debug
+      console.log('contract is allowed response');
       console.log(res);
       return res.subscribed;
     } catch (e) {

@@ -16,6 +16,13 @@ const getIssueEducationCredentialData = ({
   lastName,
   did
 }: IssueEducationCredentialsParameters) => {
+  let yearInt
+  try {
+    yearInt = parseInt(year)
+  } catch (e) {
+    yearInt = 2023
+  }
+
   return {
     credentialData: {
       credentialSubject: {
@@ -28,7 +35,7 @@ const getIssueEducationCredentialData = ({
             preferredName: university,
             registration: '0597065J'
           },
-          endedAtTime: `${year}-06-26T00:00:00Z`,
+          endedAtTime: `${yearInt}-06-26T00:00:00Z`,
           id: 'https://leaston.bcdiploma.com/law-economics-management#AwardingOpportunity',
           identifier: 'https://certificate-demo.bcdiploma.com/check/87ED2F2270E6C41456E94B86B9D9115B4E35BCCAD200A49B846592C14F79C86BV1Fnbllta0NZTnJkR3lDWlRmTDlSRUJEVFZISmNmYzJhUU5sZUJ5Z2FJSHpWbmZZ',
           location: 'FRANCE',

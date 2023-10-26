@@ -18,6 +18,15 @@ const getIssueEmploymentCredentialData = ({
   lastName,
   did
 }: IssueEmploymentCredentialsParameters) => {
+  let startYearSafe
+  let endYearSafe
+  try {
+    startYearSafe = parseInt(startYear)
+    endYearSafe = parseInt(endYear)
+  } catch  (e) {
+    startYearSafe = 2018
+    endYearSafe = 2021
+  }
   return {
     credentialData: {
       credentialSubject: {

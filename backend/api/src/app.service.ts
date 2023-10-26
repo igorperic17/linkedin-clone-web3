@@ -17,6 +17,7 @@ import {
   CredentialEmployment,
   CredentialEvent,
 } from './contracts/generated/MyProject.types';
+import parseInteger from './utils/parseInteger';
 
 @Injectable()
 export class AppService {

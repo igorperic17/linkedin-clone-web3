@@ -1,5 +1,6 @@
 import { useWrappedClientContext } from "contexts/client"
 import React, { useState } from "react"
+import parseInteger from "utils/parseInteger"
 
 interface IssueEducationCredentialsParameters {
   university: string

@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { useWrappedClientContext } from "contexts/client"
+import parseInteger from "utils/parseInteger"
 
 interface IssueEmploymentCredentialsParameters {
   company: string

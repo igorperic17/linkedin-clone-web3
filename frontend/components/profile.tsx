@@ -24,6 +24,7 @@ interface ProfileHeaderProps {
   toggle?: ReactElement
   onSubscribe?: () => void
   setUserInfo?: (userInfo: UserInfo) => void
+  setIsEdit?: (isEdit: boolean) => void
 }
 
 export interface ProfileProps {
@@ -80,10 +81,10 @@ const Divider = () => {
 
 const EmploymentListItem = ({ data }: ListItemProps<CredentialEmployment>) => {
   return (
-    <div className="mb-2">
-      <p>{data.institution_name}</p>
-      <p>
-        {data.start_year}-{data.end_year ?? 'Present'}
+    <div className="mb-2 pb-2 border-b">
+      <p className="text-xl font-bold">{data.institution_name}</p>
+      <p className="text-sm border-secondary">
+        {data.start_year ?? 'Unknown'}-{data.end_year ?? 'Present'}
       </p>
     </div>
   )
@@ -91,18 +92,18 @@ const EmploymentListItem = ({ data }: ListItemProps<CredentialEmployment>) => {
 
 const DegreeListItem = ({ data }: ListItemProps<CredentialDegree>) => {
   return (
-    <div className="mb-2">
-      <p>{data.institution_name}</p>
-      <p>{data.year ?? 'N/A'}</p>
+    <div className="mb-2 pb-2 border-b">
+      <p className="text-xl font-bold">{data.institution_name}</p>
+      <p className="text-sm border-secondary">{data.year ?? 'N/A'}</p>
     </div>
   )
 }
 
 const EventListItem = ({ data }: ListItemProps<CredentialEvent>) => {
   return (
-    <div className="mb-2">
-      <p>{data.event_name}</p>
-      <p>{data.year ?? 'N/A'}</p>
+    <div className="mb-2 pb-2 border-b">
+      <p className="text-xl font-bold">{data.event_name}</p>
+      <p className="text-sm border-secondary">{data.year ?? 'N/A'}</p>
     </div>
   )
 }
@@ -111,6 +112,7 @@ const EditableProfileHeader = ({
   userInfo,
   toggle,
   setUserInfo,
+  setIsEdit
 }: ProfileHeaderProps) => {
   const { contractClient, auth } = useWrappedClientContext()
 
@@ -141,6 +143,7 @@ const EditableProfileHeader = ({
           console.log(res)
         })
       setUserInfo && setUserInfo(userInfo)
+      setIsEdit && setIsEdit(false)
     }
   }
 
@@ -153,39 +156,39 @@ const EditableProfileHeader = ({
   }
 
   return (
-        <div className="my-4 p-8 text-left rounded-xl bg-white flex gap-8">
-            {toggle}
-            <Image
-                src="/person-icon-1682.png"
-                alt="Profile icon"
-                width={240}
-                height={220}
-            />
-            <div className="w-3/4 text-lg">
-                <div className="flex flex-col align-center gap-5">
-                    <h1 className="font-bold text-4xl">About</h1>
-                    <input
-                        defaultValue={username}
-                        className="text-xl px-4 py-2 rounded-xl bg-secondary"
-                        onChange={onUsernameChangeHandler}
-                        placeholder={'Enter fullname or username'}
-                    />
-                    {/* <h2 className="font-bold text-3xl">Some Username</h2> */}
-                    <textarea
-                        defaultValue={bio}
-                        className="text-sm font-bold px-4 py-2 rounded-xl bg-secondary"
-                        onChange={onBioChangeHandler}
-                        placeholder={'Enter a short bio'}
-                    />
-                    <button
-                        className="px-2 py-1 text-md text-primary border border-primary rounded-full text-neutral hover:border-primary hover:bg-primary hover:text-secondary"
-                        onClick={onSaveHandler}
-                    >
-                        Save
-                    </button>
-                </div>
-            </div>
+    <div className="my-4 p-8 text-left rounded-xl bg-white flex gap-8">
+      {toggle}
+      <Image
+        src="/person-icon-1682.png"
+        alt="Profile icon"
+        width={240}
+        height={220}
+      />
+      <div className="w-3/4 text-lg">
+        <div className="flex flex-col align-center gap-5">
+          <h1 className="font-bold text-4xl">About</h1>
+          <input
+            defaultValue={username}
+            className="text-xl px-4 py-2 rounded-xl bg-secondary"
+            onChange={onUsernameChangeHandler}
+            placeholder={'Enter fullname or username'}
+          />
+          {/* <h2 className="font-bold text-3xl">Some Username</h2> */}
+          <textarea
+            defaultValue={bio}
+            className="text-sm font-bold px-4 py-2 rounded-xl bg-secondary"
+            onChange={onBioChangeHandler}
+            placeholder={'Enter a short bio'}
+          />
+          <button
+            className="px-2 py-1 text-md text-primary border border-primary rounded-full text-neutral hover:border-primary hover:bg-primary hover:text-secondary"
+            onClick={onSaveHandler}
+          >
+            Save
+          </button>
         </div>
+      </div>
+    </div>
   )
 }
 
@@ -216,68 +219,62 @@ const ReadOnlyProfileHeader = ({
 }
 
 const EmploymentSection = ({ state }: SectionProps<CredentialEmployment>) => {
-  //   if (state.length === 0) {
-  //     return <></>
-  //   }
+  if (state.length === 0) {
+    return <></>
+  }
   return (
     <div className="mb-4 py-3 px-6 text-left rounded-xl bg-white">
       <h1 className="font-bold text-3xl mb-6">Employment</h1>
-      <div className="mb-2 pb-2 border-b">
-        <p className="text-xl font-bold">Apple</p>
-        <p className="text-sm border-secondary">
-            2020-2022
-        </p>
-      </div>
-        <div className="mb-2 pb-2 border-b">
-            <p className="text-xl font-bold">Microsoft</p>
-            <p className="text-sm border-secondary">
-                2016-2019
-            </p>
-        </div>
-        <div className="mb-2 pb-2 border-b">
-            <p className="text-xl font-bold">IKEA</p>
-            <p className="text-sm border-secondary">
-                2014-2015
-            </p>
-        </div>
+      {state
+        .sort(
+          (a, b) =>
+            (b.end_year ?? 99999 + (b.start_year ?? 0)) -
+            (a.end_year ?? 99999 + (a.start_year ?? 0))
+        )
+        .map((value, index) => (
+          <>
+            <EmploymentListItem data={value} key={index} />
+            {index < state.length - 1 && <Divider />}
+          </>
+        ))}
     </div>
   )
 }
 
 const DegreeSection = ({ state }: SectionProps<CredentialDegree>) => {
-  //   if (state.length === 0) {
-  //     return <></>
-  //   }
+  if (state.length === 0) {
+    return <></>
+  }
   return (
     <div className="mb-4 py-3 px-6 text-left rounded-xl bg-white">
       <h1 className="font-bold text-3xl mb-6">Education</h1>
-        <div className="mb-2 pb-2 border-b">
-            <p className="text-xl font-bold">Harvard</p>
-            <p className="text-sm border-secondary">2015</p>
-        </div>
-        <div className="mb-2 pb-2 border-b">
-            <p className="text-xl font-bold">MIT</p>
-            <p className="text-sm border-secondary">2005</p>
-        </div>
+      {state
+        .sort((a, b) => b.year - a.year)
+        .map((value, index) => (
+          <>
+            <DegreeListItem data={value} key={index} />
+            {index < state.length - 1 && <Divider />}
+          </>
+        ))}
     </div>
   )
 }
 
 const EventSection = ({ state }: SectionProps<CredentialEvent>) => {
-  //   if (state.length === 0) {
-  //     return <></>
-  //   }
+  if (state.length === 0) {
+    return <></>
+  }
   return (
     <div className="mb-4 py-3 px-6 text-left rounded-xl bg-white">
       <h1 className="font-bold text-3xl mb-6">Events</h1>
-        <div className="mb-2 pb-2 border-b">
-            <p className="text-xl font-bold">EBC9 Hackathon 2023</p>
-            <p className="text-sm border-secondary">2023</p>
-        </div>
-        <div className="mb-2 pb-2 border-b">
-            <p className="text-xl font-bold">European Blockchain Convention</p>
-            <p className="text-sm border-secondary">2023</p>
-        </div>
+      {state
+        .sort((a, b) => (b.year ?? 0) - (a.year ?? 0))
+        .map((value, index) => (
+          <>
+            <EventListItem data={value} key={index} />
+            {index < state.length - 1 && <Divider />}
+          </>
+        ))}
     </div>
   )
 }
@@ -335,6 +332,7 @@ const Profile = () => {
     signingClient,
     contractClient,
     auth,
+    backendService
   } = useWrappedClientContext()
   const { walletAddress: requestedProfileWalletAddress } = requestedProfile
   const [userInfo, setUserInfo] = useState<UserInfo>()
@@ -392,7 +390,6 @@ const Profile = () => {
           .catch((e) => console.log(e))
       }
 
-      const backendService = new BackendService()
       if (requestedProfileWalletAddress === walletAddress) {
         backendService.listOwnCredentials(walletAddress, auth).then((vcs) => {
           console.log('Got my credentials!')
@@ -449,6 +446,7 @@ const Profile = () => {
           requestedProfileWalletAddress={requestedProfileWalletAddress}
           toggle={userInfo ? toggle : undefined}
           setUserInfo={setUserInfo}
+          setIsEdit={setIsEdit}
         />
       ) : (
         <ReadOnlyProfileHeader

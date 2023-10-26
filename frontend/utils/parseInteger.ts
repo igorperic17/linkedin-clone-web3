@@ -9,3 +9,5 @@ const parseInteger = (integer: string): number | undefined => {
     return undefined
   }
 }
+
+export default parseInteger

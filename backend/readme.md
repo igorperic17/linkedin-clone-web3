@@ -2,6 +2,7 @@
 
 This package is a docker compose configuration which starts all the services required to
 run a complete credential flow:
+
 - issue - using issuer-portal
 - store - using web-wallet
 - verify - using verifier-portal
@@ -9,6 +10,7 @@ run a complete credential flow:
 ## Services
 
 The complete list of services and their port mapping is following:
+
 - walletkit: `7000`
 - web-wallet-backend: `4545`
 - web-wallet-frontend: `3000` (published)
@@ -53,6 +55,7 @@ Config locations:
 #### Redirect to web-wallet doesn't work (http://host.docker.internal:3000)
 
 Make sure the hostname mapping is available in the hosts file:
+
 - Linux: `/etc/hosts`
 - MacOS: `/private/etc/hosts`
 - Windows: `C:\Windows\System32\drivers\etc\hosts`
@@ -64,11 +67,20 @@ It should contain a record similar to `127.0.0.1 host.docker.internal`.
 #### Updating ports doesn't work
 
 Make sure the ports are also updated in:
+
 - ingress.conf
 - walletkit/config
   - issuer-config.json
   - verifier-config.json
   - wallet-config.json
 - wallet-backend/config
+
   - wallet.conf
   - web.conf
+
+## Creating new credential type
+
+```
+curl -d "@VerifiableEvent.json" -X POST localhost:8080/issuer-api/default/config/templates/VerifiableEvent
+curl -d "@VerifiableEmployment.json" -X POST localhost:8080/issuer-api/default/config/templates/VerifiableEmployment
+```

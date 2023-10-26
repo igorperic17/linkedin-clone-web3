@@ -1,24 +1,11 @@
-## Updating contract types
+# CoredIn - EBC 9 Hackathon Web3Wizards Submissions
 
-0. Install npm install -g @cosmwasm/ts-codegen
-1. Inside chain folder run
+## Project Presentation
 
-```
-cargo run --bin schema
-cosmwasm-ts-codegen generate \
-          --plugin client \
-          --schema ./schema \
-          --out ./ts \
-          --name MyProject \
-          --no-bundle
-```
+You can find our presentation [here](https://www.canva.com/design/DAFyLR0keU8/rTj4WoBQXyiraOsQPNotTQ/view?utm_content=DAFyLR0keU8&utm_campaign=designshare&utm_medium=link&utm_source=viewer)
 
-2. Copy generate types into back / frontend folders
-3. Update contract address in front env variables and backend ContractsService
+## Project Demo
 
-## Creating new credential type
+(Add video?)
 
-```
-curl -d "@VerifiableEvent.json" -X POST localhost:8080/issuer-api/default/config/templates/VerifiableEvent
-curl -d "@VerifiableEmployment.json" -X POST localhost:8080/issuer-api/default/config/templates/VerifiableEmployment
-```
+## Testnet deployment

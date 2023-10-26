@@ -1,7 +1,17 @@
-# Name Service
+# Generating contract types
 
-The goal of the application you are building is to let users buy names and to set a value these names resolve to.
-The owner of a given name will be the current highest bidder. In this section, you will learn how these simple
- requirements translate to application design.
+0. Install npm install -g @cosmwasm/ts-codegen
+1. Inside chain folder run
 
-Here is the tutorial for this application: [tutorial](https://docs.cosmwasm.com/tutorials/name-service/intro)
+```
+cargo run --bin schema
+cosmwasm-ts-codegen generate \
+          --plugin client \
+          --schema ./schema \
+          --out ./ts \
+          --name MyProject \
+          --no-bundle
+```
+
+2. Copy generate types into back / frontend folders
+3. Update contract address in front env variables and backend ContractsService

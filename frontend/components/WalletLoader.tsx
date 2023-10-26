@@ -36,22 +36,20 @@ function WalletLoader({
           style={{ opacity: '0.1', filter: 'grayscale(100%)' }}
         />
         <div className="z-10 p-16 backdrop-blur-sm rounded-xl" style={{ boxShadow: '0px 0px 50px 0px #707070' }}>
-          <h1 className="mb-12 text-9xl font-bold">
+          <h1 className="mb-10 text-9xl font-bold">
             CoredIn
           </h1>
-
-          <p className="text-md">
-            PoC Social App for professionals with self-sovereign data access
+          <p className="text-md max-w-md">
+            PoC Social app for professionals to leverage control over their sensitive data through self-sovereign identity (SSI).
           </p>
-
-          <div className="flex flex-wrap rounded-xl items-center justify-around md:max-w-4xl mt-14 sm:w-full">
+          <div className="flex flex-wrap rounded-xl items-center justify-around md:max-w-4xl mt-10 sm:w-full">
             <button
               className="p-6 text-left border border-primary text-primary hover:border-primary hover:bg-primary max-w-lg rounded-xl hover:text-secondary"
               onClick={connectWallet}
             >
               <h3 className="text-2xl font-bold">Connect your wallet &rarr;</h3>
               <p className="mt-4 text-xl">
-                Get your Keplr wallet connected now and start using CoredIn.
+                Connect your Keplr wallet to start using CoredIn.
               </p>
             </button>
           </div>
